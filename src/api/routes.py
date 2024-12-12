@@ -23,4 +23,5 @@ def handle_hello():
 
 @api.route('/signUp', methods=['POST'])
 def createuser():
+    print("Database error:")
     return jsonify({})
