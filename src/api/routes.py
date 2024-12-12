@@ -26,12 +26,6 @@ def handle_hello():
 
 #CREATE USER | SIGN-UP
 @api.route('/signUp', methods=['POST'])
-<<<<<<< HEAD
-def createuser():
-    data = request.json
-    print("Database error:")
-    return jsonify({})
-=======
 def create_user():
     data = request.json
     email = data.get("email")
@@ -73,4 +67,3 @@ def create_user():
         "user": new_user.serialize(),
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
->>>>>>> signup
