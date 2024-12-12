@@ -21,9 +21,17 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
+    def __init__(self, email, password_hashed):
+        self.email = email
+        self.password_hash = password_hashed
+        self.role = None
+        self.is_admin = False
+        self.is_event_organizer = False
+        self.is_active = True
+
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
+            "role": self.role
         }
