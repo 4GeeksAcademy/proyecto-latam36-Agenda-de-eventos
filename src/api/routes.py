@@ -20,3 +20,7 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@api.route('/signUp', methods=['POST'])
+def createuser():
+    return jsonify({})
