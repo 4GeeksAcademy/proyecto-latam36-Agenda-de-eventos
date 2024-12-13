@@ -6,7 +6,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(15))
-    password_hash = db.Column(db.String(80), unique=False, nullable=False)
+    password_hash = db.Column(db.String(250), unique=False, nullable=False)
     first_name = db.Column(db.String(100), unique=False, nullable=True)
     last_name = db.Column(db.String(100), unique=False, nullable=True)
     user_city = db.Column(db.String(30), unique=False, nullable=True)
