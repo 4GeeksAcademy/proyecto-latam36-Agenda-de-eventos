@@ -30,9 +30,24 @@ class User(db.Model):
         self.is_event_organizer = False
         self.is_active = True
 
+   
     def serialize(self):
+        role = "User"
+        if self.is_admin:
+            role = "Admin"
+        elif self.is_event_organizer:
+            role = "Event Organizer"
+
         return {
             "id": self.id,
             "email": self.email,
-            "role": self.role
+            "first_name": self.user_first_name,
+            "last_name": self.user_last_name,
+            "country": self.user_country,
+            "state": self.user_state,
+            "city": self.user_city,
+            "genere": self.user_genere,
+            "date_of_birth": self.user_date_of_birth.strftime("%d/%m/%Y") if self.user_date_of_birth else None,
+            "role": role
         }
+

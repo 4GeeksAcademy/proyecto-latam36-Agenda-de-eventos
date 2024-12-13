@@ -93,10 +93,3 @@ def create_user():
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
 
-<<<<<<< HEAD
-=======
-# Sign up route
-@api.route('/login',methods=['POST'])
-def login():
-    pass
->>>>>>> 81e86c2fcb835b05b456592c6335afa53639587f
