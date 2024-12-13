@@ -39,11 +39,10 @@ def create_user():
     birthdate = data.get("birthdate")
     country = data.get("country")
     city = data.get("city")
-    state = data.get("state")
 
     # Validaciones de campos obligatorios
-    if not all([email, password, genre, birthdate, country, city, state]):
-        return jsonify({"message": "Email, Password, Gender, Birthdate, Country, State, and City are required"}), 400
+    if not all([email, password, genre, birthdate, country, city]):
+        return jsonify({"message": "Email, Password, Gender, Birthdate, Country, and City are required"}), 400
     
     if "@" not in email or "." not in email:
         return jsonify({"message": "Invalid email format"}), 400
@@ -71,7 +70,6 @@ def create_user():
         first_name=first_name,  # Puede ser None
         last_name=last_name,    # Puede ser None
         country=country,
-        state=state,
         city=city,
         genre=genre,
         birthdate=birthdate_obj,
