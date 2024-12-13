@@ -67,3 +67,8 @@ def create_user():
         "user": new_user.serialize(),
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
+
+# Sign up route
+@api.route('/login',methods=['POST'])
+def login():
+    pass
