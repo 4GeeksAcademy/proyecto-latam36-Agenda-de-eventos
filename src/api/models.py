@@ -22,15 +22,21 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-    def __init__(self, email, password_hashed):
+    def __init__(self, email, password_hash, first_name=None, last_name=None, genre=None, birthdate=None, city=None, state=None, country=None):
         self.email = email
-        self.password_hash = password_hashed
-        self.role = None
+        self.password_hash = password_hash
+        self.first_name = first_name
+        self.last_name = last_name
+        self.genre = genre
+        self.birthdate = birthdate
+        self.city = city
+        self.state = state
+        self.country = country
+        self.role = "User"  # Default role
         self.is_admin = False
         self.is_event_organizer = False
         self.is_active = True
 
-   
     def serialize(self):
         role = "User"
         if self.is_admin:
@@ -41,13 +47,13 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "first_name": self.user_first_name,
-            "last_name": self.user_last_name,
-            "country": self.user_country,
-            "state": self.user_state,
-            "city": self.user_city,
-            "genere": self.user_genere,
-            "date_of_birth": self.user_date_of_birth.strftime("%d/%m/%Y") if self.user_date_of_birth else None,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "country": self.country,
+            "state": self.state,
+            "city": self.city,
+            "genre": self.genre,
+            "date_of_birth": self.birthdate.strftime("%d/%m/%Y") if self.birthdate else None,
             "role": role
         }
 
