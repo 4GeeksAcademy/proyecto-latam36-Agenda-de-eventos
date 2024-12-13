@@ -26,24 +26,24 @@ def handle_hello():
 
 
 
-
-#CREATE USER | SIGN-UP
+# CREATE USER | SIGN-UP
 @api.route('/signUp', methods=['POST'])
 def create_user():
     data = request.json
 
     email = data.get("email")
     password = data.get("password")
-    user_first_name = data.get("user_first_name")
-    user_last_name = data.get("user_last_name")
-    user_genere = data.get("user_genere")
+    first_name = data.get("first_name")  # No obligatorio
+    last_name = data.get("last_name")    # No obligatorio
+    genre = data.get("genre")
     birthdate = data.get("birthdate")
     country = data.get("country")
     city = data.get("city")
     state = data.get("state")
 
-    if not all([email, password, user_first_name, user_last_name, user_genere, birthdate]):
-        return jsonify({"message": "Email, Password, First Name, Last Name, Gender, and Birthdate are required"}), 400
+    # Validaciones de campos obligatorios
+    if not all([email, password, genre, birthdate, country, city, state]):
+        return jsonify({"message": "Email, Password, Gender, Birthdate, Country, State, and City are required"}), 400
     
     if "@" not in email or "." not in email:
         return jsonify({"message": "Invalid email format"}), 400
@@ -51,8 +51,8 @@ def create_user():
     if len(password) < 8:
         return jsonify({"message": "Password must be at least 8 characters long"}), 400
 
-    if user_genere not in ["Male", "Female", "Other"]:
-        return jsonify({"message": "Invalid gender. Use Male, Female, or Other"}), 400
+    if genre not in ["Male", "Female", "Other"]:
+        return jsonify({"message": "Invalid genre. Use Male, Female, or Other"}), 400
 
     try:
         birthdate_obj = datetime.strptime(birthdate, "%d/%m/%Y").date()
@@ -68,13 +68,13 @@ def create_user():
     new_user = User(
         email=email,
         password_hash=password_hash,
-        user_first_name=user_first_name,
-        user_last_name=user_last_name,
-        user_country=country,
-        user_state=state,
-        user_city=city,
-        user_genere=user_genere,
-        user_date_of_birth=birthdate_obj,
+        first_name=first_name,  # Puede ser None
+        last_name=last_name,    # Puede ser None
+        country=country,
+        state=state,
+        city=city,
+        genre=genre,
+        birthdate=birthdate_obj,
         is_admin=False,
         is_event_organizer=False,
         is_active=True
@@ -92,4 +92,3 @@ def create_user():
         "user": new_user.serialize(),
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
-
