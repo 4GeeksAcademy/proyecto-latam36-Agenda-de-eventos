@@ -71,24 +71,4 @@ def create_user():
 # Sign up route
 @api.route('/login',methods=['POST'])
 def login():
-    data = request.json
-    email = data.get("email")
-    username = data.get("username")
-    password = data.get("password")
-
-    user_exist = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
-    password_hash = generate_password_hash(password)
-
-    if user_exist==None OR user_exist.password_hash != password_hash:
-        return jsonify({"message": "Invalid email or password, try again"}), 400
-    
-    access_token = create_access_token(identity={'email': email})
-    return jsonify({'token':access_token})
-
-# Test for password hash
-@api.route ('/test', methods=['GET'])
-def test():
-    password = '1234'
-    password_hash = generate_password_hash(password)
-    print('Password hasshed:',password_hash)
-    return jsonify({"Hash":password_hash})
+    pass
