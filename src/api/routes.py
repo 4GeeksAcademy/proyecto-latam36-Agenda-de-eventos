@@ -24,42 +24,67 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+
+
+
 #CREATE USER | SIGN-UP
 @api.route('/signUp', methods=['POST'])
 def create_user():
     data = request.json
+
     email = data.get("email")
-    username = data.get("username")
     password = data.get("password")
+    user_first_name = data.get("user_first_name")
+    user_last_name = data.get("user_last_name")
+    user_genere = data.get("user_genere")
     birthdate = data.get("birthdate")
     country = data.get("country")
     city = data.get("city")
+    state = data.get("state")
 
-    if None in [email, username, password]:
-        return jsonify({"message": "Email, Username, and Password are required"}), 400
+    if not all([email, password, user_first_name, user_last_name, user_genere, birthdate]):
+        return jsonify({"message": "Email, Password, First Name, Last Name, Gender, and Birthdate are required"}), 400
+    
+    if "@" not in email or "." not in email:
+        return jsonify({"message": "Invalid email format"}), 400
+    
+    if len(password) < 8:
+        return jsonify({"message": "Password must be at least 8 characters long"}), 400
 
-    email_exist = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
-    if email_exist:
-        return jsonify({"message": "The email already exists, try another one or log-in"}), 400
-
-    username_exist = db.session.execute(db.select(User).filter_by(username=username)).one_or_none()
-    if username_exist:
-        return jsonify({"message": "The username already exists, try another one"}), 400
-
-    password_hash = generate_password_hash(password)
+    if user_genere not in ["Male", "Female", "Other"]:
+        return jsonify({"message": "Invalid gender. Use Male, Female, or Other"}), 400
 
     try:
-         birthdate_obj = datetime.strptime(birthdate, "%d/%m/%Y").date() if birthdate else None
+        birthdate_obj = datetime.strptime(birthdate, "%d/%m/%Y").date()
     except ValueError:
         return jsonify({"message": "Invalid birthdate format. Use DD/MM/YYYY"}), 400
 
-    new_user = User(email, username, password_hash, birthdate_obj, country, city)
+    email_exist = User.query.filter_by(email=email).first()
+    if email_exist:
+        return jsonify({"message": "The email already exists, try another one or log-in"}), 400
+
+    password_hash = generate_password_hash(password)
+
+    new_user = User(
+        email=email,
+        password_hash=password_hash,
+        user_first_name=user_first_name,
+        user_last_name=user_last_name,
+        user_country=country,
+        user_state=state,
+        user_city=city,
+        user_genere=user_genere,
+        user_date_of_birth=birthdate_obj,
+        is_admin=False,
+        is_event_organizer=False,
+        is_active=True
+    )
 
     try:
         db.session.add(new_user)
         db.session.commit()
     except Exception as error:
-        db.session.rollback()  
+        db.session.rollback()
         print("Database error:", error)
         return jsonify({"message": "Error saving user to database"}), 500
 
@@ -67,3 +92,4 @@ def create_user():
         "user": new_user.serialize(),
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
+
