@@ -29,7 +29,6 @@ def handle_hello():
 def create_user():
     data = request.json
     email = data.get("email")
-    username = data.get("username")
     password = data.get("password")
     birthdate = data.get("birthdate")
     country = data.get("country")
@@ -68,7 +67,20 @@ def create_user():
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
 
-# Sign up route
+# Login route
 @api.route('/login',methods=['POST'])
 def login():
-    pass
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+
+    password_hash = generate_password_hash(password)
+    user_exist = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
+
+    if user_exist==None or password_hash!=password :
+        return jsonify ({'msg':'invalid user or password, try again'}),400
+    
+    access_token = create_access_token(id=user_exist.email)
+    return jsonify ({'access token':access_token}),200
+
+    
