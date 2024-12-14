@@ -20,12 +20,12 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-    def __init__(self, email, password_hash, first_name=None, last_name=None, genre=None, birthdate=None, city=None, country=None):
+    def __init__(self, email, password_hash, first_name=None, last_name=None, gender=None, birthdate=None, city=None, country=None):
         self.email = email
         self.password_hash = password_hash
         self.first_name = first_name
         self.last_name = last_name
-        self.user_gender = genre
+        self.user_gender = gender
         self.birthdate = birthdate
         self.user_city = city
         self.user_country = country
