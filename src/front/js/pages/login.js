@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-const LoginPage = () => {
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Aquí se puede añadir la lógica para manejar el login
+        // Aquí puedes añadir la lógica para manejar el login
         console.log('Email:', email);
         console.log('Password:', password);
     };
@@ -52,4 +52,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default Login;
