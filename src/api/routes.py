@@ -24,47 +24,49 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-#CREATE USER | SIGN-UP
-@api.route('/signup', methods=['POST'])
+
+# CREATE USER | SIGN-UP
+@api.route('/signUp', methods=['POST'])
 def create_user():
     data = request.json
+
     email = data.get("email")
     password = data.get("password")
-    first_name = data.get("first_name")  
-    last_name = data.get("last_name")   
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
     genre = data.get("genre")
     birthdate = data.get("birthdate")
     country = data.get("country")
     city = data.get("city")
 
-    if None in [email, password, genre, birthdate, country, city]:
-        return jsonify({"message": "Email, Password, Gender, Birthdate, Country, and City are required"}), 400
+    if not all([email, password, first_name, last_name, genre, birthdate, country, city]):
+        return jsonify({"message": "Email, Password, First Name, Last Name, Gender, Birthdate, Country, and City are required"}), 400
     
     if "@" not in email or "." not in email:
         return jsonify({"message": "Invalid email format"}), 400
-
+    
     if len(password) < 8:
         return jsonify({"message": "Password must be at least 8 characters long"}), 400
-    
+
     if genre not in ["Male", "Female", "Other"]:
         return jsonify({"message": "Invalid genre. Use Male, Female, or Other"}), 400
 
-    email_exist = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
+    try:
+        birthdate_obj = datetime.strptime(birthdate, "%d/%m/%Y").date()
+    except ValueError:
+        return jsonify({"message": "Invalid birthdate format. Use DD/MM/YYYY"}), 400
+
+    email_exist = User.query.filter_by(email=email).first()
     if email_exist:
         return jsonify({"message": "The email already exists, try another one or log-in"}), 400
 
     password_hash = generate_password_hash(password)
 
-    try:
-         birthdate_obj = datetime.strptime(birthdate, "%d/%m/%Y").date() if birthdate else None
-    except ValueError:
-        return jsonify({"message": "Invalid birthdate format. Use DD/MM/YYYY"}), 400
-
     new_user = User(
         email=email,
         password_hash=password_hash,
-        first_name=first_name,  
-        last_name=last_name,    
+        first_name=first_name,
+        last_name=last_name,
         country=country,
         city=city,
         genre=genre,
@@ -72,13 +74,13 @@ def create_user():
         is_admin=False,
         is_event_organizer=False,
         is_active=True
-     )
+    )
 
     try:
         db.session.add(new_user)
         db.session.commit()
     except Exception as error:
-        db.session.rollback()  
+        db.session.rollback()
         print("Database error:", error)
         return jsonify({"message": "Error saving user to database"}), 500
 
@@ -86,6 +88,7 @@ def create_user():
         "user": new_user.serialize(),
         "message": "Registration completed successfully, you will be redirected to the Log-in"
     }), 200
+
 
 
 

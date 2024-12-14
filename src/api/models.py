@@ -25,11 +25,11 @@ class User(db.Model):
         self.password_hash = password_hash
         self.first_name = first_name
         self.last_name = last_name
-        self.genre = genre
+        self.user_genre = genre
         self.birthdate = birthdate
-        self.city = city
-        self.country = country
-        self.role = "User"
+        self.user_city = city
+        self.user_country = country
+        self.user_role = "User"
         self.is_admin = False
         self.is_event_organizer = False
         self.is_active = True
