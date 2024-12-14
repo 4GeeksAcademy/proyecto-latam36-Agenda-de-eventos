@@ -12,7 +12,7 @@ class User(db.Model):
     user_country = db.Column(db.String(25), unique=False, nullable=True)
     user_role = db.Column(db.String(15), unique=False, nullable=True)
     birthdate = db.Column(db.Date, unique=False, nullable=True)
-    user_genre = db.Column(db.String(10), unique=False, nullable=True)
+    user_gender = db.Column(db.String(10), unique=False, nullable=True)
     is_admin = db.Column(db.Boolean(), unique=False, nullable=True)
     is_event_organizer = db.Column(db.Boolean(), unique=False, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=True)
@@ -20,12 +20,12 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-    def __init__(self, email, password_hash, first_name=None, last_name=None, genre=None, birthdate=None, city=None, country=None):
+    def __init__(self, email, password_hash, first_name=None, last_name=None, gender=None, birthdate=None, city=None, country=None):
         self.email = email
         self.password_hash = password_hash
         self.first_name = first_name
         self.last_name = last_name
-        self.user_genre = genre
+        self.user_gender = gender
         self.birthdate = birthdate
         self.user_city = city
         self.user_country = country
@@ -48,7 +48,7 @@ class User(db.Model):
             "last_name": self.user_last_name,
             "country": self.user_country,
             "city": self.user_city,
-            "genere": self.user_genere,
+            "genere": self.user_gender,
             "date_of_birth": self.user_date_of_birth.strftime("%d/%m/%Y") if self.user_date_of_birth else None,
             "role": role
         }
