@@ -109,4 +109,9 @@ def login():
     access_token = create_access_token(id=user_exist.email)
     return jsonify ({'access token':access_token}),200
 
-    
+# test route
+@api.route('/test',methods=['GET'])
+def test():
+    password="1234"
+    password_hash= generate_password_hash(password)
+    return jsonify({"Password hash":password_hash}),200
