@@ -34,12 +34,12 @@ def create_user():
     password = data.get("password")
     first_name = data.get("first_name")
     last_name = data.get("last_name")
-    genre = data.get("genre")
+    user_gender = data.get("user_gender")
     birthdate = data.get("birthdate")
-    country = data.get("country")
-    city = data.get("city")
+    user_country = data.get("user_country")
+    user_city = data.get("user_city")
 
-    if not all([email, password, first_name, last_name, genre, birthdate, country, city]):
+    if not all([email, password, first_name, last_name, user_gender, birthdate, user_country, user_city]):
         return jsonify({"message": "Email, Password, First Name, Last Name, Gender, Birthdate, Country, and City are required"}), 400
     
     if "@" not in email or "." not in email:
@@ -48,7 +48,7 @@ def create_user():
     if len(password) < 8:
         return jsonify({"message": "Password must be at least 8 characters long"}), 400
 
-    if genre not in ["Male", "Female", "Other"]:
+    if user_gender not in ["Male", "Female", "Other"]:
         return jsonify({"message": "Invalid genre. Use Male, Female, or Other"}), 400
 
     try:
