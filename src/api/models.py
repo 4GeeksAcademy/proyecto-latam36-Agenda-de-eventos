@@ -35,20 +35,20 @@ class User(db.Model):
         self.is_active = True
 
     def serialize(self):
-        role = "User"
+        self.role = "User"
         if self.is_admin:
-            role = "Admin"
+            self.role = "Admin"
         elif self.is_event_organizer:
-            role = "Event Organizer"
+            self.role = "Event Organizer"
         return {
             "id": self.id,
             "email": self.email,
             "role": self.role,
-            "first_name": self.user_first_name,
-            "last_name": self.user_last_name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
             "country": self.user_country,
             "city": self.user_city,
             "genere": self.user_gender,
             "date_of_birth": self.user_date_of_birth.strftime("%d/%m/%Y") if self.user_date_of_birth else None,
-            "role": role
+            "role": self.role
         }
