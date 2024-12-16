@@ -9,7 +9,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('https://special-waddle-p554vx9pwvvfrp6q-3001.app.github.dev/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const Login = () => {
                             </div>
                         </form>
                         <div className="text-center mt-3">
-                            <small>¿No tienes una cuenta? <a href="#">Regístrate</a></small>
+                            <small>¿No tienes una cuenta? <a href="https://improved-bassoon-x56jx6pww426969-3000.app.github.dev/Signup">Regístrate</a></small>
                         </div>
                     </div>
                 </div>
