@@ -52,3 +52,32 @@ class User(db.Model):
             "date_of_birth": self.birthdate.strftime("%d/%m/%Y") if self.birthdate else None,
             "role": self.role
         }
+    
+class Events(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event_name = db.Column(db.String(100),unique=False, nullable=False)
+    event_description = db.Column(db.String(300),unique=False, nullable=False)
+    organizer_user_id = db.Column(db.Integer, unique=False, nullable=False)
+    event_date = db.Column(db.Date, unique=False, nullable=False)
+    event_start_time = db.Column(db.Time, unique=False, nullable=False)
+    event_duration = db.Column(db.Time, unique=False, nullable=True)
+    ticket_price = db.Column(db.Float, unique=False, nullable=True)
+    event_address = db.Column(db.String(80), unique=False, nullable=False)
+    event_city = db.Column(db.String(30), unique=False, nullable=False)
+    event_country = db.Column(db.String(25), unique=False, nullable=False)
+    event_category = db.Column(db.String(25),unique=False, nullable=False)
+    age_clasification = db.Column(db.String(10),unique=False, nullable=True)
+
+    def __repr__(self):
+        return f'<Events {self.event_name}>'
+
+    def __init__(self, name, description,date):
+        self.event_name = name
+        self.event_description = description
+        self.event_date = date
+
+    def serialize(self):
+        return{"event_name":self.event_name,
+               "description":self.event_description,
+               "date":self.event_date}
+
