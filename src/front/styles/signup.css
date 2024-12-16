@@ -12,6 +12,8 @@ body {
     justify-content: center;
     align-items: center;
     height: 100%;
+    padding-top: 65px;
+    padding-bottom: 65px;
   }
   
   .card {
@@ -85,4 +87,3 @@ img {
     height: 70px;
     
 }
-

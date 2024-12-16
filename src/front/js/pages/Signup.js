@@ -43,7 +43,8 @@ function Signup() {
   };
 
   return (
-    <div className="card horizontal-card d-flex justify-content-center">
+    <div className='container'>
+    <div className="card">
       <h2>Sign up</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
@@ -108,6 +109,7 @@ function Signup() {
           <button type="submit" className='rounded-pill' disabled={!termsAccepted}>Sign up</button>
         </div>
       </form>
+    </div>
     </div>
   );
 }
