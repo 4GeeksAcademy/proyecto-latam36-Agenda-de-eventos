@@ -67,14 +67,14 @@ def create_user():
         password_hash=password_hash,
         first_name=first_name,
         last_name=last_name,
-        user_country=user_country,
-        user_city=user_city,
-        user_gender=user_gender,
-        birthdate=birthdate_obj,
-        is_admin=False,
-        is_event_organizer=False,
-        is_active=True
-    )
+        country=user_country,
+        city=user_city,
+        gender=user_gender,
+        birthdate=birthdate_obj)
+        #is_admin=False,
+        #is_event_organizer=False,
+        #is_active=True
+    #)
 
     try:
         db.session.add(new_user)
@@ -99,14 +99,20 @@ def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-
-    password_hash = generate_password_hash(password)
+    print("email:",email," password:",password)
     user_exist = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
+    if user_exist==None:
+        return jsonify({"msg":"invalid user or password"}),400
 
-    if user_exist==None or password_hash!=password :
+    user=user_exist[0]
+    valid_password = check_password_hash(user.password_hash,password)
+    print("This is the password hash from login:",valid_password)
+    
+    if valid_password !=True :
         return jsonify ({'msg':'invalid user or password, try again'}),400
     
-    access_token = create_access_token(id=user_exist.email)
+    print("will try to create access token:")
+    access_token = create_access_token(identity=user.email)
     return jsonify ({'access token':access_token}),200
 
 # test route

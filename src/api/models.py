@@ -35,20 +35,49 @@ class User(db.Model):
         self.is_active = True
 
     def serialize(self):
-        role = "User"
+        self.role = "User"
         if self.is_admin:
-            role = "Admin"
+            self.role = "Admin"
         elif self.is_event_organizer:
-            role = "Event Organizer"
+            self.role = "Event Organizer"
         return {
             "id": self.id,
             "email": self.email,
             "role": self.role,
-            "first_name": self.user_first_name,
-            "last_name": self.user_last_name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
             "country": self.user_country,
             "city": self.user_city,
             "genere": self.user_gender,
-            "date_of_birth": self.user_date_of_birth.strftime("%d/%m/%Y") if self.user_date_of_birth else None,
-            "role": role
+            "date_of_birth": self.birthdate.strftime("%d/%m/%Y") if self.birthdate else None,
+            "role": self.role
         }
+    
+class Events(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event_name = db.Column(db.String(100),unique=False, nullable=False)
+    event_description = db.Column(db.String(300),unique=False, nullable=False)
+    organizer_user_id = db.Column(db.Integer, unique=False, nullable=False)
+    event_date = db.Column(db.Date, unique=False, nullable=False)
+    event_start_time = db.Column(db.Time, unique=False, nullable=False)
+    event_duration = db.Column(db.Time, unique=False, nullable=True)
+    ticket_price = db.Column(db.Float, unique=False, nullable=True)
+    event_address = db.Column(db.String(80), unique=False, nullable=False)
+    event_city = db.Column(db.String(30), unique=False, nullable=False)
+    event_country = db.Column(db.String(25), unique=False, nullable=False)
+    event_category = db.Column(db.String(25),unique=False, nullable=False)
+    age_clasification = db.Column(db.String(10),unique=False, nullable=True)
+
+    def __repr__(self):
+        return f'<Events {self.event_name}>'
+
+    def __init__(self, name, description,date):
+        self.event_name = name
+        self.event_description = description
+        self.event_date = date
+
+    def serialize(self):
+        return{"event_name":self.event_name,
+               "description":self.event_description,
+               "date":self.event_date}
+
