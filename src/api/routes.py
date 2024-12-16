@@ -67,10 +67,10 @@ def create_user():
         password_hash=password_hash,
         first_name=first_name,
         last_name=last_name,
-        country=country,
-        city=city,
-        genre=genre,
-        birthdate=birthdate_obj )
+        country=user_country,
+        city=user_city,
+        gender=user_gender,
+        birthdate=birthdate_obj)
         #is_admin=False,
         #is_event_organizer=False,
         #is_active=True

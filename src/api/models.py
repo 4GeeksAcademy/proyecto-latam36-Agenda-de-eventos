@@ -49,6 +49,6 @@ class User(db.Model):
             "country": self.user_country,
             "city": self.user_city,
             "genere": self.user_gender,
-            "date_of_birth": self.user_date_of_birth.strftime("%d/%m/%Y") if self.user_date_of_birth else None,
+            "date_of_birth": self.birthdate.strftime("%d/%m/%Y") if self.birthdate else None,
             "role": self.role
         }

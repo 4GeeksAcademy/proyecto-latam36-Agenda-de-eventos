@@ -6,7 +6,7 @@ export const Navbar = () => {
         <nav className="navbar navbar-expand-lg text-center bg-dark navbar-dark border-bottom border-body rounded-2 m-0 p-0">
             <div className="container-fluid d-flex justify-content-between">
                 <a className="navbar-brand align-items-center" href="#">
-                    <img className="object-cover object-center" src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo" alt="logo-culturalWave"></img>
+                    <img className="object-cover object-center w-25" src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo" alt="logo-culturalWave"></img>
                 </a>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
