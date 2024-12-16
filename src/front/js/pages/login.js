@@ -3,12 +3,34 @@ import React, { useState } from 'react';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Aquí se puede añadir la lógica para manejar el login
-        console.log('Email:', email);
-        console.log('Password:', password);
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la autenticación. Verifica tus credenciales.');
+            }
+
+            const data = await response.json();
+
+            // Guarda el token en localStorage o en el estado global
+            localStorage.setItem('accessToken', data['access token']);
+
+            // Redirige o actualiza el estado de autenticación
+            console.log('Inicio de sesión exitoso');
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
     };
 
     return (
@@ -19,6 +41,11 @@ const Login = () => {
                     <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
                         <h3 className="text-center">Iniciar Sesión</h3>
                         <form onSubmit={handleLogin}>
+                            {errorMessage && (
+                                <div className="alert alert-danger" role="alert">
+                                    {errorMessage}
+                                </div>
+                            )}
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">Correo Electrónico</label>
                                 <input
@@ -57,9 +84,9 @@ const Login = () => {
                 <div
                     className="col-md-6 d-none d-md-block"
                     style={{
-                        backgroundImage: 'url(https://media-private.canva.com/dtmvk/MAGZSbdtmvk/1/p.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJWF6QO3UH4PAAJ6Q%2F20241214%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241214T105046Z&X-Amz-Expires=40954&X-Amz-Signature=d9eb2a5bd6d5e06d45c46759c7b527f523c84c0a34ea8cb965ddf648bf38bdb8&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Sat%2C%2014%20Dec%202024%2022%3A13%3A20%20GMT)',
+                        backgroundImage: 'url(https://media-private.canva.com/dtmvk/MAGZSbdtmvk/1/p.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJWF6QO3UH4PAAJ6Q%2F20241216%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241216T105046Z&X-Amz-Expires=51754&X-Amz-Signature=a5e5db1954af31046790803a856fbefd33ffd5d8aef6e12d774783377298f451&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Tue%2C%2017%20Dec%202024%2001%3A13%3A20%20GMT)',
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundPosition: 'center',
                     }}
                 ></div>
             </div>

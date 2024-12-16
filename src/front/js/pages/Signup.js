@@ -43,7 +43,8 @@ function Signup() {
   };
 
   return (
-    <div className="card horizontal-card">
+    <div className='container'>
+    <div className="card">
       <h2>Sign up</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
@@ -104,10 +105,11 @@ function Signup() {
             Acepto las <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Políticas de Privacidad</a> y los <a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Términos de Servicio</a>
           </label>
         </div>
-        <div className="form-actions">
-          <button type="submit" disabled={!termsAccepted}>Sign up</button>
+        <div className="form-actions ">
+          <button type="submit" className='rounded-pill' disabled={!termsAccepted}>Sign up</button>
         </div>
       </form>
+    </div>
     </div>
   );
 }
