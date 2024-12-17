@@ -4,12 +4,13 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [accessToken, setAccessToken] = useState(''); // Variable para guardar el token
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://special-waddle-p554vx9pwvvfrp6q-3001.app.github.dev/api/login', {
+            const response = await fetch('https://improved-bassoon-x56jx6pww426969-3001.app.github.dev/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -23,11 +24,14 @@ const Login = () => {
 
             const data = await response.json();
 
-            // Guarda el token en localStorage o en el estado global
-            localStorage.setItem('accessToken', data['access token']);
+            // Guarda el token en localStorage y en una variable de estado
+            const token = data['access token'];
+            localStorage.setItem('accessToken', token);
+            setAccessToken(token); // Guardar en la variable de estado
 
             // Redirige o actualiza el estado de autenticación
             console.log('Inicio de sesión exitoso');
+            console.log('Token:', token);
         } catch (error) {
             setErrorMessage(error.message);
         }
@@ -36,7 +40,7 @@ const Login = () => {
     return (
         <div className="container-fluid vh-100">
             <div className="row h-100">
-                {/* Login Form Section */}
+                {/* Formulario Login */}
                 <div className="col-md-6 d-flex justify-content-center align-items-center bg-light">
                     <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
                         <h3 className="text-center">Iniciar Sesión</h3>
@@ -75,12 +79,12 @@ const Login = () => {
                             </div>
                         </form>
                         <div className="text-center mt-3">
-                            <small>¿No tienes una cuenta? <a href="https://improved-bassoon-x56jx6pww426969-3000.app.github.dev/Signup">Regístrate</a></small>
+                            <small>¿No tienes una cuenta? <a href="#">Regístrate</a></small>
                         </div>
                     </div>
                 </div>
 
-                {/* Background Image Section */}
+                {/* seccion de image */}
                 <div
                     className="col-md-6 d-none d-md-block"
                     style={{
