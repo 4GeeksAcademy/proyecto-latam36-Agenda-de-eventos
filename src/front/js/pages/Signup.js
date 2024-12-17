@@ -29,7 +29,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch('https://bookish-umbrella-7644qqwvqq6c6rv-3001.app.github.dev/signup', {
+      const response = await fetch('https://bookish-umbrella-7644qqwvqq6c6rv-3001.app.github.dev/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
