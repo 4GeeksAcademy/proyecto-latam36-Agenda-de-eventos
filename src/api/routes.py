@@ -71,9 +71,6 @@ def create_user():
         city=user_city,
         gender=user_gender,
         birthdate=birthdate_obj,
-        # is_admin=False,
-        # is_event_organizer=False,
-        # is_active=True
     )
 
     try:
@@ -121,34 +118,3 @@ def test():
     password="1234"
     password_hash= generate_password_hash(password)
     return jsonify({"Password hash":password_hash}),200
-
-
-
-
-
-# CREACION DE EVENT_ORGANIZER
-@api.route('/make-event-organizer/<int:user_id>', methods=['PUT'])
-@jwt_required()
-def approve_event_organizer(user_id):
-    current_user = get_jwt_identity()
-
-    # Verificar que el usuario actual tiene permisos,es admin
-    if not current_user["is_admin"]:
-        return jsonify({"message": "You do not have permission to perform this action"}), 403
-
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    if user.is_event_organizer:
-        return jsonify({"message": "User is already an event organizer"}), 400
-
-    user.is_event_organizer = True
-    try:
-        db.session.commit()
-    except Exception as error:
-        db.session.rollback()
-        print("Database error:", error)
-        return jsonify({"message": "Error updating user role"}), 500
-
-    return jsonify({"message": f"User {user.first_name} {user.last_name} is now an event organizer"}), 200

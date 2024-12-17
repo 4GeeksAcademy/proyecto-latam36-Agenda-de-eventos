@@ -14,7 +14,6 @@ class User(db.Model):
     birthdate = db.Column(db.Date, unique=False, nullable=True)
     user_gender = db.Column(db.String(10), unique=False, nullable=True)
     is_admin = db.Column(db.Boolean(), unique=False, nullable=True)
-    is_event_organizer = db.Column(db.Boolean(), unique=False, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=True)
 
     def __repr__(self):
@@ -31,15 +30,12 @@ class User(db.Model):
         self.user_country = country
         self.user_role = "User"
         self.is_admin = False
-        self.is_event_organizer = False
         self.is_active = True
 
     def serialize(self):
         self.role = "User"
         if self.is_admin:
             self.role = "Admin"
-        elif self.is_event_organizer:
-            self.role = "Event Organizer"
         return {
             "id": self.id,
             "email": self.email,
@@ -67,6 +63,7 @@ class Events(db.Model):
     event_country = db.Column(db.String(25), unique=False, nullable=False)
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
+    approved = db.Column(db.Boolean(), unique=False, nullable=True)
 
     def __repr__(self):
         return f'<Events {self.event_name}>'
@@ -75,9 +72,11 @@ class Events(db.Model):
         self.event_name = name
         self.event_description = description
         self.event_date = date
+        self.approved = False
 
     def serialize(self):
         return{"event_name":self.event_name,
                "description":self.event_description,
-               "date":self.event_date}
+               "date":self.event_date,
+               "approved":self.approved}
 
