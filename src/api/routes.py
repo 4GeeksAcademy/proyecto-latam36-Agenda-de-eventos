@@ -52,9 +52,10 @@ def create_user():
         return jsonify({"message": "Invalid genre. Use Male, Female, or Other"}), 400
 
     try:
-        birthdate_obj = datetime.strptime(birthdate, "%d/%m/%Y").date()
+        birthdate_obj = datetime.strptime(birthdate, "%Y-%m-%d").date()
     except ValueError:
-        return jsonify({"message": "Invalid birthdate format. Use DD/MM/YYYY"}), 400
+        return jsonify({"message": "Invalid birthdate format. Use YYYY-MM-DD"}), 400
+
 
     email_exist = User.query.filter_by(email=email).first()
     if email_exist:
