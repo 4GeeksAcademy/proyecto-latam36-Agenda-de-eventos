@@ -1,13 +1,19 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
+
+    const handleLoginClick = () => {
+        navigate('/login');
+      };
+
     return (
         
         <nav className="navbar navbar-expand-lg text-center bg-dark navbar-dark border-bottom border-body rounded-2 m-0 p-0">
             <div className="container-fluid d-flex justify-content-between">
-                <a className="navbar-brand align-items-center" href="#">
+                <Link className="navbar-brand align-items-center" to="/">
                     <img className="object-cover object-center w-25" src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo" alt="logo-culturalWave"></img>
-                </a>
+                </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -34,9 +40,12 @@ export const Navbar = () => {
                     </ul>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-light">
-                            <span href="#" className="log-in">Sing up / Log In</span>
-                        </button>
+                    <button
+                        className="btn btn-outline-primary rounded-pill"
+                        onClick={handleLoginClick}
+                    >
+                        Login
+                    </button>
                     </div>
             </div>
                 

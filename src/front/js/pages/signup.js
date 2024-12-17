@@ -14,13 +14,14 @@ function Signup() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-
+  const [termsError, setTermsError] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
+    setTermsError(false);
 
     if (password.length < 8) {
       setErrorMessage('Password must be at least 8 characters long.');
@@ -44,7 +45,7 @@ function Signup() {
 
     try {
       const response = await fetch(
-        'https://bookish-umbrella-7644qqwvqq6c6rv-3001.app.github.dev/api/signup',
+        'https://special-waddle-p554vx9pwvvfrp6q-3001.app.github.dev/api/signup',
         {
           method: 'POST',
           headers: {
@@ -201,11 +202,16 @@ function Signup() {
             </label>
           </div>
 
+          {termsError && (
+            <div className="alert alert-warning">
+              You must accept the terms and conditions to sign up.
+            </div>
+          )}
+
           <div className="form-actions">
             <button
               type="submit"
               className="rounded-pill"
-              disabled={!termsAccepted}
             >
               Sign up
             </button>
