@@ -63,7 +63,7 @@ class Events(db.Model):
     event_country = db.Column(db.String(25), unique=False, nullable=False)
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
-    approved = db.Column(db.Boolean(), unique=False, nullable=True)
+    estatus = db.Column(db.String(10), unique=False, nullable=False)
 
     def __repr__(self):
         return f'<Events {self.event_name}>'
@@ -72,11 +72,11 @@ class Events(db.Model):
         self.event_name = name
         self.event_description = description
         self.event_date = date
-        self.approved = False
+        self.status = "submitted"
 
     def serialize(self):
         return{"event_name":self.event_name,
                "description":self.event_description,
                "date":self.event_date,
-               "approved":self.approved}
+               "estatus":self.estatus}
 

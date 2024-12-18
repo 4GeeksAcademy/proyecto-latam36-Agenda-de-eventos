@@ -113,9 +113,68 @@ def login():
     access_token = create_access_token(identity=user.email)
     return jsonify ({'access token':access_token}),200
 
+
+# Event creation
+@api.route('/addevent',methods=['POST'])
+@jwt_required()
+def add_event():
+    email=get_jwt_identity()
+    data=request.json
+    event_name = data.get("event_name")
+    event_description = data.get("event_description")
+    organizer_user_id = data.get("organizer_user_id")
+    event_date = data.get("event_date")
+    event_duration = data.get("event_duration")
+    ticket_price = data.get("ticket_price")
+    event_address = data.get("event_address")
+    event_city = data.get("event_city")
+    event_country = data.get("event_country")
+    event_category = data.get("event_category")
+    age_clasification = data.get("event_clasification")
+
+    try:
+        event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"message": "Invalid birthdate format. Use YYYY-MM-DD"}), 400
+
+    new_event = Events(
+        event_name = event_name,
+        event_description = event_description,
+        organizer_user_id = organizer_user_id,
+        event_date = event_date,
+        event_duration = event_duration,
+        ticket_price = ticket_price,
+        event_address = event_address,
+        event_city = event_city,
+        event_country = event_country,
+        event_category = event_category,
+        age_clasification = age_clasification
+    )
+
+    try:
+        db.session.add(new_event)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        print("Database error:", error)
+        return jsonify({"message": "Error saving user to database"}), 500
+
+    return jsonify (new_event.serialize())
+    pass
+
+
+
 # test route
 @api.route('/test',methods=['GET'])
 def test():
     password="1234"
     password_hash= generate_password_hash(password)
     return jsonify({"Password hash":password_hash}),200
+
+# private test route
+@api.route('/private', methods=['GET'])
+@jwt_required()
+def private():
+    email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    return jsonify(user.serialize()),200
