@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, ForeignKey, Integer, String, Date
+from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
@@ -53,7 +55,7 @@ class Events(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(100),unique=False, nullable=False)
     event_description = db.Column(db.String(300),unique=False, nullable=False)
-    organizer_user_id = db.Column(db.Integer, unique=False, nullable=False)
+    organizer_user_id = db.Column(db.Integer, ForeignKey(User.id), unique=False, nullable=False)
     event_date = db.Column(db.Date, unique=False, nullable=False)
     event_start_time = db.Column(db.Time, unique=False, nullable=False)
     event_duration = db.Column(db.Time, unique=False, nullable=True)
@@ -64,6 +66,8 @@ class Events(db.Model):
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
     estatus = db.Column(db.String(10), unique=False, nullable=False)
+
+    user=relationship(User)
 
     def __repr__(self):
         return f'<Events {self.event_name}>'
