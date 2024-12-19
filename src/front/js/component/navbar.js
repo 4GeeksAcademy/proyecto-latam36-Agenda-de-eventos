@@ -61,7 +61,7 @@ export const Navbar = () => {
                         className="btn btn-outline-light bg-whithe rounded-pill"
                         onClick={handleLoginClick}
                     >
-                        Login
+                        Login AAA
                     </button>
                 </div>
             </div>
