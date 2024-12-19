@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [accessToken, setAccessToken] = useState(''); // Variable para guardar el token
+    const navigate = useNavigate();
 
     const backend=process.env.BACKEND_URL
 
@@ -32,6 +34,7 @@ const Login = () => {
             setAccessToken(token); // Guardar en la variable de estado
 
             // Redirige o actualiza el estado de autenticación
+            setTimeout(() => navigate('/'), 2000);
             console.log('Inicio de sesión exitoso');
             console.log('Token:', token);
         } catch (error) {
@@ -81,7 +84,8 @@ const Login = () => {
                             </div>
                         </form>
                         <div className="text-center mt-3">
-                            <small>¿No tienes una cuenta? <a href="#">Regístrate</a></small>
+                            <span>¿No tienes una cuenta?</span>
+                            <Link className="navbar-brand fs-6" to="/signup"> Regístrate</Link>
                         </div>
                     </div>
                 </div>

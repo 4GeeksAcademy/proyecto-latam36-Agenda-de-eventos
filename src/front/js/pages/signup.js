@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Signup() {
   const [email, setEmail] = useState('');
@@ -208,7 +208,7 @@ function Signup() {
 
           {termsError && (
             <div className="alert alert-warning">
-              You must accept the terms and conditions to sign up.
+              You must accept the terms and conditions to sign-up.
             </div>
           )}
 
@@ -217,9 +217,14 @@ function Signup() {
               type="submit"
               className="rounded-pill"
             >
-              Sign up
+              Registrarme
             </button>
-          </div>
+
+        </div>
+            <div className="text-center mt-3">
+                <span>¿Ya estas Registrado?</span>
+                <Link className="navbar-brand fs-6" to="/login"> Login</Link>
+            </div>
         </form>
       </div>
     </div>
