@@ -4,3 +4,10 @@ img {
   
 }
 
+.nav-link{
+    
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  font-weight:lighter;
+}
