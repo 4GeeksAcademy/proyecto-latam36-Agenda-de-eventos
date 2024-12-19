@@ -66,21 +66,54 @@ class Events(db.Model):
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
     estatus = db.Column(db.String(10), unique=False, nullable=False)
+    flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
 
     user=relationship(User)
 
     def __repr__(self):
         return f'<Events {self.event_name}>'
 
-    def __init__(self, name, description,date):
+    def __init__(self, name, description,user_id,date,start_time,duration,ticket_price,address,city,country,category,clasification,estatus,flyer):
         self.event_name = name
         self.event_description = description
+        self.organizer_user_id = user_id
         self.event_date = date
+        self.event_start_time = start_time
+        self.event_duration = duration
+        self.ticket_price = ticket_price
+        self.event_address = address
+        self.event_city = city
+        self.event_country = country
+        self.event_category = category
+        self.age_clasification = clasification
         self.status = "submitted"
+        self.flyer_img_url = flyer
 
     def serialize(self):
         return{"event_name":self.event_name,
                "description":self.event_description,
                "date":self.event_date,
+               "user_id": self.organizer_user_id,
                "estatus":self.estatus}
+
+class EventMedia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    media_type = db.Column(db.String(25), unique=False, nullable=False )
+    media_url = db.Column(db.String(150), unique=False, nullable=False)
+    event_id = db.Column(db.Integer, ForeignKey(Events.id),unique=False, nullable=False)
+
+    event=relationship(Events)
+
+    def __repr__(self):
+        return f'<EventMedia {self.media_url}>'
+    
+    def __init__(self, media_type, media_url,event_id):
+        self.media_type = media_type
+        self.media_url = media_url
+        self.event_id = event_id
+
+    def serialize(self):
+        return {"media_type":self.media_type,
+                "url":self.media_url
+                }
 
