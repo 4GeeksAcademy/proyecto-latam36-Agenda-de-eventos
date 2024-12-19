@@ -6,11 +6,13 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [accessToken, setAccessToken] = useState(''); // Variable para guardar el token
 
+    const backend=process.env.BACKEND_URL
+
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://improved-bassoon-x56jx6pww426969-3001.app.github.dev/api/login', {
+            const response = await fetch(backend+'/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

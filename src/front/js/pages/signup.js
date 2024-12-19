@@ -17,6 +17,10 @@ function Signup() {
   const [termsError, setTermsError] = useState(false);
   const navigate = useNavigate();
 
+
+  const backend=process.env.BACKEND_URL
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
@@ -44,8 +48,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch(
-        'https://special-waddle-p554vx9pwvvfrp6q-3001.app.github.dev/api/signup',
+      const response = await fetch(backend+'/api/signup', 
         {
           method: 'POST',
           headers: {
@@ -63,6 +66,7 @@ function Signup() {
           }),
         }
       );
+      
 
       const data = await response.json();
 
