@@ -18,6 +18,10 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean(), unique=False, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=True)
 
+# Child:Events relationship
+    events=db.relationship("Events",back_populates="user")
+
+
     def __repr__(self):
         return f'<User {self.email}>'
 
@@ -68,7 +72,11 @@ class Events(db.Model):
     estatus = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
 
-    user=relationship(User)
+#Parent: User relatioship
+    user=db.relationship(User, back_populates="events")
+
+#Child: EventMedia relationship
+    media=db.relationship("EventMedia", back_populates="event")
 
     def __repr__(self):
         return f'<Events {self.event_name}>'
@@ -102,7 +110,8 @@ class EventMedia(db.Model):
     media_url = db.Column(db.String(150), unique=False, nullable=False)
     event_id = db.Column(db.Integer, ForeignKey(Events.id),unique=False, nullable=False)
 
-    event=relationship(Events)
+#Parent:Events relationship
+    event=db.relationship(Events, back_populates="media")
 
     def __repr__(self):
         return f'<EventMedia {self.media_url}>'
