@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Context } from "../store/appContext";
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [accessToken, setAccessToken] = useState(''); // Variable para guardar el token
+    const { actions } = useContext(Context);
     const navigate = useNavigate();
 
     const backend=process.env.BACKEND_URL
@@ -28,15 +29,14 @@ const Login = () => {
 
             const data = await response.json();
 
-            // Guarda el token en localStorage y en una variable de estado
-            const token = data['access token'];
-            localStorage.setItem('accessToken', token);
-            setAccessToken(token); // Guardar en la variable de estado
+            console.log('Inicio de sesión exitoso', data);
 
-            // Redirige o actualiza el estado de autenticación
+            const token = data['access token'];
+            actions.setToken(token);
+            localStorage.setItem('token', token);
+
+
             setTimeout(() => navigate('/'), 2000);
-            console.log('Inicio de sesión exitoso');
-            console.log('Token:', token);
         } catch (error) {
             setErrorMessage(error.message);
         }
@@ -45,7 +45,6 @@ const Login = () => {
     return (
         <div className="container-fluid vh-100">
             <div className="row h-100">
-                {/* Formulario Login */}
                 <div className="col-md-6 d-flex justify-content-center align-items-center bg-light">
                     <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
                         <h3 className="text-center">Iniciar Sesión</h3>
@@ -90,11 +89,10 @@ const Login = () => {
                     </div>
                 </div>
 
-                {/* seccion de image */}
                 <div
                     className="col-md-6 d-none d-md-block"
                     style={{
-                        backgroundImage: 'url(https://media-private.canva.com/dtmvk/MAGZSbdtmvk/1/p.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJWF6QO3UH4PAAJ6Q%2F20241216%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241216T105046Z&X-Amz-Expires=51754&X-Amz-Signature=a5e5db1954af31046790803a856fbefd33ffd5d8aef6e12d774783377298f451&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Tue%2C%2017%20Dec%202024%2001%3A13%3A20%20GMT)',
+                        backgroundImage: 'url(https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/mcyi8zijuqs8el2iwgr1)',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}
