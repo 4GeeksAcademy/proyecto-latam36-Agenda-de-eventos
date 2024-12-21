@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export const Navbar = () => {
+const Navbar = () => {
 
     const navigate = useNavigate();
 
@@ -68,3 +68,6 @@ export const Navbar = () => {
         </nav>
     );
 };
+
+
+export default Navbar
