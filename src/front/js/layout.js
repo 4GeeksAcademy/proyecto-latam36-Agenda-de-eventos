@@ -7,6 +7,7 @@ import Home from "./pages/home";
 import injectContext from "./store/appContext";
 
 
+import Navbar from "./component/navbar";
 import Footer from "./component/footer";
 
 import Login from './pages/login';
@@ -25,7 +26,7 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    {/* <Navbar /> */}
+                    <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Login />} path="/login" />
