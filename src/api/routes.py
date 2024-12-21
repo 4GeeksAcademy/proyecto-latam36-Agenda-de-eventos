@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Events
+from api.models import db, User, Events, EventMedia
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -119,11 +119,13 @@ def login():
 @jwt_required()
 def add_event():
     email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
+    print("This is the user id:",user.id)
     data=request.json
     event_name = data.get("event_name")
     event_description = data.get("event_description")
-    organizer_user_id = data.get("organizer_user_id")
     event_date = data.get("event_date")
+    event_start_time = data.get("event_start_time")
     event_duration = data.get("event_duration")
     ticket_price = data.get("ticket_price")
     event_address = data.get("event_address")
@@ -132,7 +134,10 @@ def add_event():
     event_category = data.get("event_category")
     age_clasification = data.get("age_clasification")
     flyer_img_url = data.get("flyer_img_url")
+    event_media = data.get("event_media")
 
+    print("This is the event media variable:",type(event_media))
+    print("this is the event media data:",event_media)
     try:
         event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
     except ValueError:
@@ -141,8 +146,9 @@ def add_event():
     new_event = Events(
         event_name = event_name,
         event_description = event_description,
-        organizer_user_id = organizer_user_id,
+        organizer_user_id = user.id,
         event_date = event_date_obj,
+        event_start_time = event_start_time,
         event_duration = event_duration,
         ticket_price = ticket_price,
         event_address = event_address,
@@ -160,9 +166,28 @@ def add_event():
         db.session.rollback()
         print("Database error:", error)
         return jsonify({"message": "Error saving user to database"}), 500
+    
+    serialized_event=new_event.serialize()
+    new_event_id=serialized_event.get("id")
+    print("New event id:",new_event_id)
 
-    return jsonify (new_event.serialize())
-    pass
+    for media in event_media:
+        print("media type:",media.get("media_type")," media url:",media.get("media_url"))
+        new_media = EventMedia (
+            media_type = media.get("media_type"),
+            media_url = media.get("media_url"),
+            event_id = new_event_id
+        )
+        try:
+            db.session.add(new_media)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            print("Database error:", error)
+            return jsonify({"message": "Error saving user to database"}), 500
+
+    return jsonify (serialized_event)
+
 
 
 
