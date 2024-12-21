@@ -180,3 +180,15 @@ def private():
     email=get_jwt_identity()
     user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
     return jsonify(user.serialize()),200
+
+
+
+# ADMIN Verification
+@api.route('/check-admin', methods=['GET'])
+@jwt_required()
+def check_admin():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    if user and user.has_admin_privileges():
+        return jsonify({"is_admin": True}), 200
+    return jsonify({"is_admin": False}), 403
