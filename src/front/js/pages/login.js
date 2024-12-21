@@ -47,7 +47,17 @@ const Login = () => {
             <div className="row h-100">
                 <div className="col-md-6 d-flex justify-content-center align-items-center bg-light">
                     <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
-                        <h3 className="text-center">Iniciar Sesión</h3>
+                        <div className="mb-3">
+                            <Link className="navbar-brand d-block" to="/" style={{ width: '100%' }}>
+                                <img
+                                    className="object-cover object-center"
+                                    style={{ width: '160px' }}
+                                    src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
+                                    alt="logo-culturalWave"
+                                />
+                            </Link>
+                        </div>
+                        <h3 className="text-center fw-bold">Iniciar Sesión</h3>
                         <form onSubmit={handleLogin}>
                             {errorMessage && (
                                 <div className="alert alert-danger" role="alert">
