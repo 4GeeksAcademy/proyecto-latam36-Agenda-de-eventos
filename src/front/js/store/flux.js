@@ -1,54 +1,79 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			token: localStorage.getItem("token") || null, 
-			isAdmin: false,
+			message: null,
+			demo: [
+				{
+					title: "FIRST",
+					background: "white",
+					initial: "white"
+				},
+				{
+					title: "SECOND",
+					background: "white",
+					initial: "white"
+				}
+			]
 		},
-
 		actions: {
-			setToken: (newToken) => {
-				localStorage.setItem("token", newToken);
-				setStore({ token: newToken });
+			// Use getActions to call a function within a fuction
+			exampleFunction: () => {
+				getActions().changeColor(0, "green");
 			},
 
-			logout: () => {
-				setStore({ token: null, isAdmin: false });
-				localStorage.removeItem("token");
-			},
+			// getMessage: async () => {
+			// 	try{
+			// 		// fetching data from the backend
+			// 		const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+			// 		const data = await resp.json()
+			// 		setStore({ message: data.message })
+			// 		// don't forget to return something, that is how the async resolves
+			// 		return data;
+			// 	}catch(error){
+			// 		console.log("Error loading message from backend", error)
+			// 	}
+			// },
+			// changeColor: (index, color) => {
+			// 	//get the store
+			// 	const store = getStore();
 
-			checkAdmin: async () => {
-				const token = getStore().token || localStorage.getItem("token");
-				if (!token) {
-					console.error("No hay token para verificar rol de administrador.");
-					setStore({ isAdmin: false });
-					return false;
-				}
+			// 	//we have to loop the entire demo array to look for the respective index
+			// 	//and change its color
+			// 	const demo = store.demo.map((elm, i) => {
+			// 		if (i === index) elm.background = color;
+			// 		return elm;
+			// 	});
 
-				try {
-					const resp = await fetch(process.env.BACKEND_URL + "/api/check-admin", {
-						method: "GET",
-						headers: {
-							Authorization: `Bearer ${token}`,
-							"Content-Type": "application/json",
-						},
-					});
+				//reset the global store
+				// setStore({ demo: demo });
 
-					if (resp.ok) {
-						const data = await resp.json();
-						setStore({ isAdmin: data.is_admin });
-						return true; 
-					} else {
-						setStore({ isAdmin: false });
-						return false; 
+				  // Acción para verificar rol de admin
+				  checkAdmin: async () => {
+					const token = localStorage.getItem("token");
+					if (!token) return;
+	
+					try {
+						const resp = await fetch(process.env.BACKEND_URL + "/api/check-admin", {
+							method: "GET",
+							headers: {
+								"Authorization": `Bearer ${token}`,
+								"Content-Type": "application/json"
+							}
+						});
+	
+						if (resp.status === 200) {
+							const data = await resp.json();
+							setStore({ isAdmin: data.is_admin });
+						} else {
+							setStore({ isAdmin: false });
+						}
+					} catch (error) {
+						console.error("Error verificando admin:", error);
 					}
-				} catch (error) {
-					console.error("Error verificando rol de admin:", error);
-					setStore({ isAdmin: false });
-					return false; 
-				}
-			},
-		},
+				},
+			}
+		}
 	};
-};
+
 
 export default getState;

@@ -76,6 +76,7 @@ class Events(db.Model):
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
     estatus = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
+    event_reject_msg = db.Column(db.String(250), unique=False, nullable=True)
 
 #Parent: User relatioship
     user=db.relationship(User, back_populates="events")
@@ -86,28 +87,39 @@ class Events(db.Model):
     def __repr__(self):
         return f'<Events {self.event_name}>'
 
-    def __init__(self, name, description,user_id,date,start_time,duration,ticket_price,address,city,country,category,clasification,estatus,flyer):
-        self.event_name = name
-        self.event_description = description
-        self.organizer_user_id = user_id
-        self.event_date = date
-        self.event_start_time = start_time
-        self.event_duration = duration
+    def __init__(self, event_name, event_description,organizer_user_id,event_date,event_start_time,event_duration,ticket_price,event_address,event_city,event_country,event_category,age_clasification,flyer_img_url):
+        self.event_name = event_name
+        self.event_description = event_description
+        self.organizer_user_id = organizer_user_id
+        self.event_date = event_date
+        self.event_start_time = event_start_time
+        self.event_duration = event_duration
         self.ticket_price = ticket_price
-        self.event_address = address
-        self.event_city = city
-        self.event_country = country
-        self.event_category = category
-        self.age_clasification = clasification
-        self.status = "submitted"
-        self.flyer_img_url = flyer
+        self.event_address = event_address
+        self.event_city = event_city
+        self.event_country = event_country
+        self.event_category = event_category
+        self.age_clasification = age_clasification
+        self.estatus = "submitted"
+        self.flyer_img_url = flyer_img_url
 
     def serialize(self):
-        return{"event_name":self.event_name,
+        return{"id":self.id,
+               "event_name":self.event_name,
                "description":self.event_description,
                "date":self.event_date,
                "user_id": self.organizer_user_id,
                "estatus":self.estatus}
+
+    def serialize_media(self):
+        return{
+            "event_name":self.event_name,
+            "description":self.event_description,
+            "date":self.event_date,
+            "user_id": self.organizer_user_id,
+            "estatus":self.estatus,
+            "media_files":self.media.serialize
+        }
 
 class EventMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
