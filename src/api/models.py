@@ -46,6 +46,7 @@ class User(db.Model):
             "id": self.id,
             "email": self.email,
             "role": self.role,
+            "is_admin": self.is_admin,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "country": self.user_country,
@@ -54,6 +55,10 @@ class User(db.Model):
             "date_of_birth": self.birthdate.strftime("%d/%m/%Y") if self.birthdate else None,
             "role": self.role
         }
+    
+    def has_admin_privileges(self):
+        return self.is_admin
+
     
 class Events(db.Model):
     id = db.Column(db.Integer, primary_key=True)
