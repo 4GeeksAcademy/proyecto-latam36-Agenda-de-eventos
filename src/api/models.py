@@ -84,6 +84,9 @@ class Events(db.Model):
 #Child: EventMedia relationship
     media=db.relationship("EventMedia", back_populates="event")
 
+#Child: ContactInfo relationship
+    contact_info=db.relationship("ContactInfo", back_populates="event")
+
     def __repr__(self):
         return f'<Events {self.event_name}>'
 
@@ -143,3 +146,25 @@ class EventMedia(db.Model):
                 "url":self.media_url
                 }
 
+class ContactInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    contact_media = db.Column(db.String(25), unique=False, nullable=False )
+    contact_data = db.Column(db.String(150), unique=False, nullable=False)
+    contact_event_id = db.Column(db.Integer, ForeignKey(Events.id),unique=False, nullable=False)
+
+# Parent: Events relationship
+    event=db.relationship(Events, back_populates="contact_info")
+
+    def __repr__(self):
+        return f'<EventMedia {self.contact_media}>'
+    
+    def __init__(self, contact_media, contact_data, contact_event_id):
+        self.contact_media = contact_media
+        self.contact_data = contact_data
+        self.contact_event_id = contact_event_id
+    
+    def serialize(self):
+        return {"contact_media":self.contact_media,
+                "contact_data":self.contact_data,
+                "contact_event_id":self.contact_event_id
+                }

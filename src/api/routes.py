@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Events, EventMedia
+from api.models import db, User, Events, EventMedia, ContactInfo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -134,6 +134,7 @@ def add_event():
     age_clasification = data.get("age_clasification")
     flyer_img_url = data.get("flyer_img_url")
     event_media = data.get("event_media")
+    contact_info = data.get("contact_info")
 
     try:
         event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
@@ -182,6 +183,20 @@ def add_event():
             db.session.rollback()
             print("Database error:", error)
             return jsonify({"message": "Error saving media to database"}), 500
+    
+    for contact in contact_info:
+        new_contact_info = ContactInfo(contact_media=contact.get("contact_media"),
+                                        contact_data=contact.get("contact_data"), 
+                                        contact_event_id = new_event_id
+        )
+
+        try:
+            db.session.add(new_contact_info)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            print("Database error:", error)
+            return jsonify({"message": "Error saving contact info to database"}), 500
 
     return jsonify (serialized_event)
 
