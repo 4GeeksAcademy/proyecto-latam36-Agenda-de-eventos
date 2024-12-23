@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useContext } from "react";
+import { Context } from "../store/appContext";
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
 
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
 
-    const handleLoginClick = () => {
-        navigate('/login');
-      };
+    const handleLogout = () => {
+        const userConfirmed = window.confirm(`Are you sure you want to Logout, ${store.username || "user"}?`);
+        if (userConfirmed) {
+            actions.logout();
+            navigate("/login");
+    }
+    };
 
     return (
         <nav className="navbar navbar-expand-lg text-center bg-dark navbar-dark border-bottom border-body rounded-2 m-0 p-0">
@@ -57,12 +63,21 @@ const Navbar = () => {
                 </div>
 
                 <div className="d-flex align-items-center">
-                    <button
-                        className="btn btn-outline-light bg-whithe rounded-pill"
-                        onClick={handleLoginClick}
-                    >
-                        Login
-                    </button>
+               
+                    {store.token ? (
+                        <button className="btn btn-danger" onClick={handleLogout}>
+                            Logout
+                        </button>
+                    ) : (
+                        <>
+                            <Link to="/login" className="btn btn-outline-light bg-whithe fw-bold mr-2">
+                                Login
+                            </Link>
+                            <Link to="/signup" className="btn btn-outline-light bg-whithe fw_bold">
+                                SignUp
+                            </Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

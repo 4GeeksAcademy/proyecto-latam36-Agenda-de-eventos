@@ -83,152 +83,174 @@ function Signup() {
   };
 
   return (
-    <div className='container'>
-      <div className="card horizontal-card">
-        <h2>Sign up</h2>
-        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-        {successMessage && <div className="alert alert-success">{successMessage}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="signup-firstname">First Name</label>
-              <input
-                type="text"
-                id="signup-firstname"
-                required
-                onChange={(event) => setFirstName(event.target.value)}
-              />
+    <div className="container-fluid vh-100">
+        <div className="row h-100">
+            <div className="col-md-6 d-flex justify-content-center align-items-center bg-light">
+                <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
+                    <div className="mb-3">
+                        <Link className="navbar-brand d-block" to="/" style={{ width: '100%' }}>
+                            <img
+                                className="object-cover object-center"
+                                style={{ width: '160px' }}
+                                src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
+                                alt="logo-culturalWave"
+                            />
+                        </Link>
+                      </div>
+                    <h3 className="text-center fw-bold">Registrarse</h3>
+                    <form onSubmit={handleSubmit}>
+                        {errorMessage && (
+                            <div className="alert alert-danger" role="alert">
+                                {errorMessage}
+                            </div>
+                        )}
+                        {successMessage && (
+                            <div className="alert alert-success" role="alert">
+                                {successMessage}
+                            </div>
+                        )}
+                        <div className="mb-3">
+                            <label htmlFor="signup-firstname" className="form-label">Nombre</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="signup-firstname"
+                                placeholder="Ingresa tu nombre"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-lastname" className="form-label">Apellido</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="signup-lastname"
+                                placeholder="Ingresa tu apellido"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-email" className="form-label">Correo Electrónico</label>
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="signup-email"
+                                placeholder="Ingresa tu correo"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-password" className="form-label">Contraseña</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="signup-password"
+                                placeholder="Ingresa tu contraseña"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-confirm-password" className="form-label">Confirmar Contraseña</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="signup-confirm-password"
+                                placeholder="Confirma tu contraseña"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-gender" className="form-label">Género</label>
+                            <select
+                                className="form-select"
+                                id="signup-gender"
+                                value={userGender}
+                                onChange={(e) => setUserGender(e.target.value)}
+                                required
+                            >
+                                <option value="">Selecciona</option>
+                                <option value="Male">Masculino</option>
+                                <option value="Female">Femenino</option>
+                                <option value="Other">Otro</option>
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-country" className="form-label">País</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="signup-country"
+                                placeholder="Ingresa tu país"
+                                value={userCountry}
+                                onChange={(e) => setUserCountry(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-city" className="form-label">Ciudad</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="signup-city"
+                                placeholder="Ingresa tu ciudad"
+                                value={userCity}
+                                onChange={(e) => setUserCity(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="signup-birthdate" className="form-label">Fecha de Nacimiento</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                id="signup-birthdate"
+                                value={birthdate}
+                                onChange={(e) => setBirthdate(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="form-check">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="signup-terms"
+                                onChange={(e) => setTermsAccepted(e.target.checked)}
+                            />
+                            <label className="form-check-label" htmlFor="signup-terms">
+                                Acepto los <a href="/privacy-policy">Términos y Condiciones</a>
+                            </label>
+                        </div>
+                        <div className="d-grid mt-3">
+                            <button type="submit" className="btn btn-dark rounded-pill">Registrarme</button>
+                        </div>
+                    </form>
+                    <div className="text-center mt-3">
+                        <span>¿Ya tienes una cuenta?</span>
+                        <Link className="navbar-brand fs-6" to="/login"> Inicia Sesión</Link>
+                    </div>
+                </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="signup-lastname">Last Name</label>
-              <input
-                type="text"
-                id="signup-lastname"
-                required
-                onChange={(event) => setLastName(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="signup-email">Email</label>
-              <input
-                type="email"
-                id="signup-email"
-                required
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="signup-password">Password</label>
-              <input
-                type="password"
-                id="signup-password"
-                required
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="signup-confirm-password">Confirm Password</label>
-              <input
-                type="password"
-                id="signup-confirm-password"
-                required
-                onChange={(event) => setConfirmPassword(event.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="signup-gender">Gender</label>
-              <select
-                id="signup-gender"
-                required
-                onChange={(event) => setUserGender(event.target.value)}
-              >
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="signup-country">Country</label>
-              <input
-                type="text"
-                id="signup-country"
-                required
-                onChange={(event) => setUserCountry(event.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="signup-city">City</label>
-              <input
-                type="text"
-                id="signup-city"
-                required
-                onChange={(event) => setUserCity(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="signup-birthdate">Birthdate</label>
-            <input
-              type="date"
-              id="signup-birthdate"
-              required
-              onChange={(event) => setBirthdate(event.target.value)}
-            />
-          </div>
-
-          <div className="form-group terms">
-            <input
-              type="checkbox"
-              id="signup-terms"
-              onChange={(event) => setTermsAccepted(event.target.checked)}
-            />
-            <label htmlFor="signup-terms">
-              I accept the{' '}
-              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
-                Privacy Policy
-              </a>{' '}
-              and{' '}
-              <a href="/terms-of-service" target="_blank" rel="noopener noreferrer">
-                Terms of Service
-              </a>
-            </label>
-          </div>
-
-          {termsError && (
-            <div className="alert alert-warning">
-              You must accept the terms and conditions to sign-up.
-            </div>
-          )}
-
-          <div className="form-actions">
-            <button
-              type="submit"
-              className="rounded-pill"
-            >
-              Registrarme
-            </button>
-
+            <div
+                className="col-md-6 d-none d-md-block"
+                style={{
+                    backgroundImage: 'url(https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/j6y49ciylsfqym1mg34k)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            ></div>
         </div>
-            <div className="text-center mt-3">
-                <span>¿Ya estas Registrado?</span>
-                <Link className="navbar-brand fs-6" to="/login"> Login</Link>
-            </div>
-        </form>
-      </div>
     </div>
-  );
+);
 }
 
 export default Signup;
