@@ -120,10 +120,6 @@ def login():
 def add_event():
     email=get_jwt_identity()
     user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
-<<<<<<< HEAD
-    print("This is the user id:",user.id)
-=======
->>>>>>> development
     data=request.json
     event_name = data.get("event_name")
     event_description = data.get("event_description")
@@ -138,10 +134,7 @@ def add_event():
     age_clasification = data.get("age_clasification")
     flyer_img_url = data.get("flyer_img_url")
     event_media = data.get("event_media")
-<<<<<<< HEAD
-=======
     contact_info = data.get("contact_info")
->>>>>>> development
 
     print("This is the event media variable:",type(event_media))
     print("this is the event media data:",event_media)
@@ -172,16 +165,6 @@ def add_event():
     except Exception as error:
         db.session.rollback()
         print("Database error:", error)
-<<<<<<< HEAD
-        return jsonify({"message": "Error saving user to database"}), 500
-    
-    serialized_event=new_event.serialize()
-    new_event_id=serialized_event.get("id")
-    print("New event id:",new_event_id)
-
-    for media in event_media:
-        print("media type:",media.get("media_type")," media url:",media.get("media_url"))
-=======
         return jsonify({"message": "Error saving event to database"}), 500
     
     serialized_event=new_event.serialize()
@@ -190,7 +173,6 @@ def add_event():
     print("this is the new event id:",new_event_id)
     
     for media in event_media:
->>>>>>> development
         new_media = EventMedia (
             media_type = media.get("media_type"),
             media_url = media.get("media_url"),
@@ -202,12 +184,6 @@ def add_event():
         except Exception as error:
             db.session.rollback()
             print("Database error:", error)
-<<<<<<< HEAD
-            return jsonify({"message": "Error saving user to database"}), 500
-
-    return jsonify (serialized_event)
-
-=======
             return jsonify({"message": "Error saving media to database"}), 500
     
     for contact in contact_info:
@@ -225,7 +201,6 @@ def add_event():
             return jsonify({"message": "Error saving contact info to database"}), 500
 
     return jsonify (serialized_event)
->>>>>>> development
 
 
 
