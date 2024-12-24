@@ -76,6 +76,7 @@ class Events(db.Model):
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
     status = db.Column(db.String(10), unique=False, nullable=False)
+    status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_reject_msg = db.Column(db.String(250), unique=False, nullable=True)
 
@@ -104,6 +105,7 @@ class Events(db.Model):
         self.event_country = event_country
         self.event_category = event_category
         self.age_clasification = age_clasification
+        self.status = "submitted"
         self.status = "submitted"
         self.flyer_img_url = flyer_img_url
 
