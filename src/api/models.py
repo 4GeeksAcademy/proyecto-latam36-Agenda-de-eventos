@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship
+from flask import jsonify
 
 db = SQLAlchemy()
 
@@ -74,7 +75,7 @@ class Events(db.Model):
     event_country = db.Column(db.String(25), unique=False, nullable=False)
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
-    estatus = db.Column(db.String(10), unique=False, nullable=False)
+    status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_reject_msg = db.Column(db.String(250), unique=False, nullable=True)
 
@@ -103,7 +104,7 @@ class Events(db.Model):
         self.event_country = event_country
         self.event_category = event_category
         self.age_clasification = age_clasification
-        self.estatus = "submitted"
+        self.status = "submitted"
         self.flyer_img_url = flyer_img_url
 
     def serialize(self):
@@ -112,16 +113,30 @@ class Events(db.Model):
                "description":self.event_description,
                "date":self.event_date,
                "user_id": self.organizer_user_id,
-               "estatus":self.estatus}
+               "status":self.status}
 
     def serialize_media(self):
+        media_list=[]
+        for media_item in self.media:
+            media_list.append(media_item.serialize())
+
+        contact_list=[]
+        for contact_item in self.contact_info:
+            contact_list.append(contact_item.serialize())
+    
         return{
             "event_name":self.event_name,
             "description":self.event_description,
             "date":self.event_date,
-            "user_id": self.organizer_user_id,
-            "estatus":self.estatus,
-            "media_files":self.media.serialize
+            "address":self.event_address,
+            "city":self.event_city,
+            "country":self.event_country,
+            "organizer_id": self.organizer_user_id,
+            "organizer_name":self.user.first_name,
+            "status":self.status,
+            "ticket_price":self.ticket_price,
+            "media_files":media_list,
+            "contact_info":contact_list
         }
 
 class EventMedia(db.Model):
@@ -134,7 +149,7 @@ class EventMedia(db.Model):
     event=db.relationship(Events, back_populates="media")
 
     def __repr__(self):
-        return f'<EventMedia {self.media_url}>'
+        return f'<{self.media_type} : {self.media_url}>'
     
     def __init__(self, media_type, media_url,event_id):
         self.media_type = media_type
@@ -156,7 +171,7 @@ class ContactInfo(db.Model):
     event=db.relationship(Events, back_populates="contact_info")
 
     def __repr__(self):
-        return f'<EventMedia {self.contact_media}>'
+        return f'<ContactInfo {self.contact_media}>'
     
     def __init__(self, contact_media, contact_data, contact_event_id):
         self.contact_media = contact_media
