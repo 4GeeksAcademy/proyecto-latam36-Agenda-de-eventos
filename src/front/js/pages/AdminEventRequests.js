@@ -49,7 +49,7 @@ const AdminEventRequests = () => {
   
   useEffect(() => {
     if (isAdmin === true) {
-      fetch(`${backend}/api/events?status=submitted`)
+      fetch(`${backend}/api/events?estatus=submitted`)
         .then((response) => {
           if (!response.ok) throw new Error("Error al obtener los eventos");
           return response.json();

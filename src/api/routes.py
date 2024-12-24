@@ -236,3 +236,29 @@ def check_admin():
     if user and user.has_admin_privileges():
         return jsonify({"is_admin": True}), 200
     return jsonify({"is_admin": False}), 403
+
+
+
+
+# Obtener todos los eventos
+@jwt_required()
+@api.route('/events', methods=['GET'])
+def get_all_events():
+    events = Events.query.all()
+    return jsonify([event.serialize() for event in events]), 200
+
+
+# Obtener Eventos por Status
+@api.route('/events', methods=['GET'])
+@jwt_required()
+def get_events_by_status():
+    status = request.args.get('status', None) 
+
+    if not status:
+        return jsonify({"message": "Status parameter is required"}), 400
+
+    events = Events.query.filter_by(status=status).all()
+
+    serialized_events = [event.serialize() for event in events]
+
+    return jsonify(serialized_events), 200

@@ -74,7 +74,7 @@ class Events(db.Model):
     event_country = db.Column(db.String(25), unique=False, nullable=False)
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
-    estatus = db.Column(db.String(10), unique=False, nullable=False)
+    status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_reject_msg = db.Column(db.String(250), unique=False, nullable=True)
 
@@ -103,7 +103,7 @@ class Events(db.Model):
         self.event_country = event_country
         self.event_category = event_category
         self.age_clasification = age_clasification
-        self.estatus = "submitted"
+        self.status = "submitted"
         self.flyer_img_url = flyer_img_url
 
     def serialize(self):
@@ -112,7 +112,7 @@ class Events(db.Model):
                "description":self.event_description,
                "date":self.event_date,
                "user_id": self.organizer_user_id,
-               "estatus":self.estatus}
+               "status":self.status}
 
     def serialize_media(self):
         return{
@@ -120,7 +120,7 @@ class Events(db.Model):
             "description":self.event_description,
             "date":self.event_date,
             "user_id": self.organizer_user_id,
-            "estatus":self.estatus,
+            "status":self.status,
             "media_files":self.media.serialize
         }
 
