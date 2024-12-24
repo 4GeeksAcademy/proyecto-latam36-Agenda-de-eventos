@@ -19,11 +19,12 @@ const Navbar = () => {
         <nav className="navbar navbar-expand-lg text-center bg-dark navbar-dark border-bottom border-body rounded-2 m-0 p-0">
             <div className="container-fluid">
 
-                <Link className="navbar-brand" to="/">
-                    <img 
-                        className="object-cover object-center w-25" 
-                        src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo" 
-                        alt="logo-culturalWave" 
+                <Link className="navbar-brand d-block" to="/">
+                    <img
+                        className="object-cover object-center"
+                        style={{ width: '160px' }}
+                        src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
+                        alt="logo-culturalWave"
                     />
                 </Link>
 

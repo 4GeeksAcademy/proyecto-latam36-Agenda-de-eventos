@@ -1,31 +1,70 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+import Modal from "../component/Modal";
 
 const AdminEventRequests = () => {
   const [eventRequests, setEventRequests] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [justification, setJustification] = useState("");
+  const [isAdmin, setIsAdmin] = useState(null); // null mientras se verifica
+  const [isLoading, setIsLoading] = useState(true); // Para manejar el cargando
+  const backend = process.env.BACKEND_URL;
 
-  const backend=process.env.BACKEND_URL
-
-  // Simula obtener solicitudes del backend
   useEffect(() => {
-    fetch("/api/events?status=submitted")
-      .then((response) => response.json())
-      .then((data) => setEventRequests(data))
-      .catch((err) => console.error(err));
+    const verifyAdmin = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setIsAdmin(false);
+          setIsLoading(false);
+          return;
+        }
+
+        const resp = await fetch(`${backend}/api/check-admin`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (resp.ok) {
+          const data = await resp.json();
+          setIsAdmin(data.is_admin);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.error("Error verificando rol de admin:", error);
+        setIsAdmin(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    verifyAdmin();
+
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setIsAdmin(false); 
+        setIsLoading(false);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timeout);
   }, []);
 
-  // Verificar si es admin (check FrontEnd)
-  const is_Admin = true; // Cambia esto por tu lógica real
-  if (!is_Admin) {
-    return <h1>Acceso denegado</h1>;
-  }
+  useEffect(() => {
+    if (isAdmin) {
+      fetch(`${backend}/api/events?status=submitted`)
+        .then((response) => response.json())
+        .then((data) => setEventRequests(data))
+        .catch((err) => console.error(err));
+    }
+  }, [isAdmin]);
 
   const handleApprove = (eventId) => {
-    // Lógica para aprobar
-    fetch(backend+`/api/events/${eventId}/approve`, {
+    fetch(`${backend}/api/events/${eventId}/approve`, {
       method: "PUT",
     })
       .then(() => {
@@ -41,7 +80,7 @@ const AdminEventRequests = () => {
       alert("Por favor ingresa una justificación");
       return;
     }
-    fetch(`/api/events/${eventId}/reject`, {
+    fetch(`${backend}/api/events/${eventId}/reject`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ justification }),
@@ -55,6 +94,24 @@ const AdminEventRequests = () => {
       })
       .catch((err) => console.error(err));
   };
+
+  if (isLoading) {
+    return <h1>Cargando...</h1>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="container text-center mt-5">
+        <h1>Acceso denegado</h1>
+        <div className="d-flex flex-column align-items-center mt-3 mb-3">
+          <a href="/" className="btn btn-primary">
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+
+    );
+  }
 
   return (
     <div className="container mt-5">
@@ -107,11 +164,12 @@ const AdminEventRequests = () => {
       </table>
 
       {/* Modal para justificar el rechazo */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Justificación para Rechazar</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      {showModal && (
+        <Modal
+          title="Justificación para Rechazar"
+          onClose={() => setShowModal(false)}
+          onConfirm={() => handleReject(selectedEvent.id)}
+        >
           <textarea
             className="form-control"
             rows="4"
@@ -119,19 +177,8 @@ const AdminEventRequests = () => {
             value={justification}
             onChange={(e) => setJustification(e.target.value)}
           ></textarea>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cancelar
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => handleReject(selectedEvent.id)}
-          >
-            Rechazar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </Modal>
+      )}
     </div>
   );
 };

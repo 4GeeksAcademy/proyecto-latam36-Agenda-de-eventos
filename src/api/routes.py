@@ -136,6 +136,8 @@ def add_event():
     event_media = data.get("event_media")
     contact_info = data.get("contact_info")
 
+    print("This is the event media variable:",type(event_media))
+    print("this is the event media data:",event_media)
     try:
         event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
     except ValueError:
@@ -200,7 +202,13 @@ def add_event():
 
     return jsonify (serialized_event)
 
-
+# User Profile view
+@api.route('/profile', methods=['GET'])
+@jwt_required()
+def profile():
+    email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
+    return jsonify(user.serialize())
 
 # test route
 @api.route('/test',methods=['GET'])
