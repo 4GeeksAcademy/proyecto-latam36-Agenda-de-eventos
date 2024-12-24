@@ -1,0 +1,59 @@
+body {
+    background-color: #f8f9fa;
+  }
+  .event-card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .event-image {
+    position: relative;
+  }
+  .event-image img {
+    width: 100%;
+    height: auto;
+  }
+  .event-image .carousel-control-prev,
+  .event-image .carousel-control-next {
+    width: 5%;
+  }
+  .event-details {
+    padding: 20px;
+  }
+  .event-date {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  .event-date .month {
+    font-size: 12px;
+    color: #6c757d;
+  }
+  .event-date .day {
+    font-size: 24px;
+    color: #263031;
+  }
+  .event-info {
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  .event-info .price {
+    font-size: 24px;
+    color: #000000;
+  }
+  .event-info .btn {
+    width: 100%;
+  }
+  .producer-info {
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
