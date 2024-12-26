@@ -9,7 +9,7 @@ import Jumbotron from "../component/jumbotron"
 
 const Home = () => {
 	return (
-		<div className="container-fluid">
+		<div id="home-form-container" className="container-fluid">
 			<div>
 				<Navbar/>
 				<Jumbotron/>

@@ -1,0 +1,13 @@
+#home-jumbotron-container .btn {
+    background-color: #212529;
+    color: #fff; 
+    font-weight: bold;
+    border: 1px solid #fff;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  #home-jumbotron-container .btn:hover {
+    background-color: #343a40; 
+    color: #f8f9fa; 
+    transform: scale(1.05); 
+  }

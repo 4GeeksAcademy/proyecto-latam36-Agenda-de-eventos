@@ -6,6 +6,9 @@ import ReactDOM from "react-dom";
 import "../styles/index.css";
 import "../styles/home.css";
 import "../styles/signup.css";
+import "../styles/Admin.css";
+import "../styles/Navbar.css";
+import "../styles/jumbotron.css";
 
 //import your own components
 import Layout from "./layout";

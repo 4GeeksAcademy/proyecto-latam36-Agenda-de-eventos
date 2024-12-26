@@ -1,0 +1,23 @@
+/* Estilos globales para el botón del Navbar */
+.navbar .btn {
+    background-color: #3a3a3a; 
+    color: white; 
+    border: none;
+    border-radius: 4px;
+  }
+  
+.navbar .btn:hover {
+    background-color: #0c0c0c; 
+    color: #f8f9fa; 
+  }
+
+.navbar .nav-link {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    font-weight: lighter;
+  }
+  
+.navbar .nav-link:hover {
+    color: #f8f9fa;
+    }

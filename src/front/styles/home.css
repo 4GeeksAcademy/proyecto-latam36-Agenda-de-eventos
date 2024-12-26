@@ -4,10 +4,81 @@ img {
   
 }
 
-.nav-link{
-    
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: rgb(255, 255, 255);
-  font-size: 16px;
-  font-weight:lighter;
+
+/* Estilos específicos para Home y Form */
+#home-form-container {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  align-items: center;
+  height: 100vh;
+}
+
+#home-form-container .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
+
+#home-form-container .card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#home-form-container .horizontal-card {
+  display: flex;
+  flex-direction: column;
+}
+
+#home-form-container h2 {
+  text-align: center;
+}
+
+#home-form-container .form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+#home-form-container .form-group {
+  margin-bottom: 15px;
+  width: 48%;
+}
+
+#home-form-container .form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#home-form-container .form-group input,
+#home-form-container .form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#home-form-container .form-group.terms {
+  text-align: center;
+}
+
+#home-form-container .form-actions {
+  display: flex;
+  justify-content: center;
+}
+
+
+#home-form-container img {
+  width: 300px;
+  height: 70px;
 }

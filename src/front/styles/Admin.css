@@ -1,0 +1,37 @@
+/* Contenedor general para las vistas de admin */
+#admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Título de las vistas admin */
+  #admin-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    #admin-title {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      margin-top: 10px;
+    }
+  }
+  
+  /* Tarjetas de eventos */
+  #admin-cards .card {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  /* Ajuste de márgenes para las tarjetas */
+  #admin-cards .card-body {
+    padding: 15px;
+  }
+  
+  /* Botones en las tarjetas */
+  #admin-cards .btn {
+    min-width: 100px;
+  }

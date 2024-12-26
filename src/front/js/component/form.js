@@ -3,6 +3,7 @@ import React from "react";
 function Form() {
   return (
     <>
+    <div id="home-form-container">
       <h1>Formulario para eventos</h1>
       <form>
         <p>
@@ -48,6 +49,7 @@ function Form() {
         <input type="file" name="imagen" required multiple />
         <input type="submit" value="Enviar" />
       </form>
+    </div>
     </>
   );
 }
