@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../component/Modal";
-
-import Navbar from "../component/navbar"
+import Navbar from "../component/navbar";
 
 const AdminEventRequests = () => {
   const [eventRequests, setEventRequests] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [justification, setJustification] = useState("");
-  const [isAdmin, setIsAdmin] = useState(null); 
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isAdmin, setIsAdmin] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const backend = process.env.BACKEND_URL;
+  const token = localStorage.getItem("token"); // Extraemos el token aquí
 
   useEffect(() => {
     const verifyAdmin = async () => {
       try {
-        const token = localStorage.getItem("token");
         if (!token) {
           setIsAdmin(false);
           setIsLoading(false);
           return;
         }
-  
+
         const resp = await fetch(`${backend}/api/check-admin`, {
           method: "GET",
           headers: {
@@ -29,7 +28,7 @@ const AdminEventRequests = () => {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (resp.ok) {
           const data = await resp.json();
           setIsAdmin(data.is_admin);
@@ -43,17 +42,17 @@ const AdminEventRequests = () => {
         setIsLoading(false);
       }
     };
-  
+
     verifyAdmin();
   }, []);
-  
+
   useEffect(() => {
     if (isAdmin === true) {
-      fetch(`${backend}/api/events/status?status=submitted`, {
+      fetch(`${backend}/api/events?status=submitted`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((response) => {
@@ -64,47 +63,54 @@ const AdminEventRequests = () => {
         .catch((err) => console.error("Error al cargar eventos:", err));
     }
   }, [isAdmin]);
-  
 
   const handleApprove = (eventId) => {
     fetch(`${backend}/api/events/${eventId}/approve`, {
       method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     })
+      .then((response) => {
+        if (!response.ok) throw new Error("Error al aprobar el evento");
+        return response.json();
+      })
       .then(() => {
         setEventRequests((prev) =>
           prev.filter((event) => event.id !== eventId)
         );
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error al aprobar el evento:", err));
   };
 
   const handleReject = (eventId) => {
-  if (justification.trim() === "") {
-    alert("Por favor ingresa una justificación");
-    return;
-  }
-  fetch(`${backend}/api/events/${eventId}/reject`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ justification }),
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Error al rechazar el evento");
-      return response.json();
+    if (justification.trim() === "") {
+      alert("Por favor ingresa una justificación");
+      return;
+    }
+    fetch(`${backend}/api/events/${eventId}/reject`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ justification }),
     })
-    .then(() => {
-      setEventRequests((prev) =>
-        prev.filter((event) => event.id !== eventId)
-      );
-      setShowModal(false);
-      setJustification("");
-    })
-    .catch((err) => console.error(err));
-};
-
+      .then((response) => {
+        if (!response.ok) throw new Error("Error al rechazar el evento");
+        return response.json();
+      })
+      .then(() => {
+        setEventRequests((prev) =>
+          prev.filter((event) => event.id !== eventId)
+        );
+        setShowModal(false);
+        setJustification("");
+      })
+      .catch((err) => console.error("Error al rechazar el evento:", err));
+  };
+  
 
   if (isLoading) {
     return <h1>Cargando...</h1>;

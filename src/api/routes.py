@@ -262,11 +262,25 @@ def check_admin():
 
 
 # Obtener todos los eventos
-@jwt_required()
 @api.route('/events', methods=['GET'])
+@jwt_required()
 def get_all_events():
-    events = Events.query.all()
-    return jsonify([event.serialize() for event in events]), 200
+    status = request.args.get('status')
+    
+    # Lista de status válidos
+    valid_statuses = ['submitted', 'approved', 'rejected']
+    
+    try:
+        if status:
+            if status not in valid_statuses:
+                return jsonify({"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}"}), 400
+            events = Events.query.filter_by(status=status).all()
+        else:
+            events = Events.query.all()
+            
+        return jsonify([event.serialize() for event in events]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Obtener un evento por ID
@@ -277,26 +291,6 @@ def get_event(event_id):
     if not event:
         return jsonify({"error": "Event not found"}), 404
     return jsonify(event.serialize()), 200
-
-
-# Obtener Eventos por Status
-@api.route('/events/status', methods=['GET'])
-@jwt_required()
-def get_events_by_status():
-    status = request.args.get('status', None) 
-
-    if not status:
-        return jsonify({"message": "Status parameter is required"}), 400
-
-    try:
-        events = Events.query.filter_by(status=status).all()
-        serialized_events = [event.serialize() for event in events]
-
-        return jsonify(serialized_events), 200
-    except Exception as e:
-        print(f"Error obteniendo eventos: {str(e)}")
-        return jsonify({"message": "Internal server error"}), 500
-
 
 
 # Actualizar un evento existente
