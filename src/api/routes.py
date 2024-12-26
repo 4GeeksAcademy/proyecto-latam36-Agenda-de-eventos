@@ -248,6 +248,16 @@ def get_all_events():
     return jsonify([event.serialize() for event in events]), 200
 
 
+# Obtener un evento por ID
+@jwt_required()
+@api.route('/events/<int:event_id>', methods=['GET'])
+def get_event(event_id):
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    return jsonify(event.serialize()), 200
+
+
 # Obtener Eventos por Status
 @api.route('/events', methods=['GET'])
 @jwt_required()
@@ -262,3 +272,46 @@ def get_events_by_status():
     serialized_events = [event.serialize() for event in events]
 
     return jsonify(serialized_events), 200
+
+
+# Actualizar un evento existente
+@api.route('/events/<int:event_id>', methods=['PUT'])
+@jwt_required()
+def update_event(event_id):
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    data = request.get_json()
+    try:
+        event.event_name = data.get('event_name', event.event_name)
+        event.event_description = data.get('event_description', event.event_description)
+        event.event_date = data.get('event_date', event.event_date)
+        event.event_start_time = data.get('event_start_time', event.event_start_time)
+        event.event_duration = data.get('event_duration', event.event_duration)
+        event.ticket_price = data.get('ticket_price', event.ticket_price)
+        event.event_address = data.get('event_address', event.event_address)
+        event.event_city = data.get('event_city', event.event_city)
+        event.event_country = data.get('event_country', event.event_country)
+        event.event_category = data.get('event_category', event.event_category)
+        event.age_clasification = data.get('age_clasification', event.age_clasification)
+        event.flyer_img_url = data.get('flyer_img_url', event.flyer_img_url)
+        db.session.commit()
+        return jsonify(event.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+# Eliminar un evento
+@api.route('/events/<int:event_id>', methods=['DELETE'])
+@jwt_required()
+def delete_event(event_id):
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    try:
+        db.session.delete(event)
+        db.session.commit()
+        return jsonify({"message": "Event deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400

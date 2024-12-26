@@ -49,13 +49,19 @@ const AdminEventRequests = () => {
   
   useEffect(() => {
     if (isAdmin === true) {
-      fetch(`${backend}/api/events?estatus=submitted`)
+      fetch(`${backend}/api/events?status=submitted`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
         .then((response) => {
           if (!response.ok) throw new Error("Error al obtener los eventos");
           return response.json();
         })
         .then((data) => setEventRequests(data))
-        .catch((err) => console.error(err));
+        .catch((err) => console.error("Error al cargar eventos:", err));
     }
   }, [isAdmin]);
   
