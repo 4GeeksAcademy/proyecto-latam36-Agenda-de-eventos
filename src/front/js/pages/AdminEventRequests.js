@@ -8,8 +8,8 @@ const AdminEventRequests = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [justification, setJustification] = useState("");
-  const [isAdmin, setIsAdmin] = useState(null); // null mientras se verifica
-  const [isLoading, setIsLoading] = useState(true); // Para manejar el cargando
+  const [isAdmin, setIsAdmin] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
   const backend = process.env.BACKEND_URL;
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const AdminEventRequests = () => {
   
   useEffect(() => {
     if (isAdmin === true) {
-      fetch(`${backend}/api/events?status=submitted`, {
+      fetch(`${backend}/api/events/status?status=submitted`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -79,24 +79,32 @@ const AdminEventRequests = () => {
   };
 
   const handleReject = (eventId) => {
-    if (justification.trim() === "") {
-      alert("Por favor ingresa una justificación");
-      return;
-    }
-    fetch(`${backend}/api/events/${eventId}/reject`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ justification }),
+  if (justification.trim() === "") {
+    alert("Por favor ingresa una justificación");
+    return;
+  }
+  fetch(`${backend}/api/events/${eventId}/reject`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ justification }),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error("Error al rechazar el evento");
+      return response.json();
     })
-      .then(() => {
-        setEventRequests((prev) =>
-          prev.filter((event) => event.id !== eventId)
-        );
-        setShowModal(false);
-        setJustification("");
-      })
-      .catch((err) => console.error(err));
-  };
+    .then(() => {
+      setEventRequests((prev) =>
+        prev.filter((event) => event.id !== eventId)
+      );
+      setShowModal(false);
+      setJustification("");
+    })
+    .catch((err) => console.error(err));
+};
+
 
   if (isLoading) {
     return <h1>Cargando...</h1>;
@@ -136,8 +144,8 @@ const AdminEventRequests = () => {
           <tbody>
             {eventRequests.map((event) => (
               <tr key={event.id} onClick={() => alert("Ir al detalle del evento")}>
-                <td>{event.name}</td>
-                <td>{event.requestedBy}</td>
+                <td>{event.event_name}</td>
+                <td>{event.organizer_email}</td>
                 <td>{event.date}</td>
                 <td>{event.location}</td>
                 <td>${event.price}</td>
@@ -165,7 +173,8 @@ const AdminEventRequests = () => {
                 </td>
               </tr>
             ))}
-          </tbody>
+        </tbody>
+
         </table>
   
         {/* Modal para justificar el rechazo */}

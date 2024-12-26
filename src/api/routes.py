@@ -280,7 +280,7 @@ def get_event(event_id):
 
 
 # Obtener Eventos por Status
-@api.route('/events', methods=['GET'])
+@api.route('/events/status', methods=['GET'])
 @jwt_required()
 def get_events_by_status():
     status = request.args.get('status', None) 
@@ -288,20 +288,35 @@ def get_events_by_status():
     if not status:
         return jsonify({"message": "Status parameter is required"}), 400
 
-    events = Events.query.filter_by(status=status).all()
+    try:
+        events = Events.query.filter_by(status=status).all()
+        serialized_events = [event.serialize() for event in events]
 
-    serialized_events = [event.serialize() for event in events]
+        return jsonify(serialized_events), 200
+    except Exception as e:
+        print(f"Error obteniendo eventos: {str(e)}")
+        return jsonify({"message": "Internal server error"}), 500
 
-    return jsonify(serialized_events), 200
 
 
 # Actualizar un evento existente
 @api.route('/events/<int:event_id>', methods=['PUT'])
 @jwt_required()
 def update_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
     event = Events.query.get(event_id)
     if not event:
         return jsonify({"error": "Event not found"}), 404
+
+    # Verificar permisos: solo el admin o el organizador pueden actualizar
+    if not user.is_admin and event.organizer_user_id != user.id:
+        return jsonify({"error": "Unauthorized access"}), 403
+
     data = request.get_json()
     try:
         event.event_name = data.get('event_name', event.event_name)
@@ -322,13 +337,25 @@ def update_event(event_id):
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
+
 # Eliminar un evento
 @api.route('/events/<int:event_id>', methods=['DELETE'])
 @jwt_required()
 def delete_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
     event = Events.query.get(event_id)
     if not event:
         return jsonify({"error": "Event not found"}), 404
+
+    # Verificar permisos: solo el admin o el organizador pueden eliminar
+    if not user.is_admin and event.organizer_user_id != user.id:
+        return jsonify({"error": "Unauthorized access"}), 403
+
     try:
         db.session.delete(event)
         db.session.commit()
@@ -336,3 +363,58 @@ def delete_event(event_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
+
+
+
+# Aprobación de Evento
+@api.route('/events/<int:event_id>/approve', methods=['PUT'])
+@jwt_required()
+def approve_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user or not user.has_admin_privileges():
+        return jsonify({"message": "Acceso denegado"}), 403
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"message": "Evento no encontrado"}), 404
+
+    try:
+        event.status = "approved"
+        db.session.commit()
+        return jsonify({"message": f"Evento '{event.event_name}' aprobado exitosamente."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error al aprobar el evento: {str(e)}"}), 500
+
+
+# Rechazo de Evento
+@api.route('/events/<int:event_id>/reject', methods=['PUT'])
+@jwt_required()
+def reject_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user or not user.has_admin_privileges():
+        return jsonify({"message": "Acceso denegado"}), 403
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"message": "Evento no encontrado"}), 404
+
+    data = request.get_json()
+    justification = data.get("justification")
+    if not justification or justification.strip() == "":
+        return jsonify({"message": "La justificación es requerida"}), 400
+
+    try:
+        event.status = "rejected"
+        event.event_reject_msg = justification.strip()
+        db.session.commit()
+        return jsonify({"message": f"Evento '{event.event_name}' rechazado con justificación: {justification}"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error al rechazar el evento: {str(e)}"}), 500
+
+

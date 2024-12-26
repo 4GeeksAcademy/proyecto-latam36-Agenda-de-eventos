@@ -76,7 +76,6 @@ class Events(db.Model):
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
     status = db.Column(db.String(10), unique=False, nullable=False)
-    status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_reject_msg = db.Column(db.String(250), unique=False, nullable=True)
 
@@ -106,16 +105,20 @@ class Events(db.Model):
         self.event_category = event_category
         self.age_clasification = age_clasification
         self.status = "submitted"
-        self.status = "submitted"
         self.flyer_img_url = flyer_img_url
 
     def serialize(self):
-        return{"id":self.id,
-               "event_name":self.event_name,
-               "description":self.event_description,
-               "date":self.event_date,
-               "user_id": self.organizer_user_id,
-               "status":self.status}
+        return{
+            "id":self.id,
+            "event_name":self.event_name,
+            "description":self.event_description,
+            "date":self.event_date,
+            "location": f"{self.event_address}, {self.event_city}, {self.event_country}",
+            "price": self.ticket_price,
+            "category": self.event_category,
+            "user_id": self.organizer_user_id,
+            "organizer_email": self.user.email if self.user else None,
+            "status":self.status}
 
     def serialize_media(self):
         media_list=[]
