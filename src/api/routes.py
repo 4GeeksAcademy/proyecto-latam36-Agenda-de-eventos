@@ -7,7 +7,7 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from datetime import datetime
+from datetime import date, datetime
 
 api = Blueprint('api', __name__)
 
@@ -209,6 +209,27 @@ def profile():
     email=get_jwt_identity()
     user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
     return jsonify(user.serialize())
+
+# Single event view
+@api.route('/eventview/<int:id>', methods=['GET'])
+@jwt_required()
+def event_view(id):
+    email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
+    event = db.session.execute(db.select(Events).filter_by(id=id)).one_or_none()[0]
+    if user==None:
+        if event.age_clasification == "18+":
+            return jsonify({"msg":"event restricted due to age clasification"})
+    today=date.today()
+    user_age=today.year-user.birthdate.year
+    if (today.month, today.day) < (user.birthdate.month, user.birthdate.day):
+        user_age -= 1
+    if user_age < 18 and event.age_clasification == "18+":
+        return jsonify({"msg":"Event clasified as 18+"})
+    return jsonify(event.serialize_media())
+
+
+    
 
 # test route
 @api.route('/test',methods=['GET'])
