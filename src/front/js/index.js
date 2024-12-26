@@ -8,7 +8,9 @@ import "../styles/home.css";
 import "../styles/signup.css";
 import "../styles/Admin.css";
 import "../styles/Navbar.css";
+import "../styles/footer.css";
 import "../styles/jumbotron.css";
+import "../styles/eventForm.css";
 
 //import your own components
 import Layout from "./layout";
