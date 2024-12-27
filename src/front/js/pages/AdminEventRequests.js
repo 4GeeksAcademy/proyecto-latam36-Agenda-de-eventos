@@ -5,14 +5,54 @@ import "../../styles/Admin.css";
 
 const AdminEventRequests = () => {
   const [eventRequests, setEventRequests] = useState([]);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [justification, setJustification] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(null);
   const [activeTab, setActiveTab] = useState("submitted");
+  const [modalAction, setModalAction] = useState("");
   const backend = process.env.BACKEND_URL;
 
   useEffect(() => {
+    const verifyAdmin = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setIsAdmin(false);
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await fetch(`${backend}/api/check-admin`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsAdmin(data.is_admin);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.error("Error al verificar si es admin:", error);
+        setIsAdmin(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    verifyAdmin();
+  }, []);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
     const fetchEvents = async () => {
       try {
         const response = await fetch(`${backend}/api/events?status=${activeTab}`, {
@@ -27,66 +67,103 @@ const AdminEventRequests = () => {
         setEventRequests(data);
       } catch (err) {
         console.error("Error al cargar eventos:", err);
-      } finally {
-        setIsLoading(false);
       }
     };
 
     fetchEvents();
-  }, [activeTab]);
+  }, [activeTab, isAdmin]);
 
-  const handleStatusChange = (eventId, newStatus) => {
-    if (newStatus === "rejected" && justification.trim() === "") {
-      alert("Por favor ingresa una justificación");
-      return;
-    }
+  const handleStatusChange = (eventId) => {
+    const endpoint = `${backend}/api/events/${eventId}/${modalAction}`;
 
-    fetch(`${backend}/api/events/${eventId}/${newStatus === "approved" ? "approve" : "reject"}`, {
+    fetch(endpoint, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ 
-        event_reject_msg: justification || undefined,
-        status: newStatus
-      }),
+      body: JSON.stringify({ justification }),
     })
-      .then(() => {
-        setEventRequests((prev) =>
-          prev.filter((event) => event.id !== eventId)
-        );
-        setShowDetailsModal(false);
+      .then((response) => {
+        if (!response.ok) throw new Error("Error al actualizar el evento");
+        setEventRequests((prev) => prev.filter((event) => event.id !== eventId));
+        setShowModal(false);
         setJustification("");
       })
       .catch((err) => console.error(err));
   };
 
-  const handleShowDetails = (event) => {
+  const handleModalOpen = (event, action) => {
     setSelectedEvent(event);
-    setJustification(event.event_reject_msg || "");
-    setShowDetailsModal(true);
+    setModalAction(action);
+    setJustification(event.event_admin_msg || ""); // Pre-rellenar justificación
+    setShowModal(true);
   };
 
-  const formatDateTime = (date) => {
-    return new Date(date).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const renderButtons = (event) => {
+    switch (activeTab) {
+      case "submitted":
+        return (
+          <div className="d-flex justify-content-between">
+            <button
+              className="btn btn-success"
+              onClick={() => handleModalOpen(event, "approve")}
+            >
+              Aprobar
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => handleModalOpen(event, "reject")}
+            >
+              Rechazar
+            </button>
+          </div>
+        );
+      case "approved":
+        return (
+          <button
+            className="btn btn-danger w-100"
+            onClick={() => handleModalOpen(event, "reject")}
+          >
+            Cambiar a Rechazado
+          </button>
+        );
+      case "rejected":
+        return (
+          <button
+            className="btn btn-success w-100"
+            onClick={() => handleModalOpen(event, "approve")}
+          >
+            Cambiar a Aprobado
+          </button>
+        );
+      default:
+        return null;
+    }
   };
 
-  const handleCloseModal = () => {
-    setShowDetailsModal(false);
-    setJustification("");
-  };
+  if (isLoading) {
+    return <p className="text-center mt-5">Cargando...</p>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="container text-center mt-5">
+        <h1>Acceso Denegado</h1>
+        <a href="/" className="btn btn-primary mt-3 mb-3">
+          Volver al inicio
+        </a>
+      </div>
+    );
+  }
 
   return (
     <>
       <Navbar />
       <div id="admin-container" className="container mt-5">
         <h1 id="admin-title">Gestión de Eventos</h1>
-        
+
+        {/* Tabs de navegación */}
         <div className="nav nav-tabs mb-4">
           <button
             className={`nav-link ${activeTab === "submitted" ? "active" : ""}`}
@@ -109,12 +186,14 @@ const AdminEventRequests = () => {
         </div>
 
         <div id="admin-cards" className="row justify-content-center">
-          {isLoading ? (
-            <p className="text-center">Cargando...</p>
-          ) : eventRequests.length === 0 ? (
+          {eventRequests.length === 0 ? (
             <div className="alert alert-info text-center">
-              No hay eventos {activeTab === "submitted" ? "pendientes" : 
-                           activeTab === "approved" ? "aprobados" : "rechazados"}
+              No hay eventos{" "}
+              {activeTab === "submitted"
+                ? "pendientes"
+                : activeTab === "approved"
+                ? "aprobados"
+                : "rechazados"}
             </div>
           ) : (
             eventRequests.map((event) => (
@@ -122,18 +201,25 @@ const AdminEventRequests = () => {
                 <div className="card">
                   <div className="card-body">
                     <h5 className="card-title">{event.event_name}</h5>
-                    <p className="text-muted mb-3">{event.description}</p>
-                    <p><strong>Solicitante:</strong> {event.organizer_email}</p>
-                    <p><strong>Fecha:</strong> {formatDateTime(event.date)}</p>
-                    <p><strong>Lugar:</strong> {event.location}</p>
-                    <p><strong>Precio:</strong> ${event.price || 'Gratis'}</p>
-                    <p><strong>Categoría:</strong> {event.category}</p>
-                    <button
-                      className="btn btn-primary w-100"
-                      onClick={() => handleShowDetails(event)}
-                    >
-                      Ver justificación y gestionar
-                    </button>
+                    <p>
+                      <strong>Descripción:</strong> {event.description}
+                    </p>
+                    <p>
+                      <strong>Solicitante:</strong> {event.organizer_email}
+                    </p>
+                    <p>
+                      <strong>Fecha:</strong> {event.date}
+                    </p>
+                    <p>
+                      <strong>Lugar:</strong> {event.location}
+                    </p>
+                    <p>
+                      <strong>Precio:</strong> ${event.price}
+                    </p>
+                    <p>
+                      <strong>Categoría:</strong> {event.category}
+                    </p>
+                    {renderButtons(event)}
                   </div>
                 </div>
               </div>
@@ -142,87 +228,31 @@ const AdminEventRequests = () => {
         </div>
       </div>
 
-      {/* Modal de justificación y gestión */}
-      {showDetailsModal && (
+      {/* Modal para justificación */}
+      {showModal && (
         <Modal
-          title={`Gestionar Evento: ${selectedEvent.event_name}`}
-          onClose={handleCloseModal}
-          onConfirm={() => {}} // Añadido para evitar el error de prop type
-          hideConfirmButton // Asegura que el botón confirmar no se muestre
+          title={
+            modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"
+          }
+          onClose={() => setShowModal(false)}
+          onConfirm={() => handleStatusChange(selectedEvent.id)}
         >
-          <div className="p-3">
-            {activeTab !== "submitted" && selectedEvent.event_reject_msg && (
-              <div className="mb-4">
-                <h6>Última justificación:</h6>
-                <p className="border rounded p-3 bg-light">
-                  {selectedEvent.event_reject_msg}
-                </p>
-              </div>
-            )}
-
-            {(activeTab !== "submitted" || activeTab === "submitted") && (
-              <div className="mb-4">
-                <h6>Nueva justificación:</h6>
-                <textarea
-                  className="form-control"
-                  rows="4"
-                  placeholder="Escribe la justificación para el cambio de estado..."
-                  value={justification}
-                  onChange={(e) => setJustification(e.target.value)}
-                ></textarea>
-              </div>
-            )}
-
-            <div className="d-flex justify-content-end gap-2">
-              {activeTab === "submitted" ? (
-                <>
-                  <button
-                    className="btn btn-success"
-                    onClick={() => handleStatusChange(selectedEvent.id, "approved")}
-                  >
-                    Aprobar
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => {
-                      if (justification.trim() === "") {
-                        alert("Por favor ingresa una justificación");
-                        return;
-                      }
-                      handleStatusChange(selectedEvent.id, "rejected");
-                    }}
-                  >
-                    Rechazar
-                  </button>
-                </>
-              ) : activeTab === "approved" ? (
-                <button
-                  className="btn btn-danger"
-                  onClick={() => {
-                    if (justification.trim() === "") {
-                      alert("Por favor ingresa una justificación");
-                      return;
-                    }
-                    handleStatusChange(selectedEvent.id, "rejected");
-                  }}
-                >
-                  Cambiar a Rechazado
-                </button>
-              ) : (
-                <button
-                  className="btn btn-success"
-                  onClick={() => {
-                    if (justification.trim() === "") {
-                      alert("Por favor ingresa una justificación");
-                      return;
-                    }
-                    handleStatusChange(selectedEvent.id, "approved");
-                  }}
-                >
-                  Cambiar a Aprobado
-                </button>
-              )}
+          <div>
+            <p>
+              <strong>Justificación actual:</strong>
+            </p>
+            <div className="alert alert-secondary" role="alert">
+              {selectedEvent.event_admin_msg || "Sin justificación previa"}
             </div>
+          </div>
+          <div>
+            <textarea
+              className="form-control mt-3"
+              rows="4"
+              placeholder="Escribe la nueva justificación aquí..."
+              value={justification}
+              onChange={(e) => setJustification(e.target.value)}
+            ></textarea>
           </div>
         </Modal>
       )}

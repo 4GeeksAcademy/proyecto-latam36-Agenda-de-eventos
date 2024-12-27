@@ -374,14 +374,17 @@ def approve_event(event_id):
     if not event:
         return jsonify({"message": "Evento no encontrado"}), 404
 
+    data = request.get_json()
+    justification = data.get("justification")
+
     try:
         event.status = "approved"
+        event.event_admin_msg = justification 
         db.session.commit()
         return jsonify({"message": f"Evento '{event.event_name}' aprobado exitosamente."}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error al aprobar el evento: {str(e)}"}), 500
-
 
 # Rechazo de Evento
 @api.route('/events/<int:event_id>/reject', methods=['PUT'])
@@ -404,11 +407,10 @@ def reject_event(event_id):
 
     try:
         event.status = "rejected"
-        event.event_reject_msg = justification.strip()
+        event.event_admin_msg = justification.strip()  
         db.session.commit()
         return jsonify({"message": f"Evento '{event.event_name}' rechazado con justificación: {justification}"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error al rechazar el evento: {str(e)}"}), 500
-
 
