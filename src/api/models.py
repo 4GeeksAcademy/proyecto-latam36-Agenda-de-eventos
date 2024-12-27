@@ -77,7 +77,7 @@ class Events(db.Model):
     age_clasification = db.Column(db.String(10),unique=False, nullable=True)
     status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
-    event_reject_msg = db.Column(db.String(250), unique=False, nullable=True)
+    event_admin_msg = db.Column(db.String(250), unique=False, nullable=True)
 
 #Parent: User relatioship
     user=db.relationship(User, back_populates="events")
@@ -118,7 +118,9 @@ class Events(db.Model):
             "category": self.event_category,
             "user_id": self.organizer_user_id,
             "organizer_email": self.user.email if self.user else None,
-            "status":self.status}
+            "status":self.status,
+            "event_admin_msg": self.event_admin_msg
+            }
 
     def serialize_media(self):
         media_list=[]
