@@ -20,10 +20,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const token = getStore().token || localStorage.getItem("token");
 				if (!token) {
 					console.error("No hay token para verificar rol de administrador.");
-					setStore({ isAdmin: false });
+					if (getStore().isAdmin !== false) setStore({ isAdmin: false });
 					return false;
 				}
-
+			
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/check-admin", {
 						method: "GET",
@@ -32,21 +32,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Content-Type": "application/json",
 						},
 					});
-
+			
 					if (resp.ok) {
 						const data = await resp.json();
-						setStore({ isAdmin: data.is_admin });
-						return true; 
+						if (getStore().isAdmin !== data.is_admin) {
+							setStore({ isAdmin: data.is_admin }); // Actualiza solo si hay un cambio
+						}
+						return data.is_admin;
 					} else {
-						setStore({ isAdmin: false });
-						return false; 
+						if (getStore().isAdmin !== false) setStore({ isAdmin: false });
+						return false;
 					}
 				} catch (error) {
 					console.error("Error verificando rol de admin:", error);
-					setStore({ isAdmin: false });
-					return false; 
+					if (getStore().isAdmin !== false) setStore({ isAdmin: false });
+					return false;
 				}
-			},
+			}
+			
 		},
 	};
 };

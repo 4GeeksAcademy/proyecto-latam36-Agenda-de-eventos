@@ -21,3 +21,17 @@
 .navbar .nav-link:hover {
     color: #f8f9fa;
     }
+
+
+  /* Link en Navbar para ADMIN */
+ .navbar .nav-link.admin-link {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #4d50ea;
+    font-weight: bold;
+    margin-left: 15px; 
+    text-decoration: none;
+}
+
+.navbar .nav-link.admin-link:hover {
+    color: #ec1f9b;
+}

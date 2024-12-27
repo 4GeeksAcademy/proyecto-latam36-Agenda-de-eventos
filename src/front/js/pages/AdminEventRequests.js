@@ -15,6 +15,12 @@ const AdminEventRequests = () => {
   const [modalAction, setModalAction] = useState("");
   const backend = process.env.BACKEND_URL;
 
+  const handleTokenExpired = () => {
+    alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+    localStorage.removeItem("token");
+    window.location.href = "/login"; 
+  };
+  
   useEffect(() => {
     const verifyAdmin = async () => {
       try {
@@ -36,6 +42,8 @@ const AdminEventRequests = () => {
         if (response.ok) {
           const data = await response.json();
           setIsAdmin(data.is_admin);
+        } else if (response.status === 401) {
+          handleTokenExpired();
         } else {
           setIsAdmin(false);
         }
@@ -62,7 +70,12 @@ const AdminEventRequests = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        if (!response.ok) throw new Error("Error al obtener los eventos");
+        if (!response.ok) {
+          if (response.status === 401) {
+            handleTokenExpired();
+          }
+          throw new Error("Error al obtener los eventos");
+        }
         const data = await response.json();
         setEventRequests(data);
       } catch (err) {
@@ -85,7 +98,12 @@ const AdminEventRequests = () => {
       body: JSON.stringify({ justification }),
     })
       .then((response) => {
-        if (!response.ok) throw new Error("Error al actualizar el evento");
+        if (!response.ok) {
+          if (response.status === 401) {
+            handleTokenExpired();
+          }
+          throw new Error("Error al actualizar el evento");
+        }
         setEventRequests((prev) => prev.filter((event) => event.id !== eventId));
         setShowModal(false);
         setJustification("");
@@ -96,7 +114,7 @@ const AdminEventRequests = () => {
   const handleModalOpen = (event, action) => {
     setSelectedEvent(event);
     setModalAction(action);
-    setJustification(event.event_admin_msg || ""); // Pre-rellenar justificación
+    setJustification(event.event_admin_msg || ""); 
     setShowModal(true);
   };
 
