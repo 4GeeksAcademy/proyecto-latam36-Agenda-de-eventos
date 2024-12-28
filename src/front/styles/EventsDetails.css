@@ -1,6 +1,3 @@
-body {
-    background-color: #f8f9fa;
-  }
   .event-card {
     border: none;
     border-radius: 10px;
@@ -42,6 +39,7 @@ body {
     background-color: rgb(250, 250, 250);
     border-radius: 10px;
     margin-top: 20px;
+    color: black;
   }
   .event-info .price {
     font-size: 24px;
@@ -49,11 +47,13 @@ body {
   }
   .event-info .btn {
     width: 100%;
+    
   }
   .producer-info {
     padding: 20px;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     margin-top: 20px;
+    color: black;
   }
   
