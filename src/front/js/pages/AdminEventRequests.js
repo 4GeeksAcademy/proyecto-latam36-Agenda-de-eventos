@@ -264,10 +264,12 @@ const AdminEventRequests = () => {
             </div>
           </div>
           <div>
+            <p>
+              <strong>Escribe tu Justificación:</strong>
+            </p>
             <textarea
               className="form-control mt-3"
               rows="4"
-              placeholder="Escribe la nueva justificación aquí..."
               value={justification}
               onChange={(e) => setJustification(e.target.value)}
             ></textarea>

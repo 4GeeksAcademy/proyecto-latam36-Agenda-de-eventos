@@ -24,6 +24,7 @@
   #admin-cards .card {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    color: black;
   }
   
   /* Ajuste de márgenes para las tarjetas */
@@ -34,6 +35,10 @@
   /* Botones en las tarjetas */
   #admin-cards .btn {
     min-width: 100px;
+  }
+
+  .modal-content{
+    color: black;
   }
 
  
