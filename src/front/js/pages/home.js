@@ -10,6 +10,7 @@ import AutoScrollGallery from "../component/cards";
 
 function Home() {
 	return (
+		<>
 	  <main className="principal">
 		<Navbar />
 		<section className="principal__banner">
@@ -25,11 +26,15 @@ function Home() {
 			  <Link to={"/EventsForm"}>
 				<button className="boton-1">Crear tu evento</button>
 			  </Link>
-				<AutoScrollGallery/>
 			</div>
 		  </div>
 		</section>
 	  </main>
+	  
+	  <div className="scroll-gallery">
+	  <AutoScrollGallery/>
+	  </div>
+	  </>
 	);
   }
  
