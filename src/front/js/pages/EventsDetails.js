@@ -5,7 +5,7 @@ import Navbar from "../component/navbar";
 const backend = process.env.BACKEND_URL;
 
 const EventsDetails = () => {
-  const [isAdmin, setIsAdmin] = useState();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [eventRequests, setEventRequests] = useState([]);
 

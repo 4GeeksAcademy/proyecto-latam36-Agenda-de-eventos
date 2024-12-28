@@ -24,7 +24,7 @@ body {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     padding: 10px;
     border-radius: 5px;
     text-align: center;
@@ -39,20 +39,20 @@ body {
   }
   .event-info {
     padding: 20px;
-    background-color: white;
+    background-color: rgb(250, 250, 250);
     border-radius: 10px;
     margin-top: 20px;
   }
   .event-info .price {
     font-size: 24px;
-    color: #000000;
+    color: #0c0c0c;
   }
   .event-info .btn {
     width: 100%;
   }
   .producer-info {
     padding: 20px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
     margin-top: 20px;
   }
