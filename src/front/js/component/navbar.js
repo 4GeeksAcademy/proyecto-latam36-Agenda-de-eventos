@@ -44,14 +44,13 @@ const Navbar = () => {
                 <Link className="navbar-brand d-block" to="/">
                     <img
                         className="object-cover object-center logo-home"
-                        style={{ width: "250px", height: "35px" }}
                         src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/nqyo2gpte9c8kwsgqlbn"
                         alt="logo-culturalWave"
                     />
                 </Link>
 
                 <button
-                    className="navbar-toggler"
+                    className="navbar-toggler navbar-light"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav"
