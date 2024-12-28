@@ -1,0 +1,31 @@
+.auto-scroll-gallery {
+    display: flex;
+    gap: 1rem; /* Espacio entre tarjetas */
+    overflow-x: auto; /*scroll horizontal */
+    white-space: nowrap; /* Evita el salto de línea */
+    padding: 1rem; /* Espaciado interno */
+    scroll-snap-type: x mandatory; /* Habilita snap horizontal */
+    width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+    justify-content: space-between; /* Distribuye las tarjetas en todo el espacio disponible */
+    box-sizing: border-box; /* Asegura que padding/margin no afecten las dimensiones */
+  }
+  
+  .auto-scroll-gallery .card {
+    flex: 0 0 auto; /* Evita que las tarjetas se expandan o reduzcan */
+    width: calc((100% - (4 * 1rem)) / 5); /* Ajusta el ancho según el número de tarjetas y el gap */
+    max-width: 18rem; /* Limita el ancho máximo de las tarjetas */
+    scroll-snap-align: start; /* Alinea las tarjetas al inicio */
+  }
+  
+  /* Media query para pantallas pequeñas */
+  @media (max-width: 576px) {
+    .auto-scroll-gallery {
+      gap: 1rem; /* Espacio constante entre tarjetas */
+      justify-content: flex-start; /* Cambia a alineación normal en dispositivos móviles */
+    }
+  
+    .auto-scroll-gallery .card {
+      width: 18rem; /* Tamaño fijo en pantallas pequeñas */
+    }
+  }
+  

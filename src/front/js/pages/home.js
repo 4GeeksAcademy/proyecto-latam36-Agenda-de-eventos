@@ -4,6 +4,7 @@ import "../../styles/home.css";
 //componentes
 import Navbar from "../component/navbar"
 import Jumbotron from "../component/jumbotron"
+import AutoScrollGallery from "../component/cards";
 
 
 
@@ -13,6 +14,7 @@ const Home = () => {
 			<div>
 				<Navbar/>
 				<Jumbotron/>
+				<AutoScrollGallery/>
 			</div>
 		</div>
 	);
