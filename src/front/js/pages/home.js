@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 //componentes
 import Navbar from "../component/navbar"
+import AutoScrollGallery from "../component/cards";
 
 
 
@@ -24,6 +25,7 @@ function Home() {
 			  <Link to={"/EventsForm"}>
 				<button className="boton-1">Crear tu evento</button>
 			  </Link>
+				<AutoScrollGallery/>
 			</div>
 		  </div>
 		</section>
