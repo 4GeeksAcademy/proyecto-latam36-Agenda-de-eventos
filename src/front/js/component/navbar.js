@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Navbar.css";
@@ -6,31 +6,20 @@ import "../../styles/Navbar.css";
 const Navbar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        const { verifyToken } = actions;
-        verifyToken(); 
-        let isMounted = true; 
-    
-        const verifyAdmin = async () => {
-            try {
-                const result = await actions.checkAdmin(); 
-                if (isMounted && result !== isAdmin) { 
-                    setIsAdmin(result);
-                }
-            } catch (error) {
-                console.error("Error al verificar rol de administrador:", error);
+        const initialize = async () => {
+            if (!store.token) {
+                await actions.verifyToken();
+            }
+
+            if (store.token && store.isAdmin === false) {
+                await actions.checkAdmin();
             }
         };
-    
-        verifyAdmin();
-    
-        return () => {
-            isMounted = false;
-        };
-    }, [actions]); 
-    
+
+        initialize();
+    }, []);
 
     const handleLogout = () => {
         const userConfirmed = window.confirm(`Are you sure you want to Logout, ${store.username || "user"}?`);
@@ -102,7 +91,7 @@ const Navbar = () => {
                         </li>
 
                         {/* Link solo visible para admin */}
-                        {isAdmin && (
+                        {store.isAdmin && (
                             <li className="nav-item">
                                 <Link className="nav-link admin-link" to="/admineventrequests">
                                     Panel Admin
@@ -122,7 +111,7 @@ const Navbar = () => {
                             <Link to="/login" className="btn btn-outline-light bg-whithe fw-bold mr-2">
                                 Login
                             </Link>
-                            <Link to="/signup" className="btn btn-outline-light bg-whithe fw_bold">
+                            <Link to="/signup" className="btn btn-outline-light bg-whithe fw-bold">
                                 SignUp
                             </Link>
                         </>
