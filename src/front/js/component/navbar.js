@@ -9,6 +9,8 @@ const Navbar = () => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
+        const { verifyToken } = actions;
+        verifyToken(); 
         let isMounted = true; 
     
         const verifyAdmin = async () => {

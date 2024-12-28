@@ -16,6 +16,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.removeItem("token");
 			},
 
+			verifyToken: () => {
+                const token = localStorage.getItem("token");
+                if (token) {
+                    setStore({ token });
+                } else {
+                    setStore({ token: null, isAdmin: false });
+                }
+            },
+
 			checkAdmin: async () => {
 				const token = getStore().token || localStorage.getItem("token");
 				if (!token) {
