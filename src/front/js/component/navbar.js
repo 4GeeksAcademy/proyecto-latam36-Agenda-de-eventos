@@ -39,13 +39,13 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg text-center bg-dark navbar-dark border-bottom border-body rounded-2 m-0 p-0">
+        <nav className="navbar navbar-expand-lg text-center">
             <div className="container-fluid">
                 <Link className="navbar-brand d-block" to="/">
                     <img
-                        className="object-cover object-center"
-                        style={{ width: "160px" }}
-                        src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
+                        className="object-cover object-center logo-home"
+                        style={{ width: "250px", height: "35px" }}
+                        src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/nqyo2gpte9c8kwsgqlbn"
                         alt="logo-culturalWave"
                     />
                 </Link>
@@ -76,7 +76,7 @@ const Navbar = () => {
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="#">
-                                Obras/Museos
+                                Museos
                             </a>
                         </li>
                         <li className="nav-item">
@@ -92,6 +92,11 @@ const Navbar = () => {
                         <li className="nav-item">
                             <a className="nav-link" href="#">
                                 Vida Nocturna
+                            </a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">
+                                Infantil
                             </a>
                         </li>
 
