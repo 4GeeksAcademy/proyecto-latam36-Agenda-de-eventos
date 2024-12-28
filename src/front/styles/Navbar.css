@@ -1,4 +1,27 @@
 /* Estilos globales para el botón del Navbar */
+nav div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+
+.navbar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 10px;
+  background-color: rgba(0, 0, 0, 0.479);
+  border-radius: 50px;
+  gap: 10px;
+}
+
+
+ .logo-home {
+  height: 40px;
+ }
+
 .navbar .btn {
     background-color: #3a3a3a; 
     color: white; 
