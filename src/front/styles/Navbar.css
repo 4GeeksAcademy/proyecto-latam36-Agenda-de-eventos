@@ -1,0 +1,61 @@
+/* Estilos globales para el botón del Navbar */
+nav div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+
+.navbar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 10px;
+  background-color: rgba(0, 0, 0, 0.479);
+  border-radius: 50px;
+  gap: 10px;
+}
+
+
+ .logo-home {
+  height: 40px;
+ }
+
+.navbar .btn {
+    background-color: #3a3a3a; 
+    color: white; 
+    border: none;
+    border-radius: 4px;
+  }
+  
+.navbar .btn:hover {
+    background-color: #0c0c0c; 
+    color: #f8f9fa; 
+  }
+
+.navbar .nav-link {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    font-weight: lighter;
+  }
+  
+.navbar .nav-link:hover {
+    color: #f8f9fa;
+    }
+
+
+  /* Link en Navbar para ADMIN */
+ .navbar .nav-link.admin-link {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: white;
+    font-weight: bold;
+    margin-left: 15px; 
+    text-decoration: none;
+}
+
+.navbar .nav-link.admin-link:hover {
+    color: #e4afd7;
+}
+

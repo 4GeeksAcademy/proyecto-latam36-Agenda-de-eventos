@@ -8,7 +8,15 @@ import ReactDOM from "react-dom";
 import "../styles/index.css";
 import "../styles/home.css";
 import "../styles/signup.css";
+<<<<<<< HEAD
 import "../styles/EventsDetails.css";
+=======
+import "../styles/Admin.css";
+import "../styles/Navbar.css";
+import "../styles/footer.css";
+import "../styles/eventForm.css";
+
+>>>>>>> 920fe67ea07844c5eb7487bc541baea33b258396
 //import your own components
 import Layout from "./layout";
 

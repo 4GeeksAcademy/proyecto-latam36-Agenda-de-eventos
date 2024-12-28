@@ -1,13 +1,91 @@
-img {
-  width: 300px;
-  height: 70px;
-  
+.principal {
+  min-height: 90vh;
+  background-image: url("https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg");
+  background-size: cover;
+  background-position: bottom;
+  color: white;
 }
 
-.nav-link{
-    
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: rgb(255, 255, 255);
-  font-size: 16px;
-  font-weight:lighter;
+.principal__banner {
+  display: grid;
+  grid-template-columns: 1fr;
+  height: 80vh;
+  padding: 20px;
+}
+
+.principal__evento {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slogan-png {
+  width: 70%;
+  object-fit: cover;
+}
+
+.principal__crearEvento__texto {
+  background-color: rgba(0, 0, 0, 0.609);
+  border-radius: 45px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.boton-1 {
+  background-color: rgb(118, 44, 186);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 2px 8px;
+  border-radius: 25px;
+}
+
+  /* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .principal__banner {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .principal__evento {
+    grid-column: span 2 / span 2;
+    display: flex;
+    height: 100%;
+    align-items: end;
+    justify-content: start;
+  }
+  .principal__crearEvento {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  .principal__crearEvento__texto {
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+}
+
+.scroll-gallery {
+  display: flex;
 }

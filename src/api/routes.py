@@ -7,7 +7,7 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from datetime import datetime
+from datetime import date, datetime
 
 api = Blueprint('api', __name__)
 
@@ -210,6 +210,27 @@ def profile():
     user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
     return jsonify(user.serialize())
 
+# Single event view
+@api.route('/eventview/<int:id>', methods=['GET'])
+@jwt_required()
+def event_view(id):
+    email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
+    event = db.session.execute(db.select(Events).filter_by(id=id)).one_or_none()[0]
+    if user==None:
+        if event.age_clasification == "18+":
+            return jsonify({"msg":"event restricted due to age clasification"})
+    today=date.today()
+    user_age=today.year-user.birthdate.year
+    if (today.month, today.day) < (user.birthdate.month, user.birthdate.day):
+        user_age -= 1
+    if user_age < 18 and event.age_clasification == "18+":
+        return jsonify({"msg":"Event clasified as 18+"})
+    return jsonify(event.serialize_media())
+
+
+    
+
 # test route
 @api.route('/test',methods=['GET'])
 def test():
@@ -236,3 +257,160 @@ def check_admin():
     if user and user.has_admin_privileges():
         return jsonify({"is_admin": True}), 200
     return jsonify({"is_admin": False}), 403
+
+
+
+
+# Obtener todos los eventos
+@api.route('/events', methods=['GET'])
+@jwt_required()
+def get_all_events():
+    status = request.args.get('status')
+    
+    # Lista de status válidos
+    valid_statuses = ['submitted', 'approved', 'rejected']
+    
+    try:
+        if status:
+            if status not in valid_statuses:
+                return jsonify({"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}"}), 400
+            events = Events.query.filter_by(status=status).all()
+        else:
+            events = Events.query.all()
+            
+        return jsonify([event.serialize() for event in events]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Obtener un evento por ID
+@jwt_required()
+@api.route('/events/<int:event_id>', methods=['GET'])
+def get_event(event_id):
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    return jsonify(event.serialize()), 200
+
+
+# Actualizar un evento existente
+@api.route('/events/<int:event_id>', methods=['PUT'])
+@jwt_required()
+def update_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+
+    # Verificar permisos: solo el admin o el organizador pueden actualizar
+    if not user.is_admin and event.organizer_user_id != user.id:
+        return jsonify({"error": "Unauthorized access"}), 403
+
+    data = request.get_json()
+    try:
+        event.event_name = data.get('event_name', event.event_name)
+        event.event_description = data.get('event_description', event.event_description)
+        event.event_date = data.get('event_date', event.event_date)
+        event.event_start_time = data.get('event_start_time', event.event_start_time)
+        event.event_duration = data.get('event_duration', event.event_duration)
+        event.ticket_price = data.get('ticket_price', event.ticket_price)
+        event.event_address = data.get('event_address', event.event_address)
+        event.event_city = data.get('event_city', event.event_city)
+        event.event_country = data.get('event_country', event.event_country)
+        event.event_category = data.get('event_category', event.event_category)
+        event.age_clasification = data.get('age_clasification', event.age_clasification)
+        event.flyer_img_url = data.get('flyer_img_url', event.flyer_img_url)
+        db.session.commit()
+        return jsonify(event.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+
+# Eliminar un evento
+@api.route('/events/<int:event_id>', methods=['DELETE'])
+@jwt_required()
+def delete_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+
+    # Verificar permisos: solo el admin o el organizador pueden eliminar
+    if not user.is_admin and event.organizer_user_id != user.id:
+        return jsonify({"error": "Unauthorized access"}), 403
+
+    try:
+        db.session.delete(event)
+        db.session.commit()
+        return jsonify({"message": "Event deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+
+
+# Aprobación de Evento
+@api.route('/events/<int:event_id>/approve', methods=['PUT'])
+@jwt_required()
+def approve_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user or not user.has_admin_privileges():
+        return jsonify({"message": "Acceso denegado"}), 403
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"message": "Evento no encontrado"}), 404
+
+    data = request.get_json()
+    justification = data.get("justification")
+
+    try:
+        event.status = "approved"
+        event.event_admin_msg = justification 
+        db.session.commit()
+        return jsonify({"message": f"Evento '{event.event_name}' aprobado exitosamente."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error al aprobar el evento: {str(e)}"}), 500
+
+# Rechazo de Evento
+@api.route('/events/<int:event_id>/reject', methods=['PUT'])
+@jwt_required()
+def reject_event(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user or not user.has_admin_privileges():
+        return jsonify({"message": "Acceso denegado"}), 403
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"message": "Evento no encontrado"}), 404
+
+    data = request.get_json()
+    justification = data.get("justification")
+    if not justification or justification.strip() == "":
+        return jsonify({"message": "La justificación es requerida"}), 400
+
+    try:
+        event.status = "rejected"
+        event.event_admin_msg = justification.strip()  
+        db.session.commit()
+        return jsonify({"message": f"Evento '{event.event_name}' rechazado con justificación: {justification}"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error al rechazar el evento: {str(e)}"}), 500
+

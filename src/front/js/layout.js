@@ -14,6 +14,7 @@ import Signup from "./pages/signup";
 import EventsForm from "./pages/EventsForm"
 import EventsDetails from "./pages/EventsDetails"
 import AdminEventRequests from "./pages/AdminEventRequests"
+import Perfil from "./pages/perfil";
 
 
 //create your first component
@@ -38,7 +39,11 @@ const Layout = () => {
                         <Route element={<EventsDetails/>} path="/EventsDetails"/>
 
                         <Route element={<AdminEventRequests/>} path="/AdminEventRequests"/>
+<<<<<<< HEAD
 
+=======
+                        <Route element={<Perfil/>} path="/perfil" />
+>>>>>>> 920fe67ea07844c5eb7487bc541baea33b258396
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
