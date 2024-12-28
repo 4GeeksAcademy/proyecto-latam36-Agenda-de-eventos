@@ -36,7 +36,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (resp.ok) {
 						const data = await resp.json();
 						if (getStore().isAdmin !== data.is_admin) {
-							setStore({ isAdmin: data.is_admin }); // Actualiza solo si hay un cambio
+							setStore({ isAdmin: data.is_admin });
 						}
 						return data.is_admin;
 					} else {

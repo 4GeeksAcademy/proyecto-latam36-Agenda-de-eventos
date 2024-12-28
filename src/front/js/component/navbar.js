@@ -9,12 +9,12 @@ const Navbar = () => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        let isMounted = true; // Para evitar actualizaciones si el componente se desmonta
+        let isMounted = true; 
     
         const verifyAdmin = async () => {
             try {
-                const result = await actions.checkAdmin(); // Llama a checkAdmin
-                if (isMounted && result !== isAdmin) { // Solo actualiza si hay un cambio
+                const result = await actions.checkAdmin(); 
+                if (isMounted && result !== isAdmin) { 
                     setIsAdmin(result);
                 }
             } catch (error) {
@@ -25,9 +25,9 @@ const Navbar = () => {
         verifyAdmin();
     
         return () => {
-            isMounted = false; // Limpia la referencia al desmontar
+            isMounted = false;
         };
-    }, [actions]); // Dependencia mínima para evitar múltiples llamadas
+    }, [actions]); 
     
 
     const handleLogout = () => {
