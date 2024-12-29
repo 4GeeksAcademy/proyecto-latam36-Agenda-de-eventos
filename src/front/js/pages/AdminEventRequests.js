@@ -6,7 +6,6 @@ import "../../styles/Admin.css";
 const AdminEventRequests = () => {
   const [eventRequests, setEventRequests] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [showApproveModal, setShowApproveModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [justification, setJustification] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -86,29 +85,32 @@ const AdminEventRequests = () => {
     fetchEvents();
   }, [activeTab, isAdmin]);
 
-  const handleStatusChange = (eventId) => {
-    const endpoint = `${backend}/api/events/${eventId}/${modalAction}`;
+  const handleStatusChange = async (eventId) => {
+    try {
+      const endpoint = `${backend}/api/events/${eventId}/${modalAction}`;
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ justification }),
+      });
 
-    fetch(endpoint, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ justification }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            handleTokenExpired();
-          }
-          throw new Error("Error al actualizar el evento");
+      if (!response.ok) {
+        if (response.status === 401) {
+          handleTokenExpired();
+          return;
         }
-        setEventRequests((prev) => prev.filter((event) => event.id !== eventId));
-        setShowModal(false);
-        setJustification("");
-      })
-      .catch((err) => console.error(err));
+        throw new Error("Error al actualizar el evento");
+      }
+
+      setEventRequests((prev) => prev.filter((event) => event.id !== eventId));
+      setShowModal(false);
+      setJustification("");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleModalOpen = (event, action) => {
@@ -122,15 +124,15 @@ const AdminEventRequests = () => {
     switch (activeTab) {
       case "submitted":
         return (
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between gap-2">
             <button
-              className="btn btn-success"
+              className="btn btn-success flex-grow-1"
               onClick={() => handleModalOpen(event, "approve")}
             >
               Aprobar
             </button>
             <button
-              className="btn btn-danger"
+              className="btn btn-danger flex-grow-1"
               onClick={() => handleModalOpen(event, "reject")}
             >
               Rechazar
@@ -176,105 +178,111 @@ const AdminEventRequests = () => {
   }
 
   return (
-    <>
+    <div className="page-wrapper">
       <Navbar />
-      <div id="admin-container" className="container mt-5">
-        <h1 id="admin-title">Gestión de Eventos</h1>
+      <main className="main-content">
+        <div id="admin-container" className="container mt-5">
+          <h1 id="admin-title">Gestión de Eventos</h1>
 
-        {/* Tabs de navegación */}
-        <div className="nav nav-tabs mb-4">
-          <button
-            className={`nav-link ${activeTab === "submitted" ? "active" : ""}`}
-            onClick={() => setActiveTab("submitted")}
-          >
-            Pendientes
-          </button>
-          <button
-            className={`nav-link ${activeTab === "approved" ? "active" : ""}`}
-            onClick={() => setActiveTab("approved")}
-          >
-            Aprobados
-          </button>
-          <button
-            className={`nav-link ${activeTab === "rejected" ? "active" : ""}`}
-            onClick={() => setActiveTab("rejected")}
-          >
-            Rechazados
-          </button>
-        </div>
+          <div className="nav nav-tabs mb-4">
+            <button
+              className={`nav-link ${activeTab === "submitted" ? "active" : ""}`}
+              onClick={() => setActiveTab("submitted")}
+            >
+              Pendientes
+            </button>
+            <button
+              className={`nav-link ${activeTab === "approved" ? "active" : ""}`}
+              onClick={() => setActiveTab("approved")}
+            >
+              Aprobados
+            </button>
+            <button
+              className={`nav-link ${activeTab === "rejected" ? "active" : ""}`}
+              onClick={() => setActiveTab("rejected")}
+            >
+              Rechazados
+            </button>
+          </div>
 
-        <div id="admin-cards" className="row justify-content-center">
-          {eventRequests.length === 0 ? (
-            <div className="alert alert-info text-center">
-              No hay eventos{" "}
-              {activeTab === "submitted"
-                ? "pendientes"
-                : activeTab === "approved"
-                ? "aprobados"
-                : "rechazados"}
-            </div>
-          ) : (
-            eventRequests.map((event) => (
-              <div key={event.id} className="col-12 col-md-8 col-lg-6 mb-4">
-                <div className="card">
-                  <div className="card-body">
-                    <h5 className="card-title">{event.event_name}</h5>
-                    <p>
-                      <strong>Descripción:</strong> {event.description}
-                    </p>
-                    <p>
-                      <strong>Solicitante:</strong> {event.organizer_email}
-                    </p>
-                    <p>
-                      <strong>Fecha:</strong> {event.date}
-                    </p>
-                    <p>
-                      <strong>Lugar:</strong> {event.location}
-                    </p>
-                    <p>
-                      <strong>Precio:</strong> ${event.price}
-                    </p>
-                    <p>
-                      <strong>Categoría:</strong> {event.category}
-                    </p>
-                    {renderButtons(event)}
+          <div id="admin-cards" className="row justify-content-center">
+            {eventRequests.length === 0 ? (
+              <div className="alert alert-info text-center">
+                No hay eventos {" "}
+                {activeTab === "submitted"
+                  ? "pendientes"
+                  : activeTab === "approved"
+                  ? "aprobados"
+                  : "rechazados"}
+              </div>
+            ) : (
+              eventRequests.map((event) => (
+                <div key={event.id} className="col-12 col-md-8 col-lg-6 mb-4">
+                  <div className="card">
+                    <div className="card-body">
+                      <h5 className="card-title">{event.event_name}</h5>
+                      <p>
+                        <strong>Descripción:</strong> {event.description}
+                      </p>
+                      <p>
+                        <strong>Solicitante:</strong> {event.organizer_email}
+                      </p>
+                      <p>
+                        <strong>Fecha:</strong> {event.date}
+                      </p>
+                      <p>
+                        <strong>Lugar:</strong> {event.location}
+                      </p>
+                      <p>
+                        <strong>Precio:</strong> ${event.price}
+                      </p>
+                      <p>
+                        <strong>Categoría:</strong> {event.category}
+                      </p>
+                      {renderButtons(event)}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* Modal para justificación */}
       {showModal && (
         <Modal
-          title={
-            modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"
-          }
-          onClose={() => setShowModal(false)}
+          title={modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"}
+          onClose={() => {
+            setShowModal(false);
+            setJustification("");
+          }}
           onConfirm={() => handleStatusChange(selectedEvent.id)}
         >
-          <div>
-            <p>
-              <strong>Justificación actual:</strong>
-            </p>
-            <div className="alert alert-secondary" role="alert">
-              {selectedEvent.event_admin_msg || "Sin justificación previa"}
+          <div className="p-3">
+            <div className="mb-4">
+              <p className="mb-2">
+                <strong>Justificación actual:</strong>
+              </p>
+              <div className="alert alert-secondary" role="alert">
+                {selectedEvent.event_admin_msg || "Sin justificación previa"}
+              </div>
             </div>
-          </div>
-          <div>
-            <textarea
-              className="form-control mt-3"
-              rows="4"
-              placeholder="Escribe la nueva justificación aquí..."
-              value={justification}
-              onChange={(e) => setJustification(e.target.value)}
-            ></textarea>
+            <div>
+              <p className="mb-2">
+                <strong>Nueva justificación:</strong>
+              </p>
+              <textarea
+                className="form-control"
+                rows="4"
+                value={justification}
+                onChange={(e) => setJustification(e.target.value)}
+                placeholder="Escribe tu justificación aquí..."
+              ></textarea>
+            </div>
           </div>
         </Modal>
       )}
-    </>
+    </div>
   );
 };
 

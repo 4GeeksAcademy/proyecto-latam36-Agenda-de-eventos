@@ -12,8 +12,10 @@ import Footer from "./component/footer";
 import Login from './pages/login';
 import Signup from "./pages/signup";
 import EventsForm from "./pages/EventsForm"
+import EventsDetails from "./pages/EventsDetails"
 import AdminEventRequests from "./pages/AdminEventRequests"
 import Perfil from "./pages/perfil";
+
 
 //create your first component
 const Layout = () => {
@@ -33,6 +35,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Signup />} path="/signup"/>
                         <Route element={<EventsForm/>} path="/EventsForm"/>
+                        <Route element={<EventsDetails/>} path="/EventsDetails"/>
                         <Route element={<AdminEventRequests/>} path="/AdminEventRequests"/>
                         <Route element={<Perfil/>} path="/perfil" />
                         <Route element={<h1>Not found!</h1>} />

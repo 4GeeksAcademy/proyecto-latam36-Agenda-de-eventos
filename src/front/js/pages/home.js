@@ -1,23 +1,42 @@
 import React from "react";
 import "../../styles/home.css";
+import { Link } from "react-router-dom";
 
 //componentes
 import Navbar from "../component/navbar"
-import Jumbotron from "../component/jumbotron"
 import AutoScrollGallery from "../component/cards";
 
 
 
-const Home = () => {
+function Home() {
 	return (
-		<div id="home-form-container" className="container-fluid">
-			<div>
-				<Navbar/>
-				<Jumbotron/>
-				<AutoScrollGallery/>
+		<>
+	  <main className="principal">
+		<Navbar />
+		<section className="principal__banner">
+		  <div className="principal__evento">
+			<img className="slogan-png"
+			  src="https://res.cloudinary.com/dijfzjssm/image/upload/v1734509652/BOCETOS_INTERFAZ_ANDREINA-10_aqzcje.png"
+			  alt="texto"
+			/>
+		  </div>
+		  <div className="principal__crearEvento">
+			<div className="principal__crearEvento__texto">
+			  <p>Publica tu evento</p>
+			  <Link to={"/EventsForm"}>
+				<button className="boton-1">Crear tu evento</button>
+			  </Link>
 			</div>
-		</div>
+		  </div>
+		</section>
+	  </main>
+	  
+	  <div className="scroll-gallery">
+	  <AutoScrollGallery/>
+	  </div>
+	  </>
 	);
-};
-
-export default Home;
+  }
+ 
+  
+  export default Home;
