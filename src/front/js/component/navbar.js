@@ -90,6 +90,15 @@ const Navbar = () => {
                             </a>
                         </li>
 
+                        {/* Link al perfil visible para cualquier usuario logueado */}
+                        {store.token && (
+                            <li className="nav-item">
+                                <Link className="nav-link user-link" to="/perfil">
+                                    Perfil
+                                </Link>
+                            </li>
+                        )}
+
                         {/* Link solo visible para admin */}
                         {store.isAdmin && (
                             <li className="nav-item">

@@ -59,3 +59,16 @@ nav div {
     color: #ff00ff;
 }
 
+/* Link en Navbar para User */
+.navbar .nav-link.user-link {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
+  font-weight: bold;
+  margin-left: 15px; 
+  text-decoration: none;
+}
+
+.navbar .nav-link.user-link:hover {
+  color: #ff00ff;
+}
+
