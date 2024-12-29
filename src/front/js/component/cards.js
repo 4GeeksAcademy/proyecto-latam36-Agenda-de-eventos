@@ -4,8 +4,10 @@ import "../../styles/cards.css"; // Importa los estilos necesarios
 const AutoScrollGallery = () => {
   return (
     <div className="container-fluid">
-      <h1 className="mb-5 ml-4">Eventos cerca de ti</h1>
+      <div className="ms-5 mb-4 ps-4"><h2>Eventos cerca de ti</h2></div>
+      
       <div className="auto-scroll-gallery">
+        
         <a href="#" className="card text-decoration-none text-muted">
           <img
             src="https://via.placeholder.com/300x200"
