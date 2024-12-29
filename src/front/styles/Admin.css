@@ -1,47 +1,109 @@
-/* Contenedor general para las vistas de admin */
+/* Admin.css */
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #0b0405;
+  color: white;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+}
+
 #admin-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+#admin-title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+
+/* Modal styling */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-title {
+  color: white;
+  font-weight: 600;
+}
+
+.modal-content .alert-secondary {
+  background-color: #2d2d2d;
+  border-color: #404040;
+  color: #d1d1d1;
+}
+
+.modal-content textarea.form-control {
+  background-color: #2d2d2d;
+  border-color: #404040;
+  color: white;
+}
+
+.modal-content textarea.form-control:focus {
+  background-color: #333;
+  border-color: #ff00ff;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 255, 0.25);
+  color: white;
+}
+
+/* Modal Animation */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Alert styling */
+.alert-info {
+  background-color: #1a1a1a;
+  border-color: #333;
+  color: #d1d1d1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #admin-container {
+    padding: 0 0.5rem;
   }
   
-  /* Título de las vistas admin */
+  .modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+  
   #admin-title {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 2rem;
   }
-  
-  @media (max-width: 768px) {
-    #admin-title {
-      font-size: 2rem;
-      margin-bottom: 30px;
-      margin-top: 10px;
-    }
-  }
-  
-  /* Tarjetas de eventos */
-  #admin-cards .card {
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    color: black;
-  }
-  
-  /* Ajuste de márgenes para las tarjetas */
-  #admin-cards .card-body {
-    padding: 15px;
-  }
-  
-  /* Botones en las tarjetas */
-  #admin-cards .btn {
-    min-width: 100px;
-  }
-
-  .modal-content{
-    color: black;
-  }
-
- 
-
-
-
+}

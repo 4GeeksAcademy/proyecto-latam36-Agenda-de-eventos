@@ -8,6 +8,101 @@ h1 {
   }
 
 
-  footer {
-    margin-top: auto; 
-}
+
+ /* Card styling */
+ .card {
+    background-color: #1a1a1a;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .card-title {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .card p {
+    color: #d1d1d1;
+    margin-bottom: 0.5rem;
+  }
+
+
+  /* Button styling */
+.btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary {
+    background-color: #ff00ff;
+    border-color: #ff00ff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #cc00cc;
+    border-color: #cc00cc;
+  }
+  
+  .btn-success {
+    background-color: #00c853;
+    border-color: #00c853;
+  }
+  
+  .btn-success:hover {
+    background-color: #00a844;
+    border-color: #00a844;
+  }
+  
+  .btn-danger {
+    background-color: #ff1744;
+    border-color: #ff1744;
+  }
+  
+  .btn-danger:hover {
+    background-color: #d50000;
+    border-color: #d50000;
+  }
+
+  /* Tabs styling */
+.nav-tabs {
+    border-bottom: 1px solid #4a4a4a;
+  }
+  
+  .nav-tabs .nav-link {
+    color: #a8a8a8;
+    background: transparent;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-tabs .nav-link:hover {
+    color: white;
+    border-color: transparent;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: white;
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom: 3px solid #ff00ff;
+    font-weight: 500;
+  }

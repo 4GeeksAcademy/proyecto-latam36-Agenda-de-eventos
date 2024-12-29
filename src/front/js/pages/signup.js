@@ -237,6 +237,10 @@ function Signup() {
                         Registrarse
                     </button>
                 </form>
+                <div className="text-center mt-3">
+                    <span>¿Ya tienes una cuenta?</span>
+                    <Link className="navbar-brand fs-6" to="/login"> Inicia Sesión </Link>
+                </div>
             </div>
         </div>
         <div
