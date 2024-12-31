@@ -1,11 +1,16 @@
-const getState = ({ getStore, setStore }) => {
+const getState = ({ getStore, setStore, getActions }) => {
     return {
         store: {
             token: localStorage.getItem("token") || null,
             isAdmin: false,
+            loading: false,
         },
 
         actions: {
+            setLoading: (isLoading) => {
+                setStore({ loading: isLoading });
+            },
+
             setToken: (newToken) => {
                 localStorage.setItem("token", newToken);
                 setStore({ token: newToken });
@@ -17,13 +22,36 @@ const getState = ({ getStore, setStore }) => {
             },
 
             verifyToken: async () => {
+                const { setLoading } = getActions();
+                setLoading(true); 
                 const token = localStorage.getItem("token");
-                if (token) {
-                    setStore({ token });
-                } else {
+                if (!token) {
                     setStore({ token: null, isAdmin: false });
+                    setLoading(false);
+                    return;
+                }
+
+                try {
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/verify-token", {
+                        method: "GET",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    if (resp.ok) {
+                        setStore({ token });
+                    } else {
+                        setStore({ token: null, isAdmin: false });
+                        localStorage.removeItem("token");
+                    }
+                } catch (error) {
+                    console.error("Error verificando el token:", error);
+                    setStore({ token: null, isAdmin: false });
+                    localStorage.removeItem("token");
+                } finally {
+                    setLoading(false);
                 }
             },
+            
 
             checkAdmin: async () => {
                 const token = getStore().token;

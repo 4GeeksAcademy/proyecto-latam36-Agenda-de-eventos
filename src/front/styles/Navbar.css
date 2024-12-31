@@ -46,15 +46,14 @@ nav div {
     }
 
 
-  /* Link en Navbar para ADMIN */
- .navbar .nav-link.admin-link {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: white;
-    font-weight: bold;
-    margin-left: 15px; 
-    text-decoration: none;
+/* Link en Navbar para ADMIN */
+.navbar .nav-link.admin-link {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
+  font-weight: bold;
+  margin-left: 15px; 
+  text-decoration: none;
 }
-
 .navbar .nav-link.admin-link:hover {
     color: #ff00ff;
 }
@@ -67,7 +66,6 @@ nav div {
   margin-left: 15px; 
   text-decoration: none;
 }
-
 .navbar .nav-link.user-link:hover {
   color: #ff00ff;
 }

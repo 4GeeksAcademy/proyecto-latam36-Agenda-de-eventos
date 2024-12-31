@@ -15,14 +15,14 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
+# @api.route('/hello', methods=['POST', 'GET'])
+# def handle_hello():
 
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
+#     response_body = {
+#         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+#     }
 
-    return jsonify(response_body), 200
+#     return jsonify(response_body), 200
 
 
 # CREATE USER | SIGN-UP
@@ -246,6 +246,17 @@ def private():
     user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
     return jsonify(user.serialize()),200
 
+
+
+# TOKEN Verification 
+@api.route('/verify-token', methods=['GET'])
+@jwt_required()
+def verify_token():
+    try:
+        current_user_email = get_jwt_identity() 
+        return jsonify({"message": "Token válido", "email": current_user_email}), 200
+    except Exception as e:
+        return jsonify({"error": "Token inválido o expirado", "details": str(e)}), 401
 
 
 # ADMIN Verification
