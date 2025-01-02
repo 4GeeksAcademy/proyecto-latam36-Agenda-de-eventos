@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Modal from "../component/Modal";
 import Navbar from "../component/navbar";
 import "../../styles/Admin.css";
@@ -84,11 +84,7 @@ const AdminEventRequests = () => {
         setIsAdmin(userData.is_admin || false);
         
         if (userData.is_admin) {
-          await Promise.all([
-            fetchEvents("submitted"),
-            fetchEvents("approved"),
-            fetchEvents("rejected")
-          ]);
+          await Promise.all([fetchEvents("submitted"), fetchEvents("approved"), fetchEvents("rejected")]);
         } else {
           navigate("/");
         }
@@ -156,35 +152,23 @@ const AdminEventRequests = () => {
       case "submitted":
         return (
           <div className="d-flex justify-content-between gap-2">
-            <button
-              className="btn btn-success flex-grow-1"
-              onClick={() => handleModalOpen(event, "approve")}
-            >
+            <button className="btn btn-success flex-grow-1" onClick={() => handleModalOpen(event, "approve")}>
               Aprobar
             </button>
-            <button
-              className="btn btn-danger flex-grow-1"
-              onClick={() => handleModalOpen(event, "reject")}
-            >
+            <button className="btn btn-danger flex-grow-1" onClick={() => handleModalOpen(event, "reject")}>
               Rechazar
             </button>
           </div>
         );
       case "approved":
         return (
-          <button
-            className="btn btn-danger w-100"
-            onClick={() => handleModalOpen(event, "reject")}
-          >
+          <button className="btn btn-danger w-100" onClick={() => handleModalOpen(event, "reject")}>
             Cambiar a Rechazado
           </button>
         );
       case "rejected":
         return (
-          <button
-            className="btn btn-success w-100"
-            onClick={() => handleModalOpen(event, "approve")}
-          >
+          <button className="btn btn-success w-100" onClick={() => handleModalOpen(event, "approve")}>
             Cambiar a Aprobado
           </button>
         );
@@ -217,14 +201,8 @@ const AdminEventRequests = () => {
 
           <div className="nav nav-tabs mb-4">
             {["submitted", "approved", "rejected"].map(tab => (
-              <button
-                key={tab}
-                className={`nav-link ${activeTab === tab ? "active" : ""}`}
-                onClick={() => setActiveTab(tab)}
-                disabled={tabLoading}
-              >
-                {tab === "submitted" ? "Pendientes" : 
-                 tab === "approved" ? "Aprobados" : "Rechazados"}
+              <button key={tab} className={`nav-link ${activeTab === tab ? "active" : ""}`} onClick={() => setActiveTab(tab)} disabled={tabLoading}>
+                {tab === "submitted" ? "Pendientes" : tab === "approved" ? "Aprobados" : "Rechazados"}
               </button>
             ))}
           </div>
@@ -238,37 +216,25 @@ const AdminEventRequests = () => {
               </div>
             ) : eventRequests[activeTab].length === 0 ? (
               <div className="alert alert-info text-center">
-                No hay eventos {" "}
-                {activeTab === "submitted" ? "pendientes" : 
-                 activeTab === "approved" ? "aprobados" : "rechazados"}
+                No hay eventos {activeTab === "submitted" ? "pendientes" : activeTab === "approved" ? "aprobados" : "rechazados"}
               </div>
             ) : (
               eventRequests[activeTab].map((event) => (
                 <div key={event.id} className="col-12 col-md-8 col-lg-6 mb-4">
                   <div className="card">
                     <div className="card-body">
-                      <h5 className="card-title">{event.event_name}</h5>
-                      <p>
-                        <strong>Descripción:</strong> {event.description}
-                      </p>
-                      <p>
-                        <strong>Solicitante:</strong> {event.organizer_email}
-                      </p>
-                      <p>
-                        <strong>Fecha:</strong> {event.date}
-                      </p>
-                      <p>
-                        <strong>Lugar:</strong> {event.location}
-                      </p>
-                      <p>
-                        <strong>Precio:</strong> ${event.ticket_price}
-                      </p>
-                      <p>
-                        <strong>Categoría:</strong> {event.category}
-                      </p>
-                      <p>
-                        <strong>Clasificación:</strong> {event.age_classification}
-                      </p>
+                      <h5 className="card-title">
+                        <Link to={`/EventsDetails/${event.id}`} className="text-decoration-none">
+                          {event.event_name}
+                        </Link>
+                      </h5>
+                      <p><strong>Descripción:</strong> {event.description}</p>
+                      <p><strong>Solicitante:</strong> {event.organizer_email}</p>
+                      <p><strong>Fecha:</strong> {event.date}</p>
+                      <p><strong>Lugar:</strong> {event.location}</p>
+                      <p><strong>Precio:</strong> ${event.ticket_price}</p>
+                      <p><strong>Categoría:</strong> {event.category}</p>
+                      <p><strong>Clasificación:</strong> {event.age_classification}</p>
                       {renderButtons(event)}
                     </div>
                   </div>
@@ -280,34 +246,15 @@ const AdminEventRequests = () => {
       </main>
 
       {showModal && (
-        <Modal
-          title={modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"}
-          onClose={() => {
-            setShowModal(false);
-            setJustification("");
-          }}
-          onConfirm={() => handleStatusChange(selectedEvent.id)}
-        >
+        <Modal title={modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"} onClose={() => setShowModal(false)} onConfirm={() => handleStatusChange(selectedEvent.id)}>
           <div className="p-3">
             <div className="mb-4">
-              <p className="mb-2">
-                <strong>Justificación actual:</strong>
-              </p>
-              <div className="alert alert-secondary" role="alert">
-                {selectedEvent.event_admin_msg || "Sin justificación previa"}
-              </div>
+              <p className="mb-2"><strong>Justificación actual:</strong></p>
+              <div className="alert alert-secondary" role="alert">{selectedEvent.event_admin_msg || "Sin justificación previa"}</div>
             </div>
             <div>
-              <p className="mb-2">
-                <strong>Nueva justificación:</strong>
-              </p>
-              <textarea
-                className="form-control"
-                rows="4"
-                value={justification}
-                onChange={(e) => setJustification(e.target.value)}
-                placeholder="Escribe tu justificación aquí..."
-              ></textarea>
+              <p className="mb-2"><strong>Nueva justificación:</strong></p>
+              <textarea className="form-control" rows="4" onChange={(e) => setJustification(e.target.value)} placeholder="Escribe tu justificación aquí..."></textarea>
             </div>
           </div>
         </Modal>
