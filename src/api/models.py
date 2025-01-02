@@ -108,25 +108,20 @@ class Events(db.Model):
         self.flyer_img_url = flyer_img_url
 
     def serialize(self, include_details=False):
-       
         base_data = {
             "id": self.id,
             "event_name": self.event_name,
             "description": self.event_description,
             "date": self.event_date,
-            "start_time": self.event_start_time,
-            "duration": self.event_duration,
+            "start_time": self.event_start_time.strftime("%H:%M:%S") if self.event_start_time else None,
+            "duration": self.event_duration.strftime("%H:%M:%S") if self.event_duration else None,
             "ticket_price": self.ticket_price,
             "category": self.event_category,
             "age_classification": self.age_clasification,
             "status": self.status,
             "flyer_img_url": self.flyer_img_url,
             "event_admin_msg": self.event_admin_msg,
-            # Datos de localización
-            "address": self.event_address,
-            "city": self.event_city,
-            "country": self.event_country,
-            # Datos del organizador
+            "location": f"{self.event_address}, {self.event_city}, {self.event_country}",
             "organizer_id": self.organizer_user_id,
             "organizer_name": self.user.first_name if self.user else None,
             "organizer_email": self.user.email if self.user else None,
@@ -139,6 +134,7 @@ class Events(db.Model):
             })
 
         return base_data
+
 
 class EventMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -21,7 +21,7 @@ const EventsDetails = () => {
         setIsAdmin(isAdminResponse.is_admin);
 
         // Detalles del evento
-        const response = await fetch(`${backend}/api/events/2`, {
+        const response = await fetch(`${backend}/api/events/1?details=true`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         if (response.ok) {

@@ -261,7 +261,7 @@ const AdminEventRequests = () => {
                         <strong>Lugar:</strong> {event.location}
                       </p>
                       <p>
-                        <strong>Precio:</strong> ${event.price}
+                        <strong>Precio:</strong> ${event.ticket_price}
                       </p>
                       <p>
                         <strong>Categoría:</strong> {event.category}
