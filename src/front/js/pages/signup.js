@@ -48,7 +48,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch(backend+'/api/signup', 
+      const response = await fetch(backend+'/api/users', 
         {
           method: 'POST',
           headers: {

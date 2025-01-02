@@ -16,7 +16,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch(backend+'/api/login', {
+            const response = await fetch(backend+'/api/users/token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
