@@ -107,3 +107,46 @@
     font-size: 2rem;
   }
 }
+
+/* Contenedor de las pestañas */
+.nav-tabs {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow-x: auto;  /* Permite scroll horizontal si es necesario */
+  white-space: nowrap;  /* Evita que el texto se rompa en múltiples líneas */
+  -webkit-overflow-scrolling: touch;  /* Scroll suave en iOS */
+}
+
+/* Cada pestaña individual */
+.nav-tabs .nav-link {
+  flex: 1;
+  min-width: 110px;  /* Ancho mínimo para evitar texto muy comprimido */
+  text-align: center;
+  padding: 0.5rem;  /* Reduce el padding para pantallas pequeñas */
+  font-size: 0.9rem;  /* Ajusta el tamaño de fuente para pantallas pequeñas */
+}
+
+/* Ocultar la barra de scroll pero mantener la funcionalidad */
+.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-tabs {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Asegura que los bordes se vean correctamente */
+.nav-tabs .nav-link {
+  border: 1px solid #dee2e6;
+  border-bottom: none;
+  margin-bottom: -1px;
+  background: #0b0405;
+}
+
+.nav-tabs .nav-link.active {
+  border-color: #dee2e6 #dee2e6 #fff;
+  border-bottom: none;
+  background: #ff00ff;
+}

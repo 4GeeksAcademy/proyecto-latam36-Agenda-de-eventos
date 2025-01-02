@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Modal from "../component/Modal";
 import Navbar from "../component/navbar";
+import Breadcrumbs from "../component/Breadcrumbs.jsx";
 import "../../styles/Admin.css";
 
 const AdminEventRequests = () => {
@@ -195,14 +196,24 @@ const AdminEventRequests = () => {
   return (
     <div className="page-wrapper">
       <Navbar />
+      <Breadcrumbs />
       <main className="main-content">
         <div id="admin-container" className="container mt-5">
           <h1 id="admin-title">Gestión de Eventos</h1>
 
           <div className="nav nav-tabs mb-4">
-            {["submitted", "approved", "rejected"].map(tab => (
-              <button key={tab} className={`nav-link ${activeTab === tab ? "active" : ""}`} onClick={() => setActiveTab(tab)} disabled={tabLoading}>
-                {tab === "submitted" ? "Pendientes" : tab === "approved" ? "Aprobados" : "Rechazados"}
+            {[
+              { id: "submitted", label: "Pendientes" },
+              { id: "approved", label: "Aprobados" },
+              { id: "rejected", label: "Rechazados" }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                className={`nav-link ${activeTab === tab.id ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
+                disabled={tabLoading}
+              >
+                {tab.label}
               </button>
             ))}
           </div>
