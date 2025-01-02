@@ -271,21 +271,30 @@ def get_all_events():
 @api.route('/events/<int:event_id>', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
 def get_event(event_id):
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+
     if request.method == 'GET':
-        email=get_jwt_identity()
-        user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
-        event = db.session.execute(db.select(Events).filter_by(id=event_id)).one_or_none()[0]
-        if user==None:
-            if event.age_clasification == "18+":
-                return jsonify({"msg":"event restricted due to age clasification"})
-        today=date.today()
-        user_age=today.year-user.birthdate.year
-        if (today.month, today.day) < (user.birthdate.month, user.birthdate.day):
-            user_age -= 1
-        if user_age < 18 and event.age_clasification == "18+":
-            return jsonify({"msg":"Event clasified as 18+"})
-        return jsonify(event.serialize_media())
-    
+        email = get_jwt_identity()
+        user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
+        user = user[0] if user else None
+
+        if user is None and event.age_clasification == "18+":
+            return jsonify({"msg": "Event restricted due to age classification"}), 403
+
+        if user:
+            today = date.today()
+            user_age = today.year - user.birthdate.year
+            if (today.month, today.day) < (user.birthdate.month, user.birthdate.day):
+                user_age -= 1
+            if user_age < 18 and event.age_clasification == "18+":
+                return jsonify({"msg": "Event classified as 18+"}), 403
+
+        # Verificar si se necesitan detalles completos
+        include_details = request.args.get('details', 'false').strip().lower() in ['true', '1', 'yes']
+        return jsonify(event.serialize(include_details=include_details)), 200
+
     if request.method == 'PUT':
         current_user_email = get_jwt_identity()
         user = User.query.filter_by(email=current_user_email).first()
@@ -293,12 +302,8 @@ def get_event(event_id):
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        event = Events.query.get(event_id)
-        if not event:
-            return jsonify({"error": "Event not found"}), 404
-
-        # Verificar permisos: solo el admin o el organizador pueden actualizar
-        if not user.is_admin or event.organizer_user_id != user.id:
+        # Verificar permisos
+        if not user.is_admin and event.organizer_user_id != user.id:
             return jsonify({"error": "Unauthorized access"}), 403
 
         data = request.get_json()
@@ -320,29 +325,25 @@ def get_event(event_id):
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 400
-            
+
     if request.method == 'DELETE':
-            current_user_email = get_jwt_identity()
-            user = User.query.filter_by(email=current_user_email).first()
+        current_user_email = get_jwt_identity()
+        user = User.query.filter_by(email=current_user_email).first()
 
-            if not user:
-                return jsonify({"error": "User not found"}), 404
+        if not user:
+            return jsonify({"error": "User not found"}), 404
 
-            event = Events.query.get(event_id)
-            if not event:
-                return jsonify({"error": "Event not found"}), 404
+        # Verificar permisos
+        if not user.is_admin and event.organizer_user_id != user.id:
+            return jsonify({"error": "Unauthorized access"}), 403
 
-            # Verificar permisos: solo el admin o el organizador pueden eliminar
-            if not user.is_admin or event.organizer_user_id != user.id:
-                return jsonify({"error": "Unauthorized access"}), 403
-
-            try:
-                db.session.delete(event)
-                db.session.commit()
-                return jsonify({"message": "Event deleted successfully"}), 200
-            except Exception as e:
-                db.session.rollback()
-                return jsonify({"error": str(e)}), 400
+        try:
+            db.session.delete(event)
+            db.session.commit()
+            return jsonify({"message": "Event deleted successfully"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
 
 
 
