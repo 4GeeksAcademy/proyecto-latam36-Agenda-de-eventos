@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Para obtener el ID del evento desde el URL
+import { useParams } from 'react-router-dom';
 import Navbar from "../component/navbar";
 
 const backend = process.env.BACKEND_URL;
 
 const EventsDetails = () => {
-  const { id } = useParams(); // Captura el ID del evento desde el URL
+  const { id } = useParams(); 
   const [eventDetails, setEventDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -13,15 +13,15 @@ const EventsDetails = () => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        // Verificar si el usuario es administrador
-        const responseAdmin = await fetch(`${backend}/api/check-admin`, {
+        // ADMIN?
+        const responseAdmin = await fetch(`${backend}/api/users/me`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         const isAdminResponse = await responseAdmin.json();
         setIsAdmin(isAdminResponse.is_admin);
 
-        // Obtener los detalles del evento
-        const response = await fetch(`${backend}/api/events/1`, {
+        // Detalles del evento
+        const response = await fetch(`${backend}/api/events/2`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         if (response.ok) {

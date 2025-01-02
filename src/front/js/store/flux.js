@@ -14,7 +14,6 @@ const getState = ({ getStore, setStore, getActions }) => {
             setToken: (newToken) => {
                 localStorage.setItem("token", newToken);
                 setStore({ token: newToken });
-                // Verificar admin status inmediatamente después de setear el token
                 getActions().checkAdmin();
             },
 
