@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../component/navbar';
+import Breadcrumbs from "../component/Breadcrumbs.jsx";
 
 const Perfil = ({ user }) => {
     const placeholderUser = {
@@ -15,6 +16,7 @@ const Perfil = ({ user }) => {
     return (
       <div>
         <Navbar/>
+        <Breadcrumbs />
         <div className="container mt-5">
           <div className="card-header bg-dark mb-5 text-white">
               <h2>Perfil del Usuario</h2>
