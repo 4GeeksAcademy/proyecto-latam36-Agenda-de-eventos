@@ -1,111 +1,142 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../component/Modal";
 import Navbar from "../component/navbar";
 import "../../styles/Admin.css";
 
 const AdminEventRequests = () => {
-  const [eventRequests, setEventRequests] = useState([]);
+  const [eventRequests, setEventRequests] = useState({
+    submitted: [],
+    approved: [],
+    rejected: []
+  });
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [justification, setJustification] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(null);
   const [activeTab, setActiveTab] = useState("submitted");
   const [modalAction, setModalAction] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [tabLoading, setTabLoading] = useState(false);
+  const navigate = useNavigate();
   const backend = process.env.BACKEND_URL;
 
-  const handleTokenExpired = () => {
-    alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-    localStorage.removeItem("token");
-    window.location.href = "/login"; 
-  };
-  
-  useEffect(() => {
-    const verifyAdmin = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setIsAdmin(false);
-          setIsLoading(false);
-          return;
-        }
+  const fetchEvents = useCallback(async (status) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-        const response = await fetch(`${backend}/api/check-admin`, {
-          method: "GET",
+      setTabLoading(true);
+      const response = await fetch(`${backend}/api/events?status=${status}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Error al obtener los eventos");
+      }
+
+      const data = await response.json();
+      setEventRequests(prev => ({
+        ...prev,
+        [status]: data
+      }));
+    } catch (err) {
+      console.error("Error al cargar eventos:", err);
+    } finally {
+      setTabLoading(false);
+    }
+  }, [backend, navigate]);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${backend}/api/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setIsAdmin(data.is_admin);
-        } else if (response.status === 401) {
-          handleTokenExpired();
+        if (!response.ok) {
+          throw new Error("Error verificando permisos");
+        }
+
+        const userData = await response.json();
+        setIsAdmin(userData.is_admin || false);
+        
+        if (userData.is_admin) {
+          await Promise.all([
+            fetchEvents("submitted"),
+            fetchEvents("approved"),
+            fetchEvents("rejected")
+          ]);
         } else {
-          setIsAdmin(false);
+          navigate("/");
         }
       } catch (error) {
-        console.error("Error al verificar si es admin:", error);
-        setIsAdmin(false);
+        console.error("Error:", error);
+        navigate("/");
       } finally {
         setIsLoading(false);
       }
     };
 
-    verifyAdmin();
-  }, []);
-
-  useEffect(() => {
-    if (!isAdmin) return;
-
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(`${backend}/api/events?status=${activeTab}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!response.ok) {
-          if (response.status === 401) {
-            handleTokenExpired();
-          }
-          throw new Error("Error al obtener los eventos");
-        }
-        const data = await response.json();
-        setEventRequests(data);
-      } catch (err) {
-        console.error("Error al cargar eventos:", err);
-      }
-    };
-
-    fetchEvents();
-  }, [activeTab, isAdmin]);
+    checkAdminStatus();
+  }, [navigate, fetchEvents, backend]);
 
   const handleStatusChange = async (eventId) => {
     try {
-      const endpoint = `${backend}/api/events/${eventId}/${modalAction}`;
-      const response = await fetch(endpoint, {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const newStatus = modalAction === "approve" ? "approved" : "rejected";
+
+      const response = await fetch(`${backend}/api/events/${eventId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ justification }),
+        body: JSON.stringify({ 
+          status: newStatus,
+          justification 
+        }),
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          handleTokenExpired();
-          return;
-        }
         throw new Error("Error al actualizar el evento");
       }
 
-      setEventRequests((prev) => prev.filter((event) => event.id !== eventId));
+      const updatedEvent = { ...selectedEvent, status: newStatus, event_admin_msg: justification };
+      
+      setEventRequests(prev => ({
+        ...prev,
+        [activeTab]: prev[activeTab].filter(event => event.id !== eventId),
+        [newStatus]: [...prev[newStatus], updatedEvent]
+      }));
+
       setShowModal(false);
       setJustification("");
     } catch (err) {
@@ -116,7 +147,7 @@ const AdminEventRequests = () => {
   const handleModalOpen = (event, action) => {
     setSelectedEvent(event);
     setModalAction(action);
-    setJustification(event.event_admin_msg || ""); 
+    setJustification(event.event_admin_msg || "");
     setShowModal(true);
   };
 
@@ -185,38 +216,34 @@ const AdminEventRequests = () => {
           <h1 id="admin-title">Gestión de Eventos</h1>
 
           <div className="nav nav-tabs mb-4">
-            <button
-              className={`nav-link ${activeTab === "submitted" ? "active" : ""}`}
-              onClick={() => setActiveTab("submitted")}
-            >
-              Pendientes
-            </button>
-            <button
-              className={`nav-link ${activeTab === "approved" ? "active" : ""}`}
-              onClick={() => setActiveTab("approved")}
-            >
-              Aprobados
-            </button>
-            <button
-              className={`nav-link ${activeTab === "rejected" ? "active" : ""}`}
-              onClick={() => setActiveTab("rejected")}
-            >
-              Rechazados
-            </button>
+            {["submitted", "approved", "rejected"].map(tab => (
+              <button
+                key={tab}
+                className={`nav-link ${activeTab === tab ? "active" : ""}`}
+                onClick={() => setActiveTab(tab)}
+                disabled={tabLoading}
+              >
+                {tab === "submitted" ? "Pendientes" : 
+                 tab === "approved" ? "Aprobados" : "Rechazados"}
+              </button>
+            ))}
           </div>
 
           <div id="admin-cards" className="row justify-content-center">
-            {eventRequests.length === 0 ? (
+            {tabLoading ? (
+              <div className="text-center">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Cargando...</span>
+                </div>
+              </div>
+            ) : eventRequests[activeTab].length === 0 ? (
               <div className="alert alert-info text-center">
                 No hay eventos {" "}
-                {activeTab === "submitted"
-                  ? "pendientes"
-                  : activeTab === "approved"
-                  ? "aprobados"
-                  : "rechazados"}
+                {activeTab === "submitted" ? "pendientes" : 
+                 activeTab === "approved" ? "aprobados" : "rechazados"}
               </div>
             ) : (
-              eventRequests.map((event) => (
+              eventRequests[activeTab].map((event) => (
                 <div key={event.id} className="col-12 col-md-8 col-lg-6 mb-4">
                   <div className="card">
                     <div className="card-body">

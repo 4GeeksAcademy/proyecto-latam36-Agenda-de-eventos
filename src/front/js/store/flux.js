@@ -14,6 +14,8 @@ const getState = ({ getStore, setStore, getActions }) => {
             setToken: (newToken) => {
                 localStorage.setItem("token", newToken);
                 setStore({ token: newToken });
+                // Verificar admin status inmediatamente después de setear el token
+                getActions().checkAdmin();
             },
 
             logout: () => {
@@ -22,61 +24,66 @@ const getState = ({ getStore, setStore, getActions }) => {
             },
 
             verifyToken: async () => {
+                const store = getStore();
                 const { setLoading } = getActions();
-                setLoading(true); 
-                const token = localStorage.getItem("token");
-                if (!token) {
+                
+                if (!store.token) {
                     setStore({ token: null, isAdmin: false });
-                    setLoading(false);
-                    return;
+                    return false;
                 }
 
+                setLoading(true);
+                
                 try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/verify-token", {
-                        method: "GET",
-                        headers: { Authorization: `Bearer ${token}` },
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/users/token/verify", {
+                        headers: { 
+                            Authorization: `Bearer ${store.token}`,
+                            "Content-Type": "application/json"
+                        },
                     });
 
-                    if (resp.ok) {
-                        setStore({ token });
-                    } else {
+                    const isValid = resp.ok;
+                    if (!isValid) {
                         setStore({ token: null, isAdmin: false });
                         localStorage.removeItem("token");
                     }
+                    
+                    return isValid;
                 } catch (error) {
                     console.error("Error verificando el token:", error);
                     setStore({ token: null, isAdmin: false });
                     localStorage.removeItem("token");
+                    return false;
                 } finally {
                     setLoading(false);
                 }
             },
-            
 
             checkAdmin: async () => {
-                const token = getStore().token;
-                if (!token) {
+                const store = getStore();
+                
+                if (!store.token) {
                     setStore({ isAdmin: false });
                     return false;
                 }
 
                 try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/check-admin", {
-                        method: "GET",
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/users/me", {
                         headers: {
-                            Authorization: `Bearer ${token}`,
+                            Authorization: `Bearer ${store.token}`,
                             "Content-Type": "application/json",
                         },
                     });
 
                     if (resp.ok) {
-                        const data = await resp.json();
-                        setStore({ isAdmin: data.is_admin });
-                        return data.is_admin;
-                    } else {
-                        setStore({ isAdmin: false });
-                        return false;
+                        const userData = await resp.json();
+                        const isAdmin = userData.is_admin || false;
+                        setStore({ isAdmin });
+                        return isAdmin;
                     }
+                    
+                    setStore({ isAdmin: false });
+                    return false;
                 } catch (error) {
                     console.error("Error verificando rol de admin:", error);
                     setStore({ isAdmin: false });

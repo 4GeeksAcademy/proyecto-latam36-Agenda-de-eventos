@@ -15,18 +15,11 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 
-# @api.route('/hello', methods=['POST', 'GET'])
-# def handle_hello():
 
-#     response_body = {
-#         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-#     }
-
-#     return jsonify(response_body), 200
-
+# USERS endpoints
 
 # CREATE USER | SIGN-UP
-@api.route('/signup', methods=['POST'])
+@api.route('/users', methods=['POST'])
 def create_user():
     data = request.json
 
@@ -88,11 +81,8 @@ def create_user():
     }), 200
 
 
-
-
-
-# Login route
-@api.route('/login',methods=['POST'])
+# LOGIN
+@api.route('/users/token',methods=['POST'])
 def login():
     data = request.json
     email = data.get("email")
@@ -113,6 +103,58 @@ def login():
     access_token = create_access_token(identity=user.email)
     return jsonify ({'access token':access_token}),200
 
+
+# User Profile view
+@api.route('/users/me', methods=['GET'])
+@jwt_required()
+def profile():
+    email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
+    return jsonify(user.serialize())
+
+
+# TOKEN Verification 
+@api.route('/users/token/verify', methods=['GET'])
+@jwt_required()
+def verify_token():
+    try:
+        current_user_email = get_jwt_identity() 
+        return jsonify({"message": "Token válido", "email": current_user_email}), 200
+    except Exception as e:
+        return jsonify({"error": "Token inválido o expirado", "details": str(e)}), 401
+
+
+# ADMIN Verification
+@api.route('/users/admin/verify', methods=['GET'])
+@jwt_required()
+def check_admin():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    if user and user.has_admin_privileges():
+        return jsonify({"is_admin": True}), 200
+    return jsonify({"is_admin": False}), 403
+
+
+# TEST enpoints
+
+# test route
+@api.route('/test',methods=['GET'])
+def test():
+    password="1234"
+    password_hash= generate_password_hash(password)
+    return jsonify({"Password hash":password_hash}),200
+
+# private test route
+@api.route('/private', methods=['GET'])
+@jwt_required()
+def private():
+    email=get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    return jsonify(user.serialize()),200
+
+
+
+# EVENTS endpoints
 
 # Event creation
 @api.route('/addevent',methods=['POST'])
@@ -202,13 +244,6 @@ def add_event():
 
     return jsonify (serialized_event)
 
-# User Profile view
-@api.route('/profile', methods=['GET'])
-@jwt_required()
-def profile():
-    email=get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
-    return jsonify(user.serialize())
 
 # Single event view
 @api.route('/eventview/<int:id>', methods=['GET'])
@@ -227,49 +262,6 @@ def event_view(id):
     if user_age < 18 and event.age_clasification == "18+":
         return jsonify({"msg":"Event clasified as 18+"})
     return jsonify(event.serialize_media())
-
-
-    
-
-# test route
-@api.route('/test',methods=['GET'])
-def test():
-    password="1234"
-    password_hash= generate_password_hash(password)
-    return jsonify({"Password hash":password_hash}),200
-
-# private test route
-@api.route('/private', methods=['GET'])
-@jwt_required()
-def private():
-    email=get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
-    return jsonify(user.serialize()),200
-
-
-
-# TOKEN Verification 
-@api.route('/verify-token', methods=['GET'])
-@jwt_required()
-def verify_token():
-    try:
-        current_user_email = get_jwt_identity() 
-        return jsonify({"message": "Token válido", "email": current_user_email}), 200
-    except Exception as e:
-        return jsonify({"error": "Token inválido o expirado", "details": str(e)}), 401
-
-
-# ADMIN Verification
-@api.route('/check-admin', methods=['GET'])
-@jwt_required()
-def check_admin():
-    current_user_email = get_jwt_identity()
-    user = User.query.filter_by(email=current_user_email).first()
-    if user and user.has_admin_privileges():
-        return jsonify({"is_admin": True}), 200
-    return jsonify({"is_admin": False}), 403
-
-
 
 
 # Obtener todos los eventos
@@ -370,11 +362,10 @@ def delete_event(event_id):
         return jsonify({"error": str(e)}), 400
 
 
-
-# Aprobación de Evento
-@api.route('/events/<int:event_id>/approve', methods=['PUT'])
+# APROBACION y RECHAZO de Eventos 
+@api.route('/events/<int:event_id>/status', methods=['PUT']) 
 @jwt_required()
-def approve_event(event_id):
+def update_event_status(event_id):
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
 
@@ -386,42 +377,23 @@ def approve_event(event_id):
         return jsonify({"message": "Evento no encontrado"}), 404
 
     data = request.get_json()
+    new_status = data.get("status")
     justification = data.get("justification")
 
-    try:
-        event.status = "approved"
-        event.event_admin_msg = justification 
-        db.session.commit()
-        return jsonify({"message": f"Evento '{event.event_name}' aprobado exitosamente."}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"Error al aprobar el evento: {str(e)}"}), 500
+    if new_status not in ["approved", "rejected"]:
+        return jsonify({"message": "Estado inválido"}), 400
 
-# Rechazo de Evento
-@api.route('/events/<int:event_id>/reject', methods=['PUT'])
-@jwt_required()
-def reject_event(event_id):
-    current_user_email = get_jwt_identity()
-    user = User.query.filter_by(email=current_user_email).first()
-
-    if not user or not user.has_admin_privileges():
-        return jsonify({"message": "Acceso denegado"}), 403
-
-    event = Events.query.get(event_id)
-    if not event:
-        return jsonify({"message": "Evento no encontrado"}), 404
-
-    data = request.get_json()
-    justification = data.get("justification")
-    if not justification or justification.strip() == "":
-        return jsonify({"message": "La justificación es requerida"}), 400
+    if new_status == "rejected" and (not justification or justification.strip() == ""):
+        return jsonify({"message": "La justificación es requerida para rechazar"}), 400
 
     try:
-        event.status = "rejected"
-        event.event_admin_msg = justification.strip()  
+        event.status = new_status
+        event.event_admin_msg = justification.strip() if justification else None
         db.session.commit()
-        return jsonify({"message": f"Evento '{event.event_name}' rechazado con justificación: {justification}"}), 200
+        return jsonify({
+            "message": f"Evento '{event.event_name}' {new_status}",
+            "justification": justification
+        }), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message": f"Error al rechazar el evento: {str(e)}"}), 500
-
+        return jsonify({"message": f"Error al actualizar el estado del evento: {str(e)}"}), 500
