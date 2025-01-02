@@ -10,6 +10,7 @@ const EventsDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -53,9 +54,11 @@ const EventsDetails = () => {
     description,
     date,
     location,
-    price,
+    ticket_price,
     category,
+    age_classification,
     organizer_name,
+    organizer_email,
     media_files,
     contact_info,
     status,
@@ -117,12 +120,15 @@ const EventsDetails = () => {
             <div className="event-info">
               <h5>{location}</h5>
               <p><i className="fas fa-calendar-alt"></i> {new Date(date).toLocaleString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
-              <p className="price">FROM ${price}</p>
+              <p><strong>Categoria : </strong>{category}</p>
+              <p><strong>Clasificación : </strong>{age_classification}</p>
+              <p className="price">$ {ticket_price}</p>
               <button className="btn btn-primary">Buscar tickets</button>
             </div>
             <div className="producer-info">
-              <p>{organizer_name}</p>
-              <p>Productor.</p>
+              <h4 className='fw-bold'>Productor :</h4>
+              <p><strong>Nombre : </strong>{organizer_name}</p>
+              <p><strong>Email : </strong>{organizer_email}</p>
             </div>
             {isAdmin && (
               <div className="admin-buttons mt-3">

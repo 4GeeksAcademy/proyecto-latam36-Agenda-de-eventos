@@ -266,6 +266,9 @@ const AdminEventRequests = () => {
                       <p>
                         <strong>Categoría:</strong> {event.category}
                       </p>
+                      <p>
+                        <strong>Clasificación:</strong> {event.age_classification}
+                      </p>
                       {renderButtons(event)}
                     </div>
                   </div>
