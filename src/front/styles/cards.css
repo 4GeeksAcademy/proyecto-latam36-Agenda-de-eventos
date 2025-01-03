@@ -1,12 +1,12 @@
 .auto-scroll-gallery {
     display: flex;
-    gap: 1rem; /* Espacio entre tarjetas */
+    gap: 4rem; /* Espacio entre tarjetas */
     overflow-x: auto; /*scroll horizontal */
     white-space: nowrap; /* Evita el salto de línea */
     padding: 1rem; /* Espaciado interno */
     scroll-snap-type: x mandatory; /* Habilita snap horizontal */
     width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
-    justify-content: space-between; /* Distribuye las tarjetas en todo el espacio disponible */
+    justify-content: center; /* Distribuye las tarjetas en todo el espacio disponible */
     box-sizing: border-box; /* Asegura que padding/margin no afecten las dimensiones */
   }
   
@@ -29,3 +29,5 @@
     }
   }
   
+
+ 

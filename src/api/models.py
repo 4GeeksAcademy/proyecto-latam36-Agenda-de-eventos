@@ -107,44 +107,34 @@ class Events(db.Model):
         self.status = "submitted"
         self.flyer_img_url = flyer_img_url
 
-    def serialize(self):
-        return{
-            "id":self.id,
-            "event_name":self.event_name,
-            "description":self.event_description,
-            "date":self.event_date,
-            "location": f"{self.event_address}, {self.event_city}, {self.event_country}",
-            "price": self.ticket_price,
+    def serialize(self, include_details=False):
+        base_data = {
+            "id": self.id,
+            "event_name": self.event_name,
+            "description": self.event_description,
+            "date": self.event_date,
+            "start_time": self.event_start_time.strftime("%H:%M:%S") if self.event_start_time else None,
+            "duration": self.event_duration.strftime("%H:%M:%S") if self.event_duration else None,
+            "ticket_price": self.ticket_price,
             "category": self.event_category,
-            "user_id": self.organizer_user_id,
-            "organizer_email": self.user.email if self.user else None,
-            "status":self.status,
-            "event_admin_msg": self.event_admin_msg
-            }
-
-    def serialize_media(self):
-        media_list=[]
-        for media_item in self.media:
-            media_list.append(media_item.serialize())
-
-        contact_list=[]
-        for contact_item in self.contact_info:
-            contact_list.append(contact_item.serialize())
-    
-        return{
-            "event_name":self.event_name,
-            "description":self.event_description,
-            "date":self.event_date,
-            "address":self.event_address,
-            "city":self.event_city,
-            "country":self.event_country,
+            "age_classification": self.age_clasification,
+            "status": self.status,
+            "flyer_img_url": self.flyer_img_url,
+            "event_admin_msg": self.event_admin_msg,
+            "location": f"{self.event_address}, {self.event_city}, {self.event_country}",
             "organizer_id": self.organizer_user_id,
-            "organizer_name":self.user.first_name,
-            "status":self.status,
-            "ticket_price":self.ticket_price,
-            "media_files":media_list,
-            "contact_info":contact_list
+            "organizer_name": self.user.first_name if self.user else None,
+            "organizer_email": self.user.email if self.user else None,
         }
+
+        if include_details:
+            base_data.update({
+                "media_files": [media.serialize() for media in self.media],
+                "contact_info": [contact.serialize() for contact in self.contact_info],
+            })
+
+        return base_data
+
 
 class EventMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)

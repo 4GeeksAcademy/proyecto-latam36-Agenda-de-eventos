@@ -1,57 +1,96 @@
-const getState = ({ getStore, getActions, setStore }) => {
-	return {
-		store: {
-			token: localStorage.getItem("token") || null, 
-			isAdmin: false,
-		},
+const getState = ({ getStore, setStore, getActions }) => {
+    return {
+        store: {
+            token: localStorage.getItem("token") || null,
+            isAdmin: false,
+            loading: false,
+        },
 
-		actions: {
-			setToken: (newToken) => {
-				localStorage.setItem("token", newToken);
-				setStore({ token: newToken });
-			},
+        actions: {
+            setLoading: (isLoading) => {
+                setStore({ loading: isLoading });
+            },
 
-			logout: () => {
-				setStore({ token: null, isAdmin: false });
-				localStorage.removeItem("token");
-			},
+            setToken: (newToken) => {
+                localStorage.setItem("token", newToken);
+                setStore({ token: newToken });
+                getActions().checkAdmin();
+            },
 
-			checkAdmin: async () => {
-				const token = getStore().token || localStorage.getItem("token");
-				if (!token) {
-					console.error("No hay token para verificar rol de administrador.");
-					if (getStore().isAdmin !== false) setStore({ isAdmin: false });
-					return false;
-				}
-			
-				try {
-					const resp = await fetch(process.env.BACKEND_URL + "/api/check-admin", {
-						method: "GET",
-						headers: {
-							Authorization: `Bearer ${token}`,
-							"Content-Type": "application/json",
-						},
-					});
-			
-					if (resp.ok) {
-						const data = await resp.json();
-						if (getStore().isAdmin !== data.is_admin) {
-							setStore({ isAdmin: data.is_admin });
-						}
-						return data.is_admin;
-					} else {
-						if (getStore().isAdmin !== false) setStore({ isAdmin: false });
-						return false;
-					}
-				} catch (error) {
-					console.error("Error verificando rol de admin:", error);
-					if (getStore().isAdmin !== false) setStore({ isAdmin: false });
-					return false;
-				}
-			}
-			
-		},
-	};
+            logout: () => {
+                setStore({ token: null, isAdmin: false });
+                localStorage.removeItem("token");
+            },
+
+            verifyToken: async () => {
+                const store = getStore();
+                const { setLoading } = getActions();
+                
+                if (!store.token) {
+                    setStore({ token: null, isAdmin: false });
+                    return false;
+                }
+
+                setLoading(true);
+                
+                try {
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/users/token/verify", {
+                        headers: { 
+                            Authorization: `Bearer ${store.token}`,
+                            "Content-Type": "application/json"
+                        },
+                    });
+
+                    const isValid = resp.ok;
+                    if (!isValid) {
+                        setStore({ token: null, isAdmin: false });
+                        localStorage.removeItem("token");
+                    }
+                    
+                    return isValid;
+                } catch (error) {
+                    console.error("Error verificando el token:", error);
+                    setStore({ token: null, isAdmin: false });
+                    localStorage.removeItem("token");
+                    return false;
+                } finally {
+                    setLoading(false);
+                }
+            },
+
+            checkAdmin: async () => {
+                const store = getStore();
+                
+                if (!store.token) {
+                    setStore({ isAdmin: false });
+                    return false;
+                }
+
+                try {
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/users/me", {
+                        headers: {
+                            Authorization: `Bearer ${store.token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    if (resp.ok) {
+                        const userData = await resp.json();
+                        const isAdmin = userData.is_admin || false;
+                        setStore({ isAdmin });
+                        return isAdmin;
+                    }
+                    
+                    setStore({ isAdmin: false });
+                    return false;
+                } catch (error) {
+                    console.error("Error verificando rol de admin:", error);
+                    setStore({ isAdmin: false });
+                    return false;
+                }
+            },
+        },
+    };
 };
 
 export default getState;

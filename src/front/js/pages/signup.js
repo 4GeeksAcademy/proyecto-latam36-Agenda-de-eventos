@@ -48,7 +48,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch(backend+'/api/signup', 
+      const response = await fetch(backend+'/api/users', 
         {
           method: 'POST',
           headers: {
@@ -83,33 +83,34 @@ function Signup() {
   };
 
   return (
-    <div className="container-fluid vh-100">
-        <div className="row h-100">
-            <div className="col-md-6 d-flex justify-content-center align-items-center bg-light">
-                <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
-                    <div className="mb-3">
-                        <Link className="navbar-brand d-block" to="/" style={{ width: '100%' }}>
-                            <img
-                                className="object-cover object-center"
-                                style={{ width: '160px' }}
-                                src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
-                                alt="logo-culturalWave"
-                            />
-                        </Link>
-                      </div>
-                    <h3 className="text-center fw-bold">Registrarse</h3>
-                    <form onSubmit={handleSubmit}>
-                        {errorMessage && (
-                            <div className="alert alert-danger" role="alert">
-                                {errorMessage}
-                            </div>
-                        )}
-                        {successMessage && (
-                            <div className="alert alert-success" role="alert">
-                                {successMessage}
-                            </div>
-                        )}
-                        <div className="mb-3">
+    <div className="container-fluid vh-100 d-flex flex-column">
+    <div className="row h-100">
+        <div className="col-md-6 d-flex justify-content-center align-items-center">
+            <div className="Signup card p-4" style={{ maxWidth: '600px', width: '100%' }}>
+                <div className="mb-3">
+                    <Link className="navbar-brand d-block" to="/" style={{ width: '100%' }}>
+                        <img
+                            className="object-cover object-center"
+                            style={{ width: '160px' }}
+                            src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
+                            alt="logo-culturalWave"
+                        />
+                    </Link>
+                </div>
+                <h3 className="text-center fw-bold">Registrarse</h3>
+                <form onSubmit={handleSubmit}>
+                    {errorMessage && (
+                        <div className="alert alert-danger" role="alert">
+                            {errorMessage}
+                        </div>
+                    )}
+                    {successMessage && (
+                        <div className="alert alert-success" role="alert">
+                            {successMessage}
+                        </div>
+                    )}
+                    <div className="row">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-firstname" className="form-label">Nombre</label>
                             <input
                                 type="text"
@@ -121,7 +122,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-lastname" className="form-label">Apellido</label>
                             <input
                                 type="text"
@@ -133,7 +134,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-email" className="form-label">Correo Electrónico</label>
                             <input
                                 type="email"
@@ -145,7 +146,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-password" className="form-label">Contraseña</label>
                             <input
                                 type="password"
@@ -157,7 +158,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-confirm-password" className="form-label">Confirmar Contraseña</label>
                             <input
                                 type="password"
@@ -169,7 +170,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-gender" className="form-label">Género</label>
                             <select
                                 className="form-select"
@@ -184,7 +185,7 @@ function Signup() {
                                 <option value="Other">Otro</option>
                             </select>
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-country" className="form-label">País</label>
                             <input
                                 type="text"
@@ -196,7 +197,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 col-md-6 mb-3">
                             <label htmlFor="signup-city" className="form-label">Ciudad</label>
                             <input
                                 type="text"
@@ -208,7 +209,7 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="mb-3">
+                        <div className="col-12 mb-3">
                             <label htmlFor="signup-birthdate" className="form-label">Fecha de Nacimiento</label>
                             <input
                                 type="date"
@@ -219,38 +220,44 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <div className="form-check">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="signup-terms"
-                                onChange={(e) => setTermsAccepted(e.target.checked)}
-                            />
-                            <label className="form-check-label" htmlFor="signup-terms">
-                                Acepto los <a href="/privacy-policy">Términos y Condiciones</a>
-                            </label>
-                        </div>
-                        <div className="d-grid mt-3">
-                            <button type="submit" className="btn btn-dark rounded-pill">Registrarme</button>
-                        </div>
-                    </form>
-                    <div className="text-center mt-3">
-                        <span>¿Ya tienes una cuenta?</span>
-                        <Link className="navbar-brand fs-6" to="/login"> Inicia Sesión</Link>
                     </div>
+                    <div className="form-check mb-3">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="signup-terms"
+                            checked={termsAccepted}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                        />
+                        <label className="form-check-label" htmlFor="signup-terms">
+                            Acepto los términos y condiciones
+                        </label>
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">
+                        Registrarse
+                    </button>
+                </form>
+                <div className="text-center mt-3">
+                    <span>¿Ya tienes una cuenta?</span>
+                    <Link className="navbar-brand fs-6" to="/login"> Inicia Sesión </Link>
                 </div>
             </div>
-            <div
-                className="col-md-6 d-none d-md-block"
-                style={{
-                    backgroundImage: 'url(https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/j6y49ciylsfqym1mg34k)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                }}
-            ></div>
         </div>
+        <div
+            className="col-md-6 d-none d-md-block"
+            style={{
+                backgroundImage: 'url(https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/j6y49ciylsfqym1mg34k)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+        ></div>
     </div>
+</div>
+
 );
 }
 
 export default Signup;
+
+
+
