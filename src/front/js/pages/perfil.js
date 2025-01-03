@@ -7,10 +7,13 @@ const Perfil = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Definir la URL del backend usando variables de entorno o `window.location.hostname`
+    const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
+
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await fetch('https://friendly-guide-7vw74rjq96jhwpgr-3001.app.github.dev/api/users/me', {
+                const response = await fetch(`${backend}/api/users/me`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -32,7 +35,7 @@ const Perfil = () => {
         };
 
         fetchProfile();
-    }, []);
+    }, [backend]);
 
     if (loading) {
         return <p>Cargando perfil...</p>;
