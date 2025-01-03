@@ -87,11 +87,11 @@ const AdminEventRequests = () => {
         if (userData.is_admin) {
           await Promise.all([fetchEvents("submitted"), fetchEvents("approved"), fetchEvents("rejected")]);
         } else {
-          navigate("/");
+          navigate("/login");
         }
       } catch (error) {
         console.error("Error:", error);
-        navigate("/");
+        navigate("/login");
       } finally {
         setIsLoading(false);
       }
