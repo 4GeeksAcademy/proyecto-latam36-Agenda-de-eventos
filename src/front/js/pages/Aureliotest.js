@@ -19,7 +19,7 @@ const ImageUpload = () => {
             console.log(`${pair[0]}: ${pair[1]}`);
           }
         
-        const response = await fetch(backend+"/api/imageloader", {
+        const response = await fetch(backend+"/api/image", {
             method: 'POST',
             body: formData, // Use the FormData object as the body
             headers: {
