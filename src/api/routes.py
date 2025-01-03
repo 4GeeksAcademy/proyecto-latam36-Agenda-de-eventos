@@ -9,6 +9,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import date, datetime
 
+import os
+import inspect
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config( 
+  cloud_name = "dxweetk1w", 
+  api_key = "932178836968972", 
+  api_secret = "4tMaS9oNlEtDYSgEcQ7Z7XwFhA4",
+  secure = True
+)
+
+from cloudinary import CloudinaryImage
+from cloudinary import CloudinaryVideo
+
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
@@ -414,3 +430,31 @@ def reject_event(event_id):
         db.session.rollback()
         return jsonify({"message": f"Error al rechazar el evento: {str(e)}"}), 500
 
+
+@api.route('/image', methods=['POST'])
+def upload_file():
+    upload_folder = 'src/api/uploads'
+    print("these are the request attributes:",dir(request.files))
+    print("this is the id field:",request.values['eventid'])
+    if 'file' not in request.files:
+        return jsonify ({"msg":"No file part in the request"})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify ({"msg":"No selected file"})
+    if file:
+        # Save the file to the configured upload folder
+        file.save(f"{upload_folder}/{file.filename}")
+
+    file_path = f"{upload_folder}/{file.filename}"
+    response = cloudinary.uploader.upload(f"{upload_folder}/{file.filename}")
+    print('this is cloudinary response:',response)
+    print("this is the file directory:",os.getcwd())
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file_path}' has been deleted.")
+        else:
+            print(f"File '{file_path}' does not exist.")
+    except Exception as e:
+        print(f"An error occurred: {e}") 
+    return f"File '{file.filename}' uploaded successfully!"
