@@ -401,9 +401,12 @@ def update_event_status(event_id):
 
 @api.route('/image', methods=['POST'])
 def upload_file():
+    user = request.args.get('user')
+    flyer = request.args.get('flyer')
+    img = request.args.get('img')
+
     upload_folder = 'src/api/uploads'
-    print("these are the request attributes:",dir(request.files))
-    print("this is the id field:",request.values['eventid'])
+
     if 'file' not in request.files:
         return jsonify ({"msg":"No file part in the request"})
     file = request.files['file']
@@ -414,8 +417,9 @@ def upload_file():
         file.save(f"{upload_folder}/{file.filename}")
 
     file_path = f"{upload_folder}/{file.filename}"
-    response = cloudinary.uploader.upload(f"{upload_folder}/{file.filename}")
-    print('this is cloudinary response:',response)
+    response = cloudinary.uploader.upload(file_path)
+
+    print('this is cloudinary response url:',response['url'])
     print("this is the file directory:",os.getcwd())
     try:
         if os.path.exists(file_path):
@@ -424,5 +428,21 @@ def upload_file():
         else:
             print(f"File '{file_path}' does not exist.")
     except Exception as e:
-        print(f"An error occurred: {e}") 
-    return f"File '{file.filename}' uploaded successfully!"
+        print(f"An error occurred: {e}")
+
+
+    if user!=None : 
+        print("user id:",user)
+        return jsonify({'msg':'user received'}),200
+    if flyer !=None :
+        print("flyer event id:",flyer)
+        return jsonify({'msg':'flyer received'}),200
+    if img !=None :
+        print("img event id:",img)
+        return jsonify({'msg':'img received'}),200
+    
+    #print("these are the request attributes:",dir(request.files))
+    #print("this is the id field:",request.values['eventid'])
+    
+     
+    return jsonify ({'url':response['url']}),200

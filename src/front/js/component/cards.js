@@ -5,6 +5,8 @@ const AutoScrollGallery = () => {
   const [events, setEvents] = useState([]); // State to hold events data
   const [error, setError] = useState(null); // State to handle errors
 
+  const backend = process.env.BACKEND_URL;
+
   // Fetch events from the API
   useEffect(() => {
     const fetchEvents = async () => {
@@ -16,7 +18,7 @@ const AutoScrollGallery = () => {
         }
 
         const response = await fetch(
-          "https://friendly-guide-7vw74rjq96jhwpgr-3001.app.github.dev/api/events",
+          `${backend}/api/events`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

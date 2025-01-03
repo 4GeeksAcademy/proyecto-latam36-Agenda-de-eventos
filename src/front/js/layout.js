@@ -16,7 +16,7 @@ import EventsForm from "./pages/EventsForm"
 import EventsDetails from "./pages/EventsDetails"
 import AdminEventRequests from "./pages/AdminEventRequests"
 import Perfil from "./pages/perfil";
-import ImageUpload from "./pages/Aureliotest";
+import ImageUpload from "./pages/ImageTestForm.js";
 
 
 //create your first component
