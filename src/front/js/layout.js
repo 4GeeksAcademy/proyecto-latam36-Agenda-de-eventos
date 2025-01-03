@@ -5,8 +5,8 @@ import { BackendURL } from "./component/backendURL";
 
 import injectContext from "./store/appContext";
 
-import Breadcrumbs from "./component/Breadcrumbs.jsx";
-import Navbar from "./component/navbar";
+// import Breadcrumbs from "./component/Breadcrumbs.jsx";
+// import Navbar from "./component/navbar";
 import Footer from "./component/footer";
 
 import Home from "./pages/home";
