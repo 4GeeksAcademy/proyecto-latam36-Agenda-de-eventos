@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/cards.css"; // Import the necessary styles
+import "../../styles/cards.css"; 
 
 const AutoScrollGallery = () => {
-  const [events, setEvents] = useState([]); // State to hold events data
-  const [error, setError] = useState(null); // State to handle errors
+  const [events, setEvents] = useState([]); 
+  const [error, setError] = useState(null); 
 
-  // Fetch events from the API
+ 
+  const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -15,30 +17,29 @@ const AutoScrollGallery = () => {
           throw new Error("JWT token is missing. Please log in.");
         }
 
-        const response = await fetch(
-          "https://friendly-guide-7vw74rjq96jhwpgr-3001.app.github.dev/api/events",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const API_BASE_URL = `${backend}/api/events`;
 
-        console.log("API Response Status:", response.status); // Log the HTTP status code
-        console.log("API Response Headers:", response.headers); // Log response headers
+        const response = await fetch(API_BASE_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("API Response Status:", response.status);
+        console.log("API Response Headers:", response.headers);
 
         if (!response.ok) {
           const errorData = await response.json();
-          console.log("API Error Details:", errorData); // Log detailed server error
+          console.log("API Error Details:", errorData);
           throw new Error(errorData.message || "Unknown error occurred");
         }
 
         const data = await response.json();
-        console.log("Fetched Events Data:", data); // Log the successfully fetched events
+        console.log("Fetched Events Data:", data);
         setEvents(data);
       } catch (err) {
-        console.error("Error occurred during fetch:", err.message); // Log any error that occurs
+        console.error("Error occurred during fetch:", err.message);
         setError(err.message);
       }
     };
