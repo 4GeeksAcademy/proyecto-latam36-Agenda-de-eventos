@@ -4,6 +4,7 @@ import "../../styles/cards.css"; // Import the necessary styles
 const AutoScrollGallery = () => {
   const [events, setEvents] = useState([]); // State to hold events data
   const [error, setError] = useState(null); // State to handle errors
+  const backend = process.env.BACKEND_URL;
 
   // Fetch events from the API
   useEffect(() => {
@@ -15,8 +16,7 @@ const AutoScrollGallery = () => {
           throw new Error("JWT token is missing. Please log in.");
         }
 
-        const response = await fetch(
-          "https://friendly-guide-7vw74rjq96jhwpgr-3001.app.github.dev/api/events",
+        const response = await fetch(`${backend}/api/events`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
