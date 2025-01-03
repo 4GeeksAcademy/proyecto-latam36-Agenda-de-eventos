@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Navbar.css";
@@ -8,17 +8,9 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const initialize = async () => {
-            if (!store.token) {
-                await actions.verifyToken();
-            }
-
-            if (store.token && store.isAdmin === false) {
-                await actions.checkAdmin();
-            }
-        };
-
-        initialize();
+        if (store.token && !store.isAdmin) {
+            actions.checkAdmin();
+        }
     }, []);
 
     const handleLogout = () => {
@@ -53,61 +45,49 @@ const Navbar = () => {
                 </button>
 
                 <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Conciertos
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Teatro
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Museos
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Familia
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Turismo
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Vida Nocturna
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Infantil
-                            </a>
-                        </li>
-
-                        {/* Link al perfil visible para cualquier usuario logueado */}
-                        {store.token && (
+                    {store.loading ? (
+                        <div className="spinner-border text-light" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    ) : (
+                        <ul className="navbar-nav">
                             <li className="nav-item">
-                                <Link className="nav-link user-link" to="/perfil">
-                                    Perfil
-                                </Link>
+                                <a className="nav-link" href="#">Conciertos</a>
                             </li>
-                        )}
-
-                        {/* Link solo visible para admin */}
-                        {store.isAdmin && (
                             <li className="nav-item">
-                                <Link className="nav-link admin-link" to="/admineventrequests">
-                                    Panel Admin
-                                </Link>
+                                <a className="nav-link" href="#">Teatro</a>
                             </li>
-                        )}
-                    </ul>
+                            <li className="nav-item">
+                                <a className="nav-link" href="#">Museos</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="#">Familia</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="#">Turismo</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="#">Vida Nocturna</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="#">Infantil</a>
+                            </li>
+                            {store.token && (
+                                <li className="nav-item">
+                                    <Link className="nav-link user-link" to="/perfil">
+                                        Perfil
+                                    </Link>
+                                </li>
+                            )}
+                            {store.isAdmin && (
+                                <li className="nav-item">
+                                    <Link className="nav-link admin-link" to="/admineventrequests">
+                                        Panel Admin
+                                    </Link>
+                                </li>
+                            )}
+                        </ul>
+                    )}
                 </div>
 
                 <div className="d-flex align-items-center">
