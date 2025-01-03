@@ -26,18 +26,36 @@ const AutoScrollGallery = () => {
           },
         });
 
-        console.log("API Response Status:", response.status);
-        console.log("API Response Headers:", response.headers);
-
         if (!response.ok) {
           const errorData = await response.json();
-          console.log("API Error Details:", errorData);
           throw new Error(errorData.message || "Unknown error occurred");
         }
 
-        const data = await response.json();
-        console.log("Fetched Events Data:", data);
-        setEvents(data);
+        const eventsData = await response.json();
+
+        // Hacer solicitudes adicionales para obtener más imágenes con `?details=true`
+        const detailedEvents = await Promise.all(
+          eventsData.map(async (event) => {
+            const detailsResponse = await fetch(
+              `${backend}/api/events/${event.id}?details=true`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (detailsResponse.ok) {
+              const detailsData = await detailsResponse.json();
+              return { ...event, additionalImages: detailsData.images || [] };
+            } else {
+              return { ...event, additionalImages: [] };
+            }
+          })
+        );
+
+        setEvents(detailedEvents);
       } catch (err) {
         console.error("Error occurred during fetch:", err.message);
         setError(err.message);
@@ -57,11 +75,7 @@ const AutoScrollGallery = () => {
       ) : (
         <div className="auto-scroll-gallery">
           {events.map((event) => (
-            <a
-              key={event.id}
-              href="#"
-              className="card text-decoration-none text-muted"
-            >
+            <div key={event.id} className="card text-decoration-none text-muted">
               <img
                 src={event.flyer_img_url}
                 className="card-img-top"
@@ -73,8 +87,19 @@ const AutoScrollGallery = () => {
                 <p className="card-text text-wrap">
                   {event.description || "No description available"}
                 </p>
+                {/* Mostrar imágenes adicionales si están disponibles */}
+                <div className="additional-images">
+                  {event.additionalImages.map((imgUrl, index) => (
+                    <img
+                      key={index}
+                      src={imgUrl}
+                      alt={`Additional image ${index}`}
+                      style={{ width: "100px", height: "100px", margin: "5px", objectFit: "cover" }}
+                    />
+                  ))}
+                </div>
               </div>
-            </a>
+            </div>
           ))}
         </div>
       )}
