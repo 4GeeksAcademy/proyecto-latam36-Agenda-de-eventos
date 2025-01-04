@@ -72,10 +72,9 @@ const AutoScrollGallery = () => {
               src={event.flyer_img_url}
               className="card-img-top"
               alt={event.event_name}
-              style={{ height: "200px", objectFit: "cover" }}
+              style={{ height: "300px", objectFit: "cover" }}
             />
             
-            {/* Contenido de la tarjeta */}
             <div className="card-body d-flex flex-column justify-content-between">
   <div>
     {/* Título del evento */}
@@ -88,7 +87,7 @@ const AutoScrollGallery = () => {
   {/* Fecha del evento */}
   <div
     style={{
-      alignSelf: "flex-end", // Asegura que la fecha esté en la esquina inferior derecha
+      alignSelf: "flex-end", 
       backgroundColor: "#f8f9fa",
       padding: "5px 10px",
       borderRadius: "8px",

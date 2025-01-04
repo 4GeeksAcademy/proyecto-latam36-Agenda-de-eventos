@@ -13,7 +13,7 @@
   .auto-scroll-gallery .card {
     flex: 0 0 auto; /* Evita que las tarjetas se expandan o reduzcan */
     width: calc((100% - (4 * 1rem)) / 5); /* Ajusta el ancho según el número de tarjetas y el gap */
-    max-width: 18rem; /* Limita el ancho máximo de las tarjetas */
+    max-width: 25rem; /* Limita el ancho máximo de las tarjetas */
     scroll-snap-align: start; /* Alinea las tarjetas al inicio */
   }
   
