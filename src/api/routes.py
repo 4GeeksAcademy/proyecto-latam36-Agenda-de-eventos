@@ -399,6 +399,10 @@ def update_event_status(event_id):
         db.session.rollback()
         return jsonify({"message": f"Error al actualizar el estado del evento: {str(e)}"}), 500
 
+
+
+# RESOURCES endpoints
+
 @api.route('/image', methods=['POST'])
 def upload_file():
     user = request.args.get('user')
