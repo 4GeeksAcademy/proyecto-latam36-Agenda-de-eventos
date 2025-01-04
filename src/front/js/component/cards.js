@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/cards.css"; 
+import "../../styles/cards.css";
+import { useNavigate } from "react-router-dom";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const AutoScrollGallery = () => {
-  const [events, setEvents] = useState([]); 
-  const [error, setError] = useState(null); 
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Definir la URL del backend usando variables de entorno o `window.location.hostname`
+  const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
   useEffect(() => {
@@ -14,10 +16,10 @@ const AutoScrollGallery = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          throw new Error("JWT token is missing. Please log in.");
+          throw new Error("Inicia Sesión para ver los Eventos");
         }
 
-        const API_BASE_URL = `${backend}/api/events`;
+        const API_BASE_URL = `${backend}/api/events?status=approved`;
 
         const response = await fetch(API_BASE_URL, {
           headers: {
@@ -33,29 +35,9 @@ const AutoScrollGallery = () => {
 
         const eventsData = await response.json();
 
-        // Hacer solicitudes adicionales para obtener más imágenes con `?details=true`
-        const detailedEvents = await Promise.all(
-          eventsData.map(async (event) => {
-            const detailsResponse = await fetch(
-              `${backend}/api/events/${event.id}?details=true`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-
-            if (detailsResponse.ok) {
-              const detailsData = await detailsResponse.json();
-              return { ...event, additionalImages: detailsData.images || [] };
-            } else {
-              return { ...event, additionalImages: [] };
-            }
-          })
-        );
-
-        setEvents(detailedEvents);
+        // Ordenar eventos por fecha de evento (más cercana primero)
+        const sortedEvents = eventsData.sort((a, b) => new Date(a.date) - new Date(b.date));
+        setEvents(sortedEvents);
       } catch (err) {
         console.error("Error occurred during fetch:", err.message);
         setError(err.message);
@@ -65,46 +47,71 @@ const AutoScrollGallery = () => {
     fetchEvents();
   }, []);
 
+  const handleCardClick = (eventId) => {
+    navigate(`/EventsDetails/${eventId}`);
+  };
+
   return (
-    <div className="container-fluid">
-      <h1 className="mb-5 ml-4">Eventos cerca de ti</h1>
-      {error ? (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      ) : (
-        <div className="auto-scroll-gallery">
-          {events.map((event) => (
-            <div key={event.id} className="card text-decoration-none text-muted">
-              <img
-                src={event.flyer_img_url}
-                className="card-img-top"
-                alt={event.event_name}
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="card-body">
-                <h5 className="card-title text-wrap">{event.event_name}</h5>
-                <p className="card-text text-wrap">
-                  {event.description || "No description available"}
-                </p>
-                {/* Mostrar imágenes adicionales si están disponibles */}
-                <div className="additional-images">
-                  {event.additionalImages.map((imgUrl, index) => (
-                    <img
-                      key={index}
-                      src={imgUrl}
-                      alt={`Additional image ${index}`}
-                      style={{ width: "100px", height: "100px", margin: "5px", objectFit: "cover" }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  <div className="container-fluid">
+    <h1 className="mb-5 ml-4">Próximos Eventos</h1>
+    {error ? (
+      <div className="alert alert-danger" role="alert">
+        {error}
+      </div>
+    ) : (
+      <div className="auto-scroll-gallery">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className="card text-decoration-none text-muted"
+            onClick={() => handleCardClick(event.id)}
+            style={{ cursor: "pointer", position: "relative" }}
+          >
+            {/* Imagen del evento */}
+            <img
+              src={event.flyer_img_url}
+              className="card-img-top"
+              alt={event.event_name}
+              style={{ height: "200px", objectFit: "cover" }}
+            />
+            
+            {/* Contenido de la tarjeta */}
+            <div className="card-body d-flex flex-column justify-content-between">
+  <div>
+    {/* Título del evento */}
+    <h5 className="card-title text-wrap">{event.event_name}</h5>
+    {/* Descripción del evento */}
+    <p className="card-text text-wrap">
+      {event.description || "No description available"}
+    </p>
+  </div>
+  {/* Fecha del evento */}
+  <div
+    style={{
+      alignSelf: "flex-end", // Asegura que la fecha esté en la esquina inferior derecha
+      backgroundColor: "#f8f9fa",
+      padding: "5px 10px",
+      borderRadius: "8px",
+      textAlign: "center",
+      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+      marginTop: "10px", // Espacio con respecto al texto
+    }}
+  >
+    <small style={{ fontSize: "10px" }}>
+      {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
+    </small>
+    <br />
+    <strong style={{ fontSize: "16px" }}>{new Date(event.date).getDate()}</strong>
+  </div>
+</div>
+
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default AutoScrollGallery;
