@@ -2,6 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
+from flask_sqlalchemy import SQLAlchemy
+
 from api.models import db, User, Events, EventMedia, ContactInfo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -423,7 +425,7 @@ def upload_file():
     file_path = f"{upload_folder}/{file.filename}"
     response = cloudinary.uploader.upload(file_path)
 
-    print('this is cloudinary response url:',response['url'])
+    print('this is cloudinary response url:',response)
     print("this is the file directory:",os.getcwd())
     try:
         if os.path.exists(file_path):
@@ -436,17 +438,70 @@ def upload_file():
 
 
     if user!=None : 
-        print("user id:",user)
-        return jsonify({'msg':'user received'}),200
+        user = User.query.filter_by(id=user).first()
+        
+        if user== None :
+            return jsonify({'msg':'invalid user id'}),400
+        
+        user.profile_image=response['url']
+        try:
+            db.session.commit()
+            return jsonify({'msg':'profile picture updated',
+                            'user_id':user.id, 
+                            'url':response['url'],
+                            'format':response['format'],
+                            'resource_type':response['resource_type']}),200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify ({'msg':'An error occurred: {e}'}), 500
+        
     if flyer !=None :
         print("flyer event id:",flyer)
-        return jsonify({'msg':'flyer received'}),200
+        event=Events.query.filter_by(id=flyer).first()
+
+        if event== None :
+            return jsonify({'msg':'invalid event id'}),400
+
+        event.flyer_img_url=response['url']
+        try:
+            db.session.commit()
+            return jsonify({'msg':'event flyer uploaded ', 
+                        'url':response['url'],
+                        'format':response['format'],
+                        'resource_type':response['resource_type']}),200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify ({'msg':'An error occurred: {e}'}), 500
+        
     if img !=None :
         print("img event id:",img)
-        return jsonify({'msg':'img received'}),200
-    
-    #print("these are the request attributes:",dir(request.files))
-    #print("this is the id field:",request.values['eventid'])
-    
+        event=Events.query.filter_by(id=img).first()
+
+        if event== None :
+            return jsonify({'msg':'invalid event id'}),400
+
+        media_type=response['format']
+        media_url=response['url']
+        event_id=event.id
+
+        new_media=EventMedia(
+            media_type=media_type,
+            media_url=media_url,
+            event_id=event_id
+        )
+
+        try:
+            db.session.add(new_media)
+            db.session.commit()
+            return jsonify({'msg':'event media uploaded ',
+                            'event_id': event_id, 
+                            'url':response['url'],
+                            'format':response['format'],
+                            'resource_type':response['resource_type']}),200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify ({'msg':'An error occurred: {e}'}), 500
      
-    return jsonify ({'url':response['url']}),200
+    return jsonify ({'media url':response['url'],
+                     'format':response['format'],
+                     'resource_type':response['resource_type']}),200

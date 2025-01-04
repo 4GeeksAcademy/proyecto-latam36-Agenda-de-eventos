@@ -37,8 +37,8 @@ const ImageUpload = () => {
             },
           })
           if (response.status==200){
-            let imgUrl=await response.json();
-            let alertmessage="Image uploaded succesfully:"+imgUrl["url"];
+            let mediaResponse=await response.json();
+            let alertmessage=mediaResponse['msg']+" img url:"+mediaResponse["url"]+" media format:"+mediaResponse['format']+" media type:"+mediaResponse['resource_type'];
             alert(alertmessage);
             navigate("/");
           }
