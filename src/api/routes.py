@@ -403,6 +403,31 @@ def update_event_status(event_id):
 
 
 
+# Filtrar eventos por país y categoría
+@api.route('/events/filter', methods=['GET'])
+def filter_events():
+    country = request.args.get('country')
+    category = request.args.get('category')
+
+    try:
+        query = Events.query
+
+        if country:
+            query = query.filter_by(event_country=country)
+
+        if category:
+            query = query.filter_by(event_category=category)
+
+        events = query.all()
+        return jsonify([event.serialize() for event in events]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+
+
 # RESOURCES endpoints
 
 @api.route('/image', methods=['POST'])

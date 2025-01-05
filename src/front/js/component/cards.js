@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../../styles/cards.css";
 import { useNavigate } from "react-router-dom";
-import { FaCalendarAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 
-const AutoScrollGallery = () => {
+const AutoScrollGallery = ({ filters }) => {
   const [events, setEvents] = useState([]);
-  const [visibleEvents, setVisibleEvents] = useState([]); 
+  const [visibleEvents, setVisibleEvents] = useState([]);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -32,13 +32,28 @@ const AutoScrollGallery = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        let API_BASE_URL = `${backend}/api/events`;
+
         const token = localStorage.getItem("token");
 
         if (!token) {
           throw new Error("Inicia Sesión para ver los Eventos");
         }
 
-        const API_BASE_URL = `${backend}/api/events?status=approved`;
+        if (filters) {
+          API_BASE_URL = `${backend}/api/events/filter?`;
+          if (filters.country) {
+            API_BASE_URL += `country=${filters.country}&`;
+          }
+          if (filters.category && filters.category !== "Todos") {
+            API_BASE_URL += `category=${filters.category}&`;
+          }
+          if (filters.isOnline !== null) {
+            API_BASE_URL += `isOnline=${filters.isOnline}&`;
+          }
+        } else if (userCountry) {
+          API_BASE_URL = `${backend}/api/events/filter?country=${userCountry}`;
+        }
 
         const response = await fetch(API_BASE_URL, {
           headers: {
@@ -53,20 +68,7 @@ const AutoScrollGallery = () => {
         }
 
         const eventsData = await response.json();
-
-        // Filtrar los eventos por país si userCountry está disponible
-        const filteredEvents = userCountry
-          ? eventsData.filter(event => {
-              const eventCountry = event.location.split(",").pop().trim();
-              return eventCountry === userCountry;
-            })
-          : eventsData;
-
-        const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-        setEvents(sortedEvents);
-
-        setVisibleEvents(sortedEvents);
-        setShowEvents(true); 
+        setEvents(eventsData);
       } catch (err) {
         console.error("Error occurred during fetch:", err.message);
         setError(err.message);
@@ -76,7 +78,35 @@ const AutoScrollGallery = () => {
     };
 
     fetchEvents();
-  }, [userCountry]);
+  }, [filters, userCountry]);
+
+  useEffect(() => {
+    const filterAndSortEvents = () => {
+      let filteredEvents = events;
+
+      const country = filters?.country || userCountry;
+      if (country) {
+        filteredEvents = filteredEvents.filter(event => {
+          const eventCountry = event.location.split(",").pop().trim();
+          return eventCountry === country;
+        });
+      }
+
+      if (filters?.category && filters.category !== "Todos") {
+        filteredEvents = filteredEvents.filter(event => event.category === filters.category);
+      }
+
+      if (filters?.isOnline !== null) {
+        filteredEvents = filteredEvents.filter(event => event.isOnline === filters.isOnline);
+      }
+
+      const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+      setVisibleEvents(sortedEvents);
+      setShowEvents(true);
+    };
+
+    filterAndSortEvents();
+  }, [events, filters, userCountry]);
 
   const handleCardClick = (eventId) => {
     navigate(`/EventsDetails/${eventId}`);
@@ -87,21 +117,19 @@ const AutoScrollGallery = () => {
 
     const gallery = galleryRef.current;
     const cardWidth = gallery.children[0]?.offsetWidth || 0;
-    const gap = 64; // 4rem gap
+    const gap = 64;
     const scrollAmount = cardWidth + gap;
     const maxScroll = gallery.scrollWidth - gallery.clientWidth;
 
     let newScrollPosition;
     if (direction === 'right') {
       if (gallery.scrollLeft >= maxScroll - 10) {
-        // Si estamos al final, volver al inicio
         newScrollPosition = 0;
       } else {
         newScrollPosition = gallery.scrollLeft + scrollAmount;
       }
     } else {
       if (gallery.scrollLeft <= 10) {
-        // Si estamos al inicio, ir al final
         newScrollPosition = maxScroll;
       } else {
         newScrollPosition = gallery.scrollLeft - scrollAmount;
