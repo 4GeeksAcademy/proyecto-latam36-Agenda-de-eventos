@@ -1,33 +1,58 @@
+.hover-shadow:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.auto-scroll-gallery::-webkit-scrollbar {
+  display: none; 
+}
+
+.auto-scroll-gallery .card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: 300px; 
+  
+}
+
 .auto-scroll-gallery {
     display: flex;
-    gap: 4rem; /* Espacio entre tarjetas */
-    overflow-x: auto; /*scroll horizontal */
-    white-space: nowrap; /* Evita el salto de línea */
-    padding: 1rem; /* Espaciado interno */
-    scroll-snap-type: x mandatory; /* Habilita snap horizontal */
-    width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
-    justify-content: center; /* Distribuye las tarjetas en todo el espacio disponible */
-    box-sizing: border-box; /* Asegura que padding/margin no afecten las dimensiones */
+    gap: 2rem; 
+    overflow-x: auto; 
+    white-space: nowrap; 
+    padding: 1rem; 
+    scroll-snap-type: x mandatory;
+    width: 100%; 
+    justify-content: flex-start;
+    box-sizing: border-box; 
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   
   .auto-scroll-gallery .card {
-    flex: 0 0 auto; /* Evita que las tarjetas se expandan o reduzcan */
-    width: calc((100% - (4 * 1rem)) / 5); /* Ajusta el ancho según el número de tarjetas y el gap */
-    max-width: 25rem; /* Limita el ancho máximo de las tarjetas */
-    scroll-snap-align: start; /* Alinea las tarjetas al inicio */
+    flex: 0 0 auto; 
+    width: calc((100% - (4 * 1rem)) / 5); 
+    max-width: 25rem;
+    scroll-snap-align: start; 
   }
   
   /* Media query para pantallas pequeñas */
   @media (max-width: 576px) {
     .auto-scroll-gallery {
-      gap: 1rem; /* Espacio constante entre tarjetas */
-      justify-content: flex-start; /* Cambia a alineación normal en dispositivos móviles */
+      gap: 2rem; 
+      justify-content: flex-start;  
     }
   
     .auto-scroll-gallery .card {
-      width: 18rem; /* Tamaño fijo en pantallas pequeñas */
+      width: 18rem; 
     }
   }
   
-
+  .hidden {
+    display: none;
+  }
+  
  

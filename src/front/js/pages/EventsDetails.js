@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from "../component/navbar";
 import Modal from "../component/Modal";
+import AutoScrollGallery from "../component/cards";
 import Breadcrumbs from "../component/Breadcrumbs.jsx";
 
 
@@ -34,7 +35,6 @@ const EventsDetails = () => {
         const isAdminResponse = await responseAdmin.json();
         setIsAdmin(isAdminResponse.is_admin);
 
-        // Obtener detalles del evento
         const response = await fetch(`${backend}/api/events/${id}?details=true`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -118,6 +118,7 @@ const EventsDetails = () => {
     age_classification,
     organizer_name,
     organizer_email,
+    flyer_img_url,
     media_files,
     contact_info,
     status,
@@ -130,28 +131,47 @@ const EventsDetails = () => {
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-8">
-            <div id="eventCarousel" className="carousel slide event-card" data-bs-ride="carousel">
-              <div className="carousel-inner">
-                {media_files && media_files.length > 0 ? (
-                  media_files.map((media, index) => (
-                    <div
-                      key={index}
-                      className={`carousel-item ${index === 0 ? "active" : ""} event-image`}
-                    >
-                      <img
-                        src={media.url}
-                        alt={media.media_type}
-                        className="d-block w-100"
-                      />
-                      <div className="event-date">
-                        <div className="month">
-                          {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
-                        </div>
-                        <div className="day">{new Date(date).getDate()}</div>
-                      </div>
+          <div id="eventCarousel" className="carousel slide event-card" data-bs-ride="carousel">
+            <div className="carousel-inner">
+              {/* Primera imagen: flyer */}
+              {flyer_img_url && (
+                <div className="carousel-item active event-image">
+                  <img
+                    src={flyer_img_url}
+                    alt="Event flyer"
+                    className="d-block w-100"
+                  />
+                  <div className="event-date">
+                    <div className="month">
+                      {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
                     </div>
-                  ))
-                ) : (
+                    <div className="day">{new Date(date).getDate()}</div>
+                  </div>
+                </div>
+              )}
+              {/* Otras imágenes: media_files */}
+              {media_files && media_files.length > 0 ? (
+                media_files.map((media, index) => (
+                  <div
+                    key={index}
+                    className={`carousel-item ${!flyer_img_url && index === 0 ? "active" : ""} event-image`}
+                  >
+                    <img
+                      src={media.url}
+                      alt={media.media_type}
+                      className="d-block w-100"
+                    />
+                    <div className="event-date">
+                      <div className="month">
+                        {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
+                      </div>
+                      <div className="day">{new Date(date).getDate()}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                // Imagen placeholder si no hay media_files
+                !flyer_img_url && (
                   <div className="carousel-item active event-image">
                     <img
                       src="https://placehold.co/600x400"
@@ -159,17 +179,19 @@ const EventsDetails = () => {
                       className="d-block w-100"
                     />
                   </div>
-                )}
-              </div>
-              <button className="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
-                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Previous</span>
-              </button>
-              <button className="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
-                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Next</span>
-              </button>
+                )
+              )}
             </div>
+            <button className="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+              <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span className="visually-hidden">Previous</span>
+            </button>
+            <button className="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+              <span className="carousel-control-next-icon" aria-hidden="true"></span>
+              <span className="visually-hidden">Next</span>
+            </button>
+          </div>
+
             <div className="event-details">
               <h3>{event_name}</h3>
               <p>{description}</p>
@@ -243,7 +265,7 @@ const EventsDetails = () => {
           </div>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-5 mb-5">
           <h4>Información de contacto</h4>
           {contact_info && contact_info.length > 0 ? (
             <ul>
@@ -258,6 +280,7 @@ const EventsDetails = () => {
           )}
         </div>
       </div>
+      <AutoScrollGallery />
 
       {showModal && (
         <Modal
