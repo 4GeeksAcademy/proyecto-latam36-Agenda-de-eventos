@@ -11,7 +11,7 @@ const AutoScrollGallery = ({ filters }) => {
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showEvents, setShowEvents] = useState(false); 
+  const [showEvents, setShowEvents] = useState(false);
   const galleryRef = useRef(null);
   const { store } = useContext(Context);
   const { userCountry, token } = store;
@@ -20,23 +20,13 @@ const AutoScrollGallery = ({ filters }) => {
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
-        let API_BASE_URL = `${backend}/api/events`;
+        let API_BASE_URL = `${backend}/api/events/filter?`;
 
+        // Si hay filtros, se usan
         if (filters) {
-          API_BASE_URL = `${backend}/api/events/filter?`;
           if (filters.country && filters.country !== "Todos") {
             API_BASE_URL += `country=${filters.country}&`;
           }
@@ -49,9 +39,12 @@ const AutoScrollGallery = ({ filters }) => {
           if (filters.price && filters.price !== "Todos") {
             API_BASE_URL += `price=${filters.price}&`;
           }
-        } else if (token && userCountry) {
-          API_BASE_URL = `${backend}/api/events/filter?country=${userCountry}`;
+        } 
+        // Si no hay filtros pero hay un usuario logueado, se usa userCountry
+        else if (token && userCountry) {
+          API_BASE_URL += `country=${userCountry}`;
         }
+        // Si no hay filtros ni usuario, muestra todos los eventos
 
         const response = await fetch(API_BASE_URL, {
           headers: {
@@ -70,42 +63,45 @@ const AutoScrollGallery = ({ filters }) => {
         console.error("Error occurred during fetch:", err.message);
         setError(err.message);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [filters, userCountry, token]);
+  }, [filters, userCountry, token, backend]);
 
   useEffect(() => {
     const filterAndSortEvents = () => {
       let filteredEvents = events;
 
-      const country = filters?.country || (token && userCountry);
-      if (country && country !== "Todos") {
-        filteredEvents = filteredEvents.filter(event => {
-          const eventCountry = event.location.split(",").pop().trim();
-          return eventCountry === country;
-        });
-      }
+      // Solo aplica filtros adicionales si se proporcionaron filtros
+      if (filters) {
+        const country = filters.country || (token && userCountry);
+        if (country && country !== "Todos") {
+          filteredEvents = filteredEvents.filter(event => {
+            const eventCountry = event.location.split(",").pop().trim();
+            return eventCountry === country;
+          });
+        }
 
-      if (filters?.category && filters.category !== "Todos") {
-        filteredEvents = filteredEvents.filter(event => event.category === filters.category);
-      }
+        if (filters.category && filters.category !== "Todos") {
+          filteredEvents = filteredEvents.filter(event => event.category === filters.category);
+        }
 
-      if (filters?.isOnline !== null) {
-        filteredEvents = filteredEvents.filter(event => event.isOnline === filters.isOnline);
-      }
+        if (filters.isOnline !== null) {
+          filteredEvents = filteredEvents.filter(event => event.isOnline === filters.isOnline);
+        }
 
-      if (filters?.price && filters.price !== "Todos") {
-        filteredEvents = filteredEvents.filter(event => {
-          if (filters.price === "De Pago") {
-            return event.ticket_price > 0;
-          } else if (filters.price === "Gratis") {
-            return event.ticket_price === 0;
-          }
-          return true; 
-        });
+        if (filters.price && filters.price !== "Todos") {
+          filteredEvents = filteredEvents.filter(event => {
+            if (filters.price === "De Pago") {
+              return event.ticket_price > 0;
+            } else if (filters.price === "Gratis") {
+              return event.ticket_price === 0;
+            }
+            return true;
+          });
+        }
       }
 
       const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
