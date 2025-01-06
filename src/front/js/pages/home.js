@@ -11,13 +11,13 @@ function Home() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [isOnline, setIsOnline] = useState(null);
-  const [selectedPrice, setSelectedPrice] = useState("Todos"); // Añadido estado para precio
+  const [selectedPrice, setSelectedPrice] = useState("Todos"); 
 
   const filters = {
     country: selectedCountry,
     category: selectedCategory,
     isOnline: isOnline,
-    price: selectedPrice, // Añadido precio a los filtros
+    price: selectedPrice, 
   };
 
   return (

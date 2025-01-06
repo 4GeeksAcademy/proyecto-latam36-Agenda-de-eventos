@@ -31,7 +31,7 @@ const AutoScrollGallery = ({ filters }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true); // Inicia el indicador de carga
+      setLoading(true); 
       try {
         let API_BASE_URL = `${backend}/api/events`;
 
@@ -70,7 +70,7 @@ const AutoScrollGallery = ({ filters }) => {
         console.error("Error occurred during fetch:", err.message);
         setError(err.message);
       } finally {
-        setLoading(false); // Termina el indicador de carga
+        setLoading(false); 
       }
     };
 
@@ -104,7 +104,7 @@ const AutoScrollGallery = ({ filters }) => {
           } else if (filters.price === "Gratis") {
             return event.ticket_price === 0;
           }
-          return true; // "Todos" should include all events
+          return true; 
         });
       }
 
