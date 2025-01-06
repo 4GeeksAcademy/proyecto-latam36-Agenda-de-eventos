@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../../styles/cards.css";
 import { useNavigate } from "react-router-dom";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt } from "react-icons/fa";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 
@@ -14,7 +14,7 @@ const AutoScrollGallery = ({ filters }) => {
   const [showEvents, setShowEvents] = useState(false); 
   const galleryRef = useRef(null);
   const { store } = useContext(Context);
-  const { userCountry } = store;
+  const { userCountry, token } = store;
 
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
@@ -31,18 +31,13 @@ const AutoScrollGallery = ({ filters }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true); // Inicia el indicador de carga
       try {
         let API_BASE_URL = `${backend}/api/events`;
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          throw new Error("Inicia Sesión para ver los Eventos");
-        }
-
         if (filters) {
           API_BASE_URL = `${backend}/api/events/filter?`;
-          if (filters.country) {
+          if (filters.country && filters.country !== "Todos") {
             API_BASE_URL += `country=${filters.country}&`;
           }
           if (filters.category && filters.category !== "Todos") {
@@ -51,20 +46,22 @@ const AutoScrollGallery = ({ filters }) => {
           if (filters.isOnline !== null) {
             API_BASE_URL += `isOnline=${filters.isOnline}&`;
           }
-        } else if (userCountry) {
+          if (filters.price && filters.price !== "Todos") {
+            API_BASE_URL += `price=${filters.price}&`;
+          }
+        } else if (token && userCountry) {
           API_BASE_URL = `${backend}/api/events/filter?country=${userCountry}`;
         }
 
         const response = await fetch(API_BASE_URL, {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || "Inicia Sesión para ver los Eventos");
+          throw new Error(errorData.message || "Error al cargar los Eventos");
         }
 
         const eventsData = await response.json();
@@ -73,19 +70,19 @@ const AutoScrollGallery = ({ filters }) => {
         console.error("Error occurred during fetch:", err.message);
         setError(err.message);
       } finally {
-        setLoading(false); 
+        setLoading(false); // Termina el indicador de carga
       }
     };
 
     fetchEvents();
-  }, [filters, userCountry]);
+  }, [filters, userCountry, token]);
 
   useEffect(() => {
     const filterAndSortEvents = () => {
       let filteredEvents = events;
 
-      const country = filters?.country || userCountry;
-      if (country) {
+      const country = filters?.country || (token && userCountry);
+      if (country && country !== "Todos") {
         filteredEvents = filteredEvents.filter(event => {
           const eventCountry = event.location.split(",").pop().trim();
           return eventCountry === country;
@@ -100,13 +97,24 @@ const AutoScrollGallery = ({ filters }) => {
         filteredEvents = filteredEvents.filter(event => event.isOnline === filters.isOnline);
       }
 
+      if (filters?.price && filters.price !== "Todos") {
+        filteredEvents = filteredEvents.filter(event => {
+          if (filters.price === "De Pago") {
+            return event.ticket_price > 0;
+          } else if (filters.price === "Gratis") {
+            return event.ticket_price === 0;
+          }
+          return true; // "Todos" should include all events
+        });
+      }
+
       const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
       setVisibleEvents(sortedEvents);
       setShowEvents(true);
     };
 
     filterAndSortEvents();
-  }, [events, filters, userCountry]);
+  }, [events, filters, userCountry, token]);
 
   const handleCardClick = (eventId) => {
     navigate(`/EventsDetails/${eventId}`);
@@ -142,7 +150,8 @@ const AutoScrollGallery = ({ filters }) => {
     });
   };
 
-  const navButtonStyle = {
+
+    const navButtonStyle = {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
@@ -157,47 +166,58 @@ const AutoScrollGallery = ({ filters }) => {
 
   return (
     <div className="container-fluid">
-      {loading ? (
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      ) : (
-        <div className="d-flex justify-content-between align-items-center">
-          <h1 className="ml-4">Top Trending en {userCountry || "tu País"}</h1>
+      <div className="d-flex justify-content-between align-items-center">
+        <h1 className="ml-4">
+          {
+            filters?.country && filters.country !== "Todos"
 
-          {!isMobile && (
-            <div className="d-flex gap-3 me-4">
-              <button
-                onClick={() => scroll('left')}
-                style={navButtonStyle}
-                className="hover-shadow"
-              >
-                <FaChevronLeft />
-              </button>
-              <button
-                onClick={() => scroll('right')}
-                style={navButtonStyle}
-                className="hover-shadow"
-              >
-                <FaChevronRight />
-              </button>
-            </div>
-          )}
+            ? `Próximos Eventos en ${filters.country}`
+            : token
+            ? `Próximos Eventos en ${userCountry}`
+            : "Próximos Eventos"
+        }
+      </h1>
+      {!isMobile && (
+        <div className="d-flex gap-3 me-4">
+          <button
+            onClick={() => scroll('left')}
+            style={navButtonStyle}
+            className="hover-shadow"
+          >
+            <FaChevronLeft />
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            style={navButtonStyle}
+            className="hover-shadow"
+          >
+            <FaChevronRight />
+          </button>
         </div>
       )}
-      {error ? (
-        <div className="alert alert-danger" role="alert">
-          {error}
+    </div>
+    {error ? (
+      <div className="alert alert-danger" role="alert">
+        {error}
+      </div>
+    ) : loading || !showEvents ? (
+      <div 
+        className="auto-scroll-gallery" 
+        ref={galleryRef}
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }} 
+      >
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
         </div>
-      ) : !loading && showEvents && (
-        <div 
-          className="auto-scroll-gallery" 
-          ref={galleryRef}
-          style={{ scrollLeft: 0, visibility: showEvents ? "visible" : "hidden" }} 
-        >
-          {visibleEvents.map((event) => (
+      </div>
+    ) : (
+      <div 
+        className="auto-scroll-gallery" 
+        ref={galleryRef}
+        style={{ scrollLeft: 0, visibility: showEvents ? "visible" : "hidden", minHeight: '400px' }} 
+      >
+        {visibleEvents.length > 0 ? (
+          visibleEvents.map((event) => (
             <div
               key={event.id}
               className="card text-decoration-none text-muted"
@@ -215,33 +235,41 @@ const AutoScrollGallery = ({ filters }) => {
                 <div>
                   <h5 className="card-title text-wrap">{event.event_name}</h5>
                   <p className="card-text text-wrap">
-                    {event.description || "No description available"}
+                    {event.description.split(" ").slice(0, 20).join(" ")}{event.description.split(" ").length > 20 ? "..." : ""}
                   </p>
                 </div>
-                <div
-                  style={{
-                    alignSelf: "flex-end", 
-                    backgroundColor: "#f8f9fa",
-                    padding: "5px 10px",
-                    borderRadius: "8px",
-                    textAlign: "center",
-                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-                    marginTop: "10px",
-                  }}
+                <div 
+                  className="d-flex justify-content-between align-items-center"
+                  style={{ marginTop: "10px" }}
                 >
-                  <small style={{ fontSize: "10px" }}>
-                    {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
-                  </small>
-                  <br />
-                  <strong style={{ fontSize: "16px" }}>{new Date(event.date).getDate()}</strong>
+                  <div className="text-start">
+                    <FaMapMarkerAlt style={{ marginRight: "5px" }} />
+                    <div>
+                      {event.location.split(',')[0]}<br />
+                      <strong>{event.location.split(',').pop().trim()}</strong>
+                    </div>
+                  </div>
+                  <div className="text-center date-container" style={{ backgroundColor: "#f8f9fa", padding: "5px 10px", borderRadius: "8px", boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)" }}>
+                    <small style={{ fontSize: "10px" }}>
+                      {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
+                    </small>
+                    <br />
+                    <strong style={{ fontSize: "16px" }}>{new Date(event.date).getDate()}</strong>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+          ))
+        ) : (
+          <div className="no-events" style={{ textAlign: 'center', marginTop: '150px' }}>
+            <h2>No hay eventos disponibles para este filtro</h2>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default AutoScrollGallery;

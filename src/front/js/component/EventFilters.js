@@ -1,10 +1,11 @@
 import React from "react";
-import "../../styles/EventFilters.css"
+import "../../styles/EventFilters.css";
 
-const EventFilters = ({ selectedCountry, setSelectedCountry, selectedCategory, setSelectedCategory, isOnline, setIsOnline }) => {
-  const countries = ["Argentina", "Mexico", "Colombia"];
+const EventFilters = ({ selectedCountry, setSelectedCountry, selectedCategory, setSelectedCategory, isOnline, setIsOnline, selectedPrice, setSelectedPrice }) => {
+  const countries = ["Todos", "Argentina", "Mexico", "Colombia"];
   const categories = ["Todos", "Deportivos", "Música", "Espiritualidad", "Gastronomía y Bebida", "Artes Visuales y Escénicas", "Familia y Educación", "Negocios", "Caridad y Causas Benéficas", "Académicos", "Moda"];
   const eventTypes = ["Todos", "Online", "Presencial"];
+  const priceTypes = ["Todos", "De Pago", "Gratis"];
 
   return (
     <div className="event-filters mb-3 p-3">
@@ -37,6 +38,20 @@ const EventFilters = ({ selectedCountry, setSelectedCountry, selectedCategory, s
             <option disabled value="">Seleccionar tipo</option>
             {eventTypes.map((type) => (
               <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+        </div>
+        <div className="event-filters__price-select">
+          <label htmlFor="price-select" className="event-filters__form-label">Valor del Evento:</label>
+          <select 
+            id="price-select" 
+            className="event-filters__form-select" 
+            value={selectedPrice || "Todos"} 
+            onChange={(e) => setSelectedPrice(e.target.value)}
+          >
+            <option disabled value="">Seleccionar valor</option>
+            {priceTypes.map((priceType) => (
+              <option key={priceType} value={priceType}>{priceType}</option>
             ))}
           </select>
         </div>

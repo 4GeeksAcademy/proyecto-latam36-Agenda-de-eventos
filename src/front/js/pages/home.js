@@ -11,11 +11,13 @@ function Home() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [isOnline, setIsOnline] = useState(null);
+  const [selectedPrice, setSelectedPrice] = useState("Todos"); // Añadido estado para precio
 
   const filters = {
     country: selectedCountry,
     category: selectedCategory,
     isOnline: isOnline,
+    price: selectedPrice, // Añadido precio a los filtros
   };
 
   return (
@@ -48,10 +50,12 @@ function Home() {
         setSelectedCategory={setSelectedCategory}
         isOnline={isOnline}
         setIsOnline={setIsOnline}
+        selectedPrice={selectedPrice}       
+        setSelectedPrice={setSelectedPrice}
       />
 
       <div className="scroll-gallery mt-5">
-        <AutoScrollGallery filters={filters} /> {/* Pasamos los filtros seleccionados como props */}
+        <AutoScrollGallery filters={filters} />
       </div>
     </>
   );
