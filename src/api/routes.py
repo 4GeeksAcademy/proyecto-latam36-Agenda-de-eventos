@@ -2,12 +2,30 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
+from flask_sqlalchemy import SQLAlchemy
+
 from api.models import db, User, Events, EventMedia, ContactInfo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import date, datetime
+
+import os
+import inspect
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config( 
+  cloud_name = "dxweetk1w", 
+  api_key = "932178836968972", 
+  api_secret = "4tMaS9oNlEtDYSgEcQ7Z7XwFhA4",
+  secure = True
+)
+
+from cloudinary import CloudinaryImage
+from cloudinary import CloudinaryVideo
 
 api = Blueprint('api', __name__)
 
@@ -267,18 +285,23 @@ def get_all_events():
         return jsonify({"error": str(e)}), 500
 
 
+
 # OBTENER, ACTUALIZAR y ELIMINAR Eventos [id]
 @api.route('/events/<int:event_id>', methods=['GET', 'PUT', 'DELETE'])
-@jwt_required()
 def get_event(event_id):
     event = Events.query.get(event_id)
     if not event:
         return jsonify({"error": "Event not found"}), 404
 
     if request.method == 'GET':
-        email = get_jwt_identity()
-        user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()
-        user = user[0] if user else None
+        # Permitir acceso no autenticado
+        user = None
+        if 'Authorization' in request.headers:
+            try:
+                token = request.headers['Authorization'].split(" ")[1]
+                user = User.decode_auth_token(token)
+            except Exception as e:
+                pass
 
         if user is None and event.age_clasification == "18+":
             return jsonify({"msg": "Event restricted due to age classification"}), 403
@@ -295,55 +318,50 @@ def get_event(event_id):
         include_details = request.args.get('details', 'false').strip().lower() in ['true', '1', 'yes']
         return jsonify(event.serialize(include_details=include_details)), 200
 
-    if request.method == 'PUT':
-        current_user_email = get_jwt_identity()
-        user = User.query.filter_by(email=current_user_email).first()
+    if request.method == 'PUT' or request.method == 'DELETE':
+        @jwt_required()
+        def protected_action():
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
 
-        if not user:
-            return jsonify({"error": "User not found"}), 404
+            if not user:
+                return jsonify({"error": "User not found"}), 404
 
-        # Verificar permisos
-        if not user.is_admin and event.organizer_user_id != user.id:
-            return jsonify({"error": "Unauthorized access"}), 403
+            # Verificar permisos
+            if not user.is_admin and event.organizer_user_id != user.id:
+                return jsonify({"error": "Unauthorized access"}), 403
 
-        data = request.get_json()
-        try:
-            event.event_name = data.get('event_name', event.event_name)
-            event.event_description = data.get('event_description', event.event_description)
-            event.event_date = data.get('event_date', event.event_date)
-            event.event_start_time = data.get('event_start_time', event.event_start_time)
-            event.event_duration = data.get('event_duration', event.event_duration)
-            event.ticket_price = data.get('ticket_price', event.ticket_price)
-            event.event_address = data.get('event_address', event.event_address)
-            event.event_city = data.get('event_city', event.event_city)
-            event.event_country = data.get('event_country', event.event_country)
-            event.event_category = data.get('event_category', event.event_category)
-            event.age_clasification = data.get('age_clasification', event.age_clasification)
-            event.flyer_img_url = data.get('flyer_img_url', event.flyer_img_url)
-            db.session.commit()
-            return jsonify(event.serialize()), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"error": str(e)}), 400
+            if request.method == 'PUT':
+                data = request.get_json()
+                try:
+                    event.event_name = data.get('event_name', event.event_name)
+                    event.event_description = data.get('event_description', event.event_description)
+                    event.event_date = data.get('event_date', event.event_date)
+                    event.event_start_time = data.get('event_start_time', event.event_start_time)
+                    event.event_duration = data.get('event_duration', event.event_duration)
+                    event.ticket_price = data.get('ticket_price', event.ticket_price)
+                    event.event_address = data.get('event_address', event.event_address)
+                    event.event_city = data.get('event_city', event.event_city)
+                    event.event_country = data.get('event_country', event.event_country)
+                    event.event_category = data.get('event_category', event.event_category)
+                    event.age_clasification = data.get('age_clasification', event.age_clasification)
+                    event.flyer_img_url = data.get('flyer_img_url', event.flyer_img_url)
+                    db.session.commit()
+                    return jsonify(event.serialize()), 200
+                except Exception as e:
+                    db.session.rollback()
+                    return jsonify({"error": str(e)}), 400
 
-    if request.method == 'DELETE':
-        current_user_email = get_jwt_identity()
-        user = User.query.filter_by(email=current_user_email).first()
+            if request.method == 'DELETE':
+                try:
+                    db.session.delete(event)
+                    db.session.commit()
+                    return jsonify({"message": "Event deleted successfully"}), 200
+                except Exception as e:
+                    db.session.rollback()
+                    return jsonify({"error": str(e)}), 400
 
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-
-        # Verificar permisos
-        if not user.is_admin and event.organizer_user_id != user.id:
-            return jsonify({"error": "Unauthorized access"}), 403
-
-        try:
-            db.session.delete(event)
-            db.session.commit()
-            return jsonify({"message": "Event deleted successfully"}), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"error": str(e)}), 400
+        return protected_action()
 
 
 
@@ -382,3 +400,140 @@ def update_event_status(event_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error al actualizar el estado del evento: {str(e)}"}), 500
+
+
+
+# Filtrar eventos por país, categoría y precio
+@api.route('/events/filter', methods=['GET'])
+def filter_events():
+    country = request.args.get('country')
+    category = request.args.get('category')
+    price_type = request.args.get('price')  
+
+    try:
+        query = Events.query
+
+        if country:
+            query = query.filter_by(event_country=country)
+
+        if category:
+            query = query.filter_by(event_category=category)
+
+        if price_type:
+            if price_type == "De Pago":
+                query = query.filter(Events.ticket_price > 0)
+            elif price_type == "Gratis":
+                query = query.filter(Events.ticket_price == 0)
+
+        events = query.all()
+        return jsonify([event.serialize() for event in events]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+
+
+# RESOURCES endpoints
+
+@api.route('/image', methods=['POST'])
+def upload_file():
+    user = request.args.get('user')
+    flyer = request.args.get('flyer')
+    img = request.args.get('img')
+
+    upload_folder = 'src/api/uploads'
+
+    if 'file' not in request.files:
+        return jsonify ({"msg":"No file part in the request"})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify ({"msg":"No selected file"})
+    if file:
+        # Save the file to the configured upload folder
+        file.save(f"{upload_folder}/{file.filename}")
+
+    file_path = f"{upload_folder}/{file.filename}"
+    response = cloudinary.uploader.upload(file_path)
+
+    print('this is cloudinary response url:',response)
+    print("this is the file directory:",os.getcwd())
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file_path}' has been deleted.")
+        else:
+            print(f"File '{file_path}' does not exist.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+    if user!=None : 
+        user = User.query.filter_by(id=user).first()
+        
+        if user== None :
+            return jsonify({'msg':'invalid user id'}),400
+        
+        user.profile_image=response['url']
+        try:
+            db.session.commit()
+            return jsonify({'msg':'profile picture updated',
+                            'user_id':user.id, 
+                            'url':response['url'],
+                            'format':response['format'],
+                            'resource_type':response['resource_type']}),200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify ({'msg':'An error occurred: {e}'}), 500
+        
+    if flyer !=None :
+        print("flyer event id:",flyer)
+        event=Events.query.filter_by(id=flyer).first()
+
+        if event== None :
+            return jsonify({'msg':'invalid event id'}),400
+
+        event.flyer_img_url=response['url']
+        try:
+            db.session.commit()
+            return jsonify({'msg':'event flyer uploaded ', 
+                        'url':response['url'],
+                        'format':response['format'],
+                        'resource_type':response['resource_type']}),200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify ({'msg':'An error occurred: {e}'}), 500
+        
+    if img !=None :
+        print("img event id:",img)
+        event=Events.query.filter_by(id=img).first()
+
+        if event== None :
+            return jsonify({'msg':'invalid event id'}),400
+
+        media_type=response['format']
+        media_url=response['url']
+        event_id=event.id
+
+        new_media=EventMedia(
+            media_type=media_type,
+            media_url=media_url,
+            event_id=event_id
+        )
+
+        try:
+            db.session.add(new_media)
+            db.session.commit()
+            return jsonify({'msg':'event media uploaded ',
+                            'event_id': event_id, 
+                            'url':response['url'],
+                            'format':response['format'],
+                            'resource_type':response['resource_type']}),200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify ({'msg':'An error occurred: {e}'}), 500
+     
+    return jsonify ({'media url':response['url'],
+                     'format':response['format'],
+                     'resource_type':response['resource_type']}),200

@@ -4,6 +4,7 @@ const getState = ({ getStore, setStore, getActions }) => {
             token: localStorage.getItem("token") || null,
             isAdmin: false,
             loading: false,
+            userCountry: null,
         },
 
         actions: {
@@ -17,8 +18,12 @@ const getState = ({ getStore, setStore, getActions }) => {
                 getActions().checkAdmin();
             },
 
+            setUserCountry: (country) => {
+                setStore({ userCountry: country });
+            },
+
             logout: () => {
-                setStore({ token: null, isAdmin: false });
+                setStore({ token: null, isAdmin: false, userCountry: null });
                 localStorage.removeItem("token");
             },
 
@@ -78,7 +83,10 @@ const getState = ({ getStore, setStore, getActions }) => {
                         const userData = await resp.json();
                         const isAdmin = userData.is_admin || false;
                         setStore({ isAdmin });
+
+                        getActions().setUserCountry(userData.country);
                         return isAdmin;
+                        
                     }
                     
                     setStore({ isAdmin: false });

@@ -35,15 +35,15 @@ function Form() {
           <option value="infantil">Infantil</option>
           <option value="vida nocturna">Vida nocturna</option>
         </select>
-        <input type="text" placeholder="direccion" required />
+        <input type="text" placeholder="Direccion" required />
         <p>Enlace de google maps</p>
         <input type="url" name="googlemaps" />
         <p>Facebook</p>
-        <input type="text" placeholder="facebook" />
+        <input type="text" placeholder="Facebook" />
         <p>Twitter</p>
-        <input type="text" placeholder="twitter" />
+        <input type="text" placeholder="Twitter" />
         <p>Instagram</p>
-        <input type="text" placeholder="instagram" />
+        <input type="text" placeholder="Instagram" />
         <p>
           Imagen del evento <span>*</span>
         </p>

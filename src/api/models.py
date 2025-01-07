@@ -16,6 +16,7 @@ class User(db.Model):
     user_role = db.Column(db.String(15), unique=False, nullable=True)
     birthdate = db.Column(db.Date, unique=False, nullable=True)
     user_gender = db.Column(db.String(10), unique=False, nullable=True)
+    profile_image = db.Column(db.String(255), unique=False, nullable=True)
     is_admin = db.Column(db.Boolean(), unique=False, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=True)
 
@@ -36,6 +37,7 @@ class User(db.Model):
         self.user_city = city
         self.user_country = country
         self.user_role = "User"
+        self.profile_image = None
         self.is_admin = False
         self.is_active = True
 
@@ -54,7 +56,7 @@ class User(db.Model):
             "city": self.user_city,
             "genere": self.user_gender,
             "date_of_birth": self.birthdate.strftime("%d/%m/%Y") if self.birthdate else None,
-            "role": self.role
+            "profile_image": self.profile_image,
         }
     
     def has_admin_privileges(self):
