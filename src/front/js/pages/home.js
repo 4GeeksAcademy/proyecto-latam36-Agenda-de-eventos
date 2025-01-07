@@ -34,9 +34,9 @@ function Home() {
           </div>
           <div className="principal__crearEvento">
             <div className="principal__crearEvento__texto">
-              <p>Publica tu evento</p>
+              <p className="parrafo-publica">Publica<br/>tu evento</p>
               <Link to={"/EventsForm"}>
-                <button className="boton-1">Crear tu evento</button>
+                <button className="boton-1">Crea tu evento</button>
               </Link>
             </div>
           </div>

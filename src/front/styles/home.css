@@ -25,23 +25,88 @@
 }
 
 .principal__crearEvento__texto {
-  background-color: rgba(0, 0, 0, 0.609);
+  background-color: rgba(0, 0, 0, 0.582);
   border-radius: 45px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  
+  
+  
 }
 
-.boton-1 {
-  background-color: rgb(118, 44, 186);
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 2px 8px;
-  border-radius: 25px;
+.parrafo-publica {
+  color: rgb(255, 255, 255); 
+  font-size: 50px; 
+  font-weight: bold; 
+  text-align: center; 
+  margin: 20px auto;
+   
+  
+  
+  line-height: 1; /* Espaciado entre líneas para mejor legibilidad */
+
+  @media (max-width: 768px) { 
+      font-size: 35px; /* Tamaño más pequeño en pantallas medianas y pequeñas */ 
+  }
+
+   @media (max-width: 480px) { 
+      font-size: 24px; /* Tamaño aún más pequeño en pantallas pequeñas */ 
+   }
 }
+
+
+
+.boton-1 {
+  background-color: #391679c7; 
+  color: white; 
+  border: 2px solid white; 
+  border-radius: 20px; 
+  padding: 9px 30px; 
+  font-size: 18px; 
+  cursor: pointer; 
+  
+   transition: background-color .1s ease, transform .1s ease;
+}
+
+.boton-1:hover {
+   background-color: #4c269ebb; 
+   transform: scale(1.05); 
+}
+
+.boton-1:active {
+   transform: scale(0.95);  
+}
+
+
+/* Media queries para hacer el botón responsive */
+@media (max-width: 768px) { /* Para tabletas y pantallas más pequeñas */
+ .boton-1 {
+     padding: 10px 20px; /* Reducir el padding en pantallas más pequeñas */
+     font-size: 16px; /* Reducir tamaño del texto en pantallas más pequeñas */
+ }
+}
+
+@media (max-width: 480px) { /* Para teléfonos móviles*/
+ .boton-1 {
+     padding: 8px 15px; /* Ajustar aún más el padding para móviles*/
+     font-size: 14px; /* Reducción adicional del tamaño del texto */
+ }
+}
+
+
+
+
+
+
+
+
+
+
+
 
   /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
