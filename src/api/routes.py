@@ -408,38 +408,54 @@ def update_event_status(event_id):
 # Filtrar eventos por país, categoría, precio y edad
 @api.route('/events/filter', methods=['GET'])
 def filter_events():
-    country = request.args.get('country')
-    category = request.args.get('category')
-    price_type = request.args.get('price')
-    is_online = request.args.get('isOnline')
-    age_classification = request.args.get('ageClassification')
-
     try:
-        query = Events.query
+        # Obtener parámetros de consulta
+        country = request.args.get('country')
+        category = request.args.get('category')
+        price_type = request.args.get('price')
+        is_online = request.args.get('isOnline')
+        age_classification = request.args.get('ageClassification')
 
-        if country:
+        # Iniciar la consulta base
+        query = Events.query.filter_by(status="submitted")  # Añadido filtro de status
+
+        # Aplicar filtros si existen y no son valores vacíos
+        if country and country != "Todos":
             query = query.filter_by(event_country=country)
 
-        if category:
+        if category and category != "Todos":
             query = query.filter_by(event_category=category)
 
-        if price_type:
+        if price_type and price_type != "Todos":
             if price_type == "De Pago":
                 query = query.filter(Events.ticket_price > 0)
             elif price_type == "Gratis":
                 query = query.filter(Events.ticket_price == 0)
 
         if is_online is not None:
-            is_online_bool = is_online.lower() == 'true'
-            query = query.filter_by(is_online=is_online_bool)
+            try:
+                is_online_bool = is_online.lower() == 'true'
+                query = query.filter_by(is_online=is_online_bool)
+            except AttributeError:
+                # Si is_online no es un string, ignorar este filtro
+                pass
 
-        if age_classification:
+        if age_classification and age_classification != "Todos":
             query = query.filter_by(age_classification=age_classification)
 
-        events = query.all()
-        return jsonify([event.serialize() for event in events]), 200
+        # Ejecutar la consulta y serializar los resultados
+        try:
+            events = query.all()
+            serialized_events = [event.serialize() for event in events]
+            return jsonify(serialized_events), 200
+        except Exception as e:
+            print(f"Error al serializar eventos: {str(e)}")
+            return jsonify({"error": "Error al procesar los eventos"}), 500
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Log del error para debugging
+        print(f"Error en filter_events: {str(e)}")
+        return jsonify({"error": "Error al procesar la solicitud"}), 500
 
 
 

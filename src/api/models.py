@@ -77,7 +77,7 @@ class Events(db.Model):
     event_country = db.Column(db.String(25), unique=False, nullable=False)
     event_category = db.Column(db.String(25),unique=False, nullable=False)
     age_classification = db.Column(db.String(20), unique=False, nullable=False, default="Todo Público")
-    is_online = db.Column(db.Boolean, unique=False, nullable=False, default=False),
+    is_online = db.Column(db.Boolean, unique=False, nullable=False, default=False)
     status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_admin_msg = db.Column(db.String(250), unique=False, nullable=True)
