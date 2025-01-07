@@ -7,7 +7,7 @@ const Perfil = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Definir la URL del backend usando variables de entorno o `window.location.hostname`
+    
     const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
     useEffect(() => {
