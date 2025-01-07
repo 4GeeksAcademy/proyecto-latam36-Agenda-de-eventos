@@ -76,7 +76,8 @@ class Events(db.Model):
     event_city = db.Column(db.String(30), unique=False, nullable=False)
     event_country = db.Column(db.String(25), unique=False, nullable=False)
     event_category = db.Column(db.String(25),unique=False, nullable=False)
-    age_clasification = db.Column(db.String(10),unique=False, nullable=True)
+    age_classification = db.Column(db.String(20), unique=False, nullable=False, default="Todo Público")
+    is_online = db.Column(db.Boolean, unique=False, nullable=False, default=False),
     status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_admin_msg = db.Column(db.String(250), unique=False, nullable=True)
@@ -93,7 +94,7 @@ class Events(db.Model):
     def __repr__(self):
         return f'<Events {self.event_name}>'
 
-    def __init__(self, event_name, event_description,organizer_user_id,event_date,event_start_time,event_duration,ticket_price,event_address,event_city,event_country,event_category,age_clasification,flyer_img_url):
+    def __init__(self, event_name, event_description,organizer_user_id,event_date,event_start_time,event_duration,ticket_price,event_address,event_city,event_country,event_category,age_classification,flyer_img_url, is_online=False):
         self.event_name = event_name
         self.event_description = event_description
         self.organizer_user_id = organizer_user_id
@@ -105,7 +106,8 @@ class Events(db.Model):
         self.event_city = event_city
         self.event_country = event_country
         self.event_category = event_category
-        self.age_clasification = age_clasification
+        self.age_classification = age_classification
+        self.is_online = is_online
         self.status = "submitted"
         self.flyer_img_url = flyer_img_url
 
@@ -119,7 +121,8 @@ class Events(db.Model):
             "duration": self.event_duration.strftime("%H:%M:%S") if self.event_duration else None,
             "ticket_price": self.ticket_price,
             "category": self.event_category,
-            "age_classification": self.age_clasification,
+            "age_classification": self.age_classification,
+            "is_online": self.is_online,
             "status": self.status,
             "flyer_img_url": self.flyer_img_url,
             "event_admin_msg": self.event_admin_msg,

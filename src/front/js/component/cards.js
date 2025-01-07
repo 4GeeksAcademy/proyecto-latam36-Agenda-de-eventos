@@ -229,10 +229,10 @@ const AutoScrollGallery = ({ filters }) => {
               
               <div className="card-body d-flex flex-column justify-content-between">
                 <div>
-                  <h5 className="card-title text-wrap">{event.event_name}</h5>
                   <p className="card-text text-wrap">
-                    {event.description.split(" ").slice(0, 20).join(" ")}{event.description.split(" ").length > 20 ? "..." : ""}
+                    {event.category}
                   </p>
+                  <h5 className="card-title text-wrap">{event.event_name}</h5>
                 </div>
                 <div 
                   className="d-flex justify-content-between align-items-center"

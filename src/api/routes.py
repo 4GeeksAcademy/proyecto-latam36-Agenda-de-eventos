@@ -191,7 +191,8 @@ def add_event():
     event_city = data.get("event_city")
     event_country = data.get("event_country")
     event_category = data.get("event_category")
-    age_clasification = data.get("age_clasification")
+    age_classification = data.get("age_classification", "Todo Público")
+    is_online = data.get("is_online", False)
     flyer_img_url = data.get("flyer_img_url")
     event_media = data.get("event_media")
     contact_info = data.get("contact_info")
@@ -215,7 +216,8 @@ def add_event():
         event_city = event_city,
         event_country = event_country,
         event_category = event_category,
-        age_clasification = age_clasification,
+        age_classification = age_classification,
+        is_online=is_online,
         flyer_img_url = flyer_img_url
     )
 
@@ -303,7 +305,7 @@ def get_event(event_id):
             except Exception as e:
                 pass
 
-        if user is None and event.age_clasification == "18+":
+        if user is None and event.age_classification == "18+":
             return jsonify({"msg": "Event restricted due to age classification"}), 403
 
         if user:
@@ -311,7 +313,7 @@ def get_event(event_id):
             user_age = today.year - user.birthdate.year
             if (today.month, today.day) < (user.birthdate.month, user.birthdate.day):
                 user_age -= 1
-            if user_age < 18 and event.age_clasification == "18+":
+            if user_age < 18 and event.age_classification == "18+":
                 return jsonify({"msg": "Event classified as 18+"}), 403
 
         # Verificar si se necesitan detalles completos
@@ -344,7 +346,7 @@ def get_event(event_id):
                     event.event_city = data.get('event_city', event.event_city)
                     event.event_country = data.get('event_country', event.event_country)
                     event.event_category = data.get('event_category', event.event_category)
-                    event.age_clasification = data.get('age_clasification', event.age_clasification)
+                    event.age_classification = data.get('age_classification', event.age_classification)
                     event.flyer_img_url = data.get('flyer_img_url', event.flyer_img_url)
                     db.session.commit()
                     return jsonify(event.serialize()), 200
@@ -403,12 +405,14 @@ def update_event_status(event_id):
 
 
 
-# Filtrar eventos por país, categoría y precio
+# Filtrar eventos por país, categoría, precio y edad
 @api.route('/events/filter', methods=['GET'])
 def filter_events():
     country = request.args.get('country')
     category = request.args.get('category')
-    price_type = request.args.get('price')  
+    price_type = request.args.get('price')
+    is_online = request.args.get('isOnline')
+    age_classification = request.args.get('ageClassification')
 
     try:
         query = Events.query
@@ -425,6 +429,13 @@ def filter_events():
             elif price_type == "Gratis":
                 query = query.filter(Events.ticket_price == 0)
 
+        if is_online is not None:
+            is_online_bool = is_online.lower() == 'true'
+            query = query.filter_by(is_online=is_online_bool)
+
+        if age_classification:
+            query = query.filter_by(age_classification=age_classification)
+
         events = query.all()
         return jsonify([event.serialize() for event in events]), 200
     except Exception as e:
@@ -434,9 +445,9 @@ def filter_events():
 
 
 
-
 # RESOURCES endpoints
 
+# Image Uploads
 @api.route('/image', methods=['POST'])
 def upload_file():
     user = request.args.get('user')
