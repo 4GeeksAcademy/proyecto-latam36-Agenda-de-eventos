@@ -20,8 +20,22 @@
 }
 
 .slogan-png {
-  width: 70%;
+  width: 70%; 
+  max-width: 800px; 
+  height: auto; 
   object-fit: cover;
+}
+
+@media (max-width: 768px) { 
+ .slogan-png {
+   width: 80%; 
+ }
+}
+
+@media (max-width: 480px) { 
+ .slogan-png {
+   width: 90%; 
+ }
 }
 
 .principal__crearEvento__texto {
@@ -32,11 +46,33 @@
   gap: 10px;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  
-  
-  
+  padding: 10px; 
+  width: calc(80% - (20px)); 
+  max-width: 400px; 
+  margin-left:auto;      
+  margin-right:auto;      
+ 
 }
+
+@media (max-width:768px){
+.principal__crearEvento__texto{
+   width : calc(90% - (20 px)); 
+   margin-left:auto;          
+   margin-right:auto;         
+}
+}
+
+@media (max-width :480 px){
+.principal__crearEvento__texto{
+   width : auto ; 
+   margin-left:auto ;          
+   margin-right:auto ;         
+}
+}
+
+
+
+
 
 .parrafo-publica {
   color: rgb(255, 255, 255); 

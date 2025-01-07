@@ -18,9 +18,25 @@ nav div {
 }
 
 
- .logo-home {
-  height: 40px;
- }
+.logo-home {
+  height: auto; 
+  max-height: 40px; 
+  width: auto; 
+  max-width: 100%; 
+}
+
+@media (max-width: 768px) { 
+  .logo-home {
+      max-height: 30px; 
+  }
+}
+
+@media (max-width: 480px) { 
+  .logo-home {
+      max-height: 25px; 
+  }
+}
+
 
 .navbar .btn {
     background-color: #3a3a3a; 
