@@ -6,7 +6,7 @@ body {
   padding: 0;
 }
 
-form {
+.form-1 {
   max-width: 800px; 
   margin: 2rem auto;
   padding: 2rem;
@@ -25,7 +25,7 @@ label {
 button[type="submit"] {
   width: 100%;
   padding: 12px;
-  background-color: #a078ff; 
+  background-color: #885bf1; 
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -37,7 +37,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: #864dff; 
+  background-color: #8959f0c9; 
 }
 
 

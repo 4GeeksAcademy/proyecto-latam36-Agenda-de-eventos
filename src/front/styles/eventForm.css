@@ -1,5 +1,3 @@
-
-
   input[type="text"],
   input[type="datetime-local"],
   input[type="number"],
@@ -79,24 +77,25 @@
     color: #ffffff;
   }
 
+  
   .form-page {
     background-image: url('https://res.cloudinary.com/dijfzjssm/image/upload/v1736307196/fondo_page_andre_necdvq.png');
-    background-size: cover; /* La imagen cubre toda la pantalla sin distorsión */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    min-height: 100vh; /* Asegura que cubra la altura completa de la ventana */
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    min-height: 100vh; 
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px; /* Agrega espacio alrededor del formulario en pantallas pequeñas */
+    padding: 20px; 
   }
   
-  /* El formulario mantiene su diseño intacto */
+  
   .form-container {
     max-width: 950px;
     margin: 2rem auto;
     padding: 2rem;
-    background-color: #3a3a3a;
+    background-color: #252424;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
   }
@@ -105,24 +104,24 @@
 .form-header {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra horizontalmente */
-  justify-content: center; /* Centra verticalmente */
-  text-align: center; /* Asegura que el texto quede centrado */
+  align-items: center;
+  justify-content: center; 
+  text-align: center; 
 }
 
 .logo {
-  width: 300px; /* Tamaño del logo más grande */
+  width: 300px; 
   margin-bottom: 1rem;
 }
 
 .form-title {
-  font-size: 28px; /* Texto más grande */
+  font-size: 28px; 
   font-weight: bold;
-  color: #ffffff; /* Blanco */
-  text-align: center; /* Centrado horizontal */
+  color: #ffffff; 
+  text-align: center; 
 }
 
-/* Form rows */
+
 .form-row {
   display: flex;
   justify-content: space-between;
@@ -133,71 +132,71 @@
   flex: 1;
 }
 
-/* Responsive design */
+
 @media (max-width: 768px) {
   .form-container {
     padding: 1.5rem;
   }
 
   .logo {
-    width: 150px; /* Reducir el logo en pantallas pequeñas */
+    width: 150px; 
   }
 
   .form-title {
-    font-size: 25px; /* Texto ajustado en pantallas pequeñas */
+    font-size: 25px;
   }
 }
 
   .checkbox-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espacio entre el checkbox y la etiqueta */
+  gap: 10px; 
 }
 
 .checkbox-container input[type="checkbox"] {
-  appearance: none; /* Oculta el checkbox por defecto */
-  width: 20px; /* Tamaño del botón */
-  height: 20px; /* Tamaño del botón */
-  border: 2px solid #a078ff; /* Borde morado */
-  border-radius: 50%; /* Hace que sea redondo */
-  background-color: #2c2c2c; /* Fondo oscuro */
+  appearance: none; 
+  width: 20px;
+  height: 20px; 
+  border: 2px solid #a078ff; 
+  border-radius: 50%; 
+  background-color: #2c2c2c; 
   cursor: pointer;
   display: inline-block;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .checkbox-container input[type="checkbox"]:checked {
-  background-color: #a078ff; /* Morado cuando está seleccionado */
-  border-color: #864dff; /* Borde más oscuro */
+  background-color: #a078ff; 
+  border-color: #864dff; 
 }
 
 .checkbox-container label {
-  font-size: 16px; /* Tamaño de texto */
-  color: #ffffff; /* Blanco */
+  font-size: 16px; 
+  color: #ffffff; 
   cursor: pointer;
 }
 
 .radio-container {
   display: flex;
   align-items: center;
-  gap: 20px; /* Espacio entre las opciones */
+  gap: 20px; 
 }
 
 .radio-container input[type="radio"] {
-  appearance: none; /* Oculta el botón de radio por defecto */
-  width: 20px; /* Tamaño del botón */
-  height: 20px; /* Tamaño del botón */
-  border: 2px solid #a078ff; /* Borde morado */
-  border-radius: 50%; /* Hace que sea redondo */
-  background-color: #2c2c2c; /* Fondo oscuro */
+  appearance: none;
+  width: 20px; 
+  height: 20px; 
+  border: 2px solid #a078ff; 
+  border-radius: 50%;
+  background-color: #2c2c2c;
   cursor: pointer;
   display: inline-block;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .radio-container input[type="radio"]:checked {
-  background-color: #a078ff; /* Morado cuando está seleccionado */
-  border-color: #864dff; /* Borde más oscuro */
+  background-color: #a078ff; 
+  border-color: #864dff; 
 }
 
 .radio-container label {
@@ -207,36 +206,36 @@
 }
 
 .boton-2 {
-  background-color: #4c269ebb; /* Mismo color que el hover de boton-1 */
+  background-color: #4c269ebb; 
   color: white; 
   border: 1px solid rgba(255, 255, 255, 0.479); 
-  border-radius: 15px; /* Redondeado, pero un poco más pequeño */
-  padding: 6px 18px; /* Más pequeño que boton-1 */
-  font-size: 14px; /* Tamaño reducido de la fuente */
+  border-radius: 12px; 
+  padding: 6px 18px; 
+  font-size: 14px; 
   cursor: pointer; 
   transition: background-color 0.1s ease, transform 0.1s ease;
   margin-top: 15px;
 }
 
 .boton-2:hover {
-  background-color: #5b35a4bb; /* Color un poco más brillante para el hover */
-  transform: scale(1.05); /* Sutil efecto al pasar el mouse */
+  background-color: #5b35a4bb; 
+  transform: scale(1.05); 
 }
 
 .boton-2:active {
-  transform: scale(0.95); /* Efecto clic */
+  transform: scale(0.95); 
 }
 
 @media (max-width: 768px) { 
   .boton-2 {
-    padding: 5px 15px; /* Ajuste para pantallas medianas */
-    font-size: 12px; /* Fuente más pequeña */
-  }
+    padding: 5px 15px; 
+    font-size: 12px;
+}
 }
 
 @media (max-width: 480px) { 
   .boton-2 {
-    padding: 4px 12px; /* Ajuste para pantallas pequeñas */
+    padding: 4px 12px; 
     font-size: 11px; 
   }
 }
