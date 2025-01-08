@@ -34,6 +34,52 @@ const Filters = ({ visibleFilters = [] }) => {
         ageClassification: "Todos",
       },
     },
+    entertainmentAndCulture: {
+      title: "Entretenimiento y Cultura",
+      filter: {
+        category: "Música, Teatro y Danza, Cine, Arte y Exposiciones, Eventos Literarios",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    educationalAndProfessional: {
+      title: "Educativos y Profesionales",
+      filter: {
+        category: "Conferencias, Talleres y Seminarios, Educación y Aprendizaje, Negocios y Emprendimiento",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    socialAndCommunity: {
+      title: "Social y Comunitario",
+      filter: {
+        category: "Eventos Familiares, Caridad y Voluntariado, Religión y Espiritualidad",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    fashionAndLifestyle: {
+      title: "Moda y Estilo de Vida",
+      filter: {
+        category: "Moda, Estilo de Vida",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    festivalsAndFestivities: {
+      title: "Fiestas y Festividades",
+      filter: {
+        category: "Festivales y Carnavales, Celebraciones",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    
   };
 
   return (

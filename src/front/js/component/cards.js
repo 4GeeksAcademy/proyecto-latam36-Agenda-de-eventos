@@ -160,106 +160,99 @@ const AutoScrollGallery = ({ filters }) => {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center">
-        <h1 className="ml-4">
-          {
-            filters?.country && filters.country !== "Todos"
+    <div className="events-gallery-container">
+      <div className="events-gallery-header d-flex justify-content-between align-items-center">
+        <h1>
+          {filters?.country && filters.country !== "Todos"
             ? `Próximos Eventos en ${filters.country}`
-            : "Próximos Eventos"
-        }
-      </h1>
-      {!isMobile && (
-        <div className="d-flex gap-3 me-4">
-          <button
-            onClick={() => scroll('left')}
-            style={navButtonStyle}
-            className="hover-shadow"
-          >
-            <FaChevronLeft />
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            style={navButtonStyle}
-            className="hover-shadow"
-          >
-            <FaChevronRight />
-          </button>
-        </div>
-      )}
-    </div>
-    {error ? (
-      <div className="alert alert-danger" role="alert">
-        {error}
-      </div>
-    ) : loading || !showEvents ? (
-      <div 
-        className="auto-scroll-gallery" 
-        ref={galleryRef}
-        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }} 
-      >
-        <div className="spinner-border" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    ) : (
-      <div 
-        className="auto-scroll-gallery" 
-        ref={galleryRef}
-        style={{ scrollLeft: 0, visibility: showEvents ? "visible" : "hidden", minHeight: '400px' }} 
-      >
-        {visibleEvents.length > 0 ? (
-          visibleEvents.map((event) => (
-            <div
-              key={event.id}
-              className="card text-decoration-none text-muted"
-              onClick={() => handleCardClick(event.id)}
-              style={{ cursor: "pointer", position: "relative" }}
+            : "Próximos Eventos"}
+        </h1>
+        {!isMobile && (
+          <div className="nav-buttons">
+            <button
+              onClick={() => scroll('left')}
+              className="nav-button"
             >
-              <img
-                src={event.flyer_img_url || "https://via.placeholder.com/600x400?text=Event+Image"}
-                className="card-img-top"
-                alt={event.event_name || "Placeholder image"}
-                style={{ height: "300px", objectFit: "cover" }}
-              />
-              
-              <div className="card-body d-flex flex-column justify-content-between">
-                <div>
-                  <p className="card-text text-wrap">
-                    {event.category}
-                  </p>
-                  <h5 className="card-title text-wrap">{event.event_name}</h5>
-                </div>
-                <div 
-                  className="d-flex justify-content-between align-items-center"
-                  style={{ marginTop: "10px" }}
-                >
-                  <div className="text-start">
-                    <FaMapMarkerAlt style={{ marginRight: "5px" }} />
-                    <div>
-                      {event.location.split(',')[0]}<br />
-                      <strong>{event.location.split(',').pop().trim()}</strong>
-                    </div>
-                  </div>
-                  <div className="text-center date-container" style={{ backgroundColor: "#f8f9fa", padding: "5px 10px", borderRadius: "8px", boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)" }}>
-                    <small style={{ fontSize: "10px" }}>
-                      {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
-                    </small>
-                    <br />
-                    <strong style={{ fontSize: "16px" }}>{new Date(event.date).getDate()}</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-events" style={{ textAlign: 'center', marginTop: '150px' }}>
-            <h2>No hay eventos disponibles para este filtro</h2>
+              <FaChevronLeft />
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              className="nav-button"
+            >
+              <FaChevronRight />
+            </button>
           </div>
         )}
       </div>
-    )}
-  </div>
+      
+      {error ? (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      ) : loading || !showEvents ? (
+        <div className="auto-scroll-gallery" ref={galleryRef}>
+          <div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <div 
+          className="auto-scroll-gallery" 
+          ref={galleryRef}
+          style={{ visibility: showEvents ? "visible" : "hidden" }}
+        >
+          {visibleEvents.length > 0 ? (
+            visibleEvents.map((event) => (
+              <div
+                key={event.id}
+                className="event-card"
+                onClick={() => handleCardClick(event.id)}
+              >
+                <div className="event-card-image">
+                  <img
+                    src={event.flyer_img_url || "https://via.placeholder.com/600x400?text=Event+Image"}
+                    alt={event.event_name || "Placeholder image"}
+                  />
+                  <div className="category-badge">
+                    {event.category}
+                  </div>
+                </div>
+                
+                <div className="event-card-content">
+                  <h3 className="event-title">{event.event_name}</h3>
+                  
+                  <div className="event-info">
+                    <div className="location-info">
+                      <FaMapMarkerAlt />
+                      <div className="location-text">
+                        {event.location.split(',')[0]}<br />
+                        <strong>{event.location.split(',').pop().trim()}</strong>
+                      </div>
+                    </div>
+                    
+                    <div className="date-badge">
+                      <div className="date-month">
+                        {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
+                      </div>
+                      <div className="date-day">
+                        {new Date(event.date).getDate()}
+                      </div>
+                      <div className="date-time">
+                        {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-events-message">
+              <h2>No hay eventos disponibles para este filtro</h2>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -27,7 +27,7 @@ function Home() {
           </div>
         </section>
       </main>
-      <Filters visibleFilters={["sportsAndWellness", "technology"]} />
+      <Filters visibleFilters={["sportsAndWellness", "technology", "gastronomy", "entertainmentAndCulture", "educationalAndProfessional", "socialAndCommunity", "fashionAndLifestyle", "festivalsAndFestivities"]} />
     </>
   );
 }
