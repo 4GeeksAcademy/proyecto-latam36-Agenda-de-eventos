@@ -2,10 +2,35 @@ import React from "react";
 import "../../styles/EventFilters.css";
 
 const EventFilters = ({ selectedCategory, setSelectedCategory, isOnline, setIsOnline, selectedPrice, setSelectedPrice, ageClassification, setAgeClassification }) => {
-  const categories = ["Todos", "Deportivos", "Música", "Espiritualidad", "Gastronomía y Bebida", "Artes Visuales y Escénicas", "Familia y Educación", "Negocios", "Caridad y Causas Benéficas", "Académicos", "Moda"];
+  const categories = ["Todos",
+                      "Música",
+                      "Teatro y Danza",
+                      "Cine",
+                      "Arte y Exposiciones",
+                      "Literarios",
+                      "Conferencias",
+                      "Talleres y Seminarios",
+                      "Educación y Aprendizaje",
+                      "Negocios y Emprendimiento",
+                      "Deportes",
+                      "Fitness y Salud",
+                      "Deportes extremos",
+                      "Artes Marciales",
+                      "Familiares",
+                      "Caridad y Voluntariado",
+                      "Religión y Espiritualidad",
+                      "Tecnología",
+                      "Ciencia",
+                      "Gastronomía",
+                      "Bebidas",
+                      "Moda",
+                      "Estilo de Vida",
+                      "Festivales y Carnavales",
+                      "Celebraciones"
+        ];
   const eventTypes = ["Todos", "Online", "Presencial"];
   const priceTypes = ["Todos", "De Pago", "Gratis"];
-  const ageTypes = ["Todos", "Todo Público", "18+"];
+  const ageTypes = ["Todo Público", "13+", "16+", "18+", "Infantiles", "Adultos Mayores"];
 
   return (
     <div className="event-filters mb-3 p-3">

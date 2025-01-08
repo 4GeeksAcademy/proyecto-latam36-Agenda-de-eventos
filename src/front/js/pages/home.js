@@ -1,6 +1,5 @@
 import React from "react";
 import "../../styles/home.css";
-import { Link } from "react-router-dom";
 import Navbar from "../component/navbar";
 import Filters from "../component/Filters";
 
@@ -17,18 +16,9 @@ function Home() {
               alt="texto"
             />
           </div>
-          <div className="principal__crearEvento">
-            <div className="principal__crearEvento__texto">
-              <p>Publica tu evento</p>
-              <Link to={"/EventsForm"}>
-                <button className="boton-1">Crear tu evento</button>
-              </Link>
-            </div>
-          </div>
         </section>
       </main>
-
-      <Filters />
+      <Filters visibleFilters={["sportsAndWellness", "technology"]} />
     </>
   );
 }

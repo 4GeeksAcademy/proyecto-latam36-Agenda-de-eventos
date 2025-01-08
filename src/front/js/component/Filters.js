@@ -1,41 +1,55 @@
-import React, { useState, useContext } from "react";
-import EventFilters from "../component/EventFilters";
+import React, { useContext } from "react";
 import AutoScrollGallery from "../component/cards";
 import { Context } from "../store/appContext";
 
-const Filters = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [isOnline, setIsOnline] = useState(null);
-  const [selectedPrice, setSelectedPrice] = useState("Todos");
-  const [ageClassification, setAgeClassification] = useState("Todos");
-
+const Filters = ({ visibleFilters = [] }) => {
   const { store } = useContext(Context);
-  const { user } = store;
 
-  const filters = {
-    category: selectedCategory,
-    isOnline: isOnline,
-    price: selectedPrice,
-    ageClassification: ageClassification,
+  // Filtros predefinidos
+  const filtersConfig = {
+    sportsAndWellness: {
+      title: "Deportes y Bienestar",
+      filter: {
+        category: "Deportes, Fitness y Salud, Deportes extremos, Artes Marciales",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    technology: {
+      title: "Tecnología y Ciencias",
+      filter: {
+        category: "Tecnología, Ciencia",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
+    gastronomy: {
+      title: "Gastronomía y Bebidas",
+      filter: {
+        category: "Gastronomía, Bebidas",
+        isOnline: null,
+        price: "Todos",
+        ageClassification: "Todos",
+      },
+    },
   };
 
   return (
-    <div className="events-page">
-      <EventFilters
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        isOnline={isOnline}
-        setIsOnline={setIsOnline}
-        selectedPrice={selectedPrice}
-        setSelectedPrice={setSelectedPrice}
-        ageClassification={ageClassification}
-        setAgeClassification={setAgeClassification}
-      />
-      
-        <div className="scroll-gallery mt-5">
-          <AutoScrollGallery filters={filters} />
-        </div>
-        
+    <div className="filters-page">
+      <h2>Explora Eventos por Categorías</h2>
+      {visibleFilters.map((filterKey) => {
+        const { title, filter } = filtersConfig[filterKey] || {};
+        return (
+          title && (
+            <div key={filterKey} className="scroll-gallery mt-5">
+              <h3>{title}</h3>
+              <AutoScrollGallery filters={filter} />
+            </div>
+          )
+        );
+      })}
     </div>
   );
 };

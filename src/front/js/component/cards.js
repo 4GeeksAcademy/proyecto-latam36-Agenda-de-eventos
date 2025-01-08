@@ -1,32 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
-import "../../styles/cards.css";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt } from "react-icons/fa";
-import { useContext } from "react";
 import { Context } from "../store/appContext";
+import "../../styles/cards.css";
 
 const AutoScrollGallery = ({ filters }) => {
   const [events, setEvents] = useState([]);
   const [visibleEvents, setVisibleEvents] = useState([]);
   const [error, setError] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showEvents, setShowEvents] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const galleryRef = useRef(null);
   const { store } = useContext(Context);
-  const { userCountry, token, user } = store;
+  const { userCountry, user } = store;
 
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
   const fetchEvents = async () => {
+    setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-  
-      if (!token) {
-        throw new Error("Inicia Sesión para ver los Eventos");
-      }
-  
       const queryParams = new URLSearchParams({
         status: "approved",
         category: filters.category !== "Todos" ? filters.category : undefined,
@@ -34,45 +28,49 @@ const AutoScrollGallery = ({ filters }) => {
         price_type: filters.price !== "Todos" ? filters.price : undefined,  
         age_classification: filters.ageClassification !== "Todos" ? filters.ageClassification : undefined,
       });
-      
-  
+
       const API_BASE_URL = `${backend}/api/events?${queryParams.toString()}`;
-  
+
       const response = await fetch(API_BASE_URL, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Inicia Sesión para ver los Eventos");
+        throw new Error(errorData.message || "Error al obtener los eventos");
       }
-  
+
       const eventsData = await response.json();
+      console.log("Eventos obtenidos:", eventsData);
       const sortedEvents = eventsData.sort((a, b) => new Date(a.date) - new Date(b.date));
       setEvents(sortedEvents);
     } catch (err) {
       console.error("Error occurred during fetch:", err.message);
       setError(err.message);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    const filterAndSortEvents = () => {
+    fetchEvents();
+  }, [filters]);
 
+  useEffect(() => {
+    const filterAndSortEvents = () => {
       let filteredEvents = events.filter(event => event.status === "approved");
-  
+
       if (filters) {
         if (filters.category && filters.category !== "Todos") {
-          filteredEvents = filteredEvents.filter(event => event.category === filters.category);
+          const categoryList = filters.category.split(",").map(c => c.trim());
+          filteredEvents = filteredEvents.filter(event => categoryList.includes(event.category));
         }
-  
+
         if (filters.isOnline !== null) {
           filteredEvents = filteredEvents.filter(event => event.is_online === filters.isOnline);
         }
-  
+
         if (filters.price && filters.price !== "Todos") {
           filteredEvents = filteredEvents.filter(event => {
             if (filters.price === "De Pago") {
@@ -83,23 +81,34 @@ const AutoScrollGallery = ({ filters }) => {
             return true;
           });
         }
-  
+
         if (filters.ageClassification && filters.ageClassification !== "Todos") {
           filteredEvents = filteredEvents.filter(event => event.age_classification === filters.ageClassification);
         }
-  
+
         if (user?.age < 18) {
           filteredEvents = filteredEvents.filter(event => event.age_classification !== "18+");
         }
       }
-  
+
       const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+      console.log("Eventos visibles:", sortedEvents);
       setVisibleEvents(sortedEvents);
       setShowEvents(true);
     };
-  
+
     filterAndSortEvents();
-  }, [events, filters, userCountry, token, user]);
+  }, [events, filters, user]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleCardClick = (eventId) => {
     navigate(`/EventsDetails/${eventId}`);
@@ -155,8 +164,6 @@ const AutoScrollGallery = ({ filters }) => {
           {
             filters?.country && filters.country !== "Todos"
             ? `Próximos Eventos en ${filters.country}`
-            : token
-            ? `Próximos Eventos en ${userCountry}`
             : "Próximos Eventos"
         }
       </h1>
@@ -251,8 +258,7 @@ const AutoScrollGallery = ({ filters }) => {
       </div>
     )}
   </div>
-);
-
+  );
 };
 
 export default AutoScrollGallery;
