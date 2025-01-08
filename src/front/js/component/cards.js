@@ -63,7 +63,9 @@ const AutoScrollGallery = ({ filters }) => {
 
       if (filters) {
         if (filters.category && filters.category !== "Todos") {
-          const categoryList = filters.category.split(",").map(c => c.trim());
+          const categoryList = Array.isArray(filters.category) 
+            ? filters.category 
+            : filters.category.split(",").map(c => c.trim());
           filteredEvents = filteredEvents.filter(event => categoryList.includes(event.category));
         }
 

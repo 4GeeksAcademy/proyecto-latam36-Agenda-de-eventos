@@ -310,58 +310,66 @@ def add_event():
 @jwt_required(optional=True)
 def get_all_events():
     status = request.args.get('status')
-    categories = request.args.getlist('category') 
-    is_online = request.args.get('is_online', type=lambda x: x.lower() == 'true' if x else None)
+    categories = request.args.getlist('category')
+    is_online = request.args.get('is_online')
     price_type = request.args.get('price_type')
     age_classification = request.args.get('age_classification')
     
     # Lista de status válidos
     valid_statuses = ['submitted', 'approved', 'rejected']
-
+    
     # Verificar si el usuario está logueado y es mayor de 18 años
     current_user = None
-    is_adult = True 
+    is_adult = True
+    
     if get_jwt_identity():
         current_user = get_jwt_identity()
         user_age = current_user.get('age', 0) if isinstance(current_user, dict) else 0
         if user_age < 18:
-            is_adult = False  
-
+            is_adult = False
+    
     try:
         query = Events.query
-
-        # Aplicar filtros si están presentes
-        if status:
+        
+        # Aplicar filtros solo si tienen valores válidos
+        if status and status != 'undefined':
             if status not in valid_statuses:
                 return jsonify({"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}"}), 400
             query = query.filter_by(status=status)
+        
+        if categories and categories != ['undefined']:
+            processed_categories = []
+            for category in categories:
+                
+                subcategories = [cat.strip() for cat in category.split(',')]
+                processed_categories.extend(subcategories)
             
-        if categories and categories != "Todos":
-            category = categories.split(",")
-            query = query.filter(or_(*[Events.event_category == cat.strip() for cat in category]))
-
-            
-        if is_online is not None:
-            query = query.filter_by(is_online=is_online)
-            
-        if price_type:
+            query = query.filter(or_(*[Events.event_category == cat for cat in processed_categories]))
+        
+        if is_online and is_online != 'undefined':
+            is_online_bool = is_online.lower() == 'true'
+            query = query.filter_by(is_online=is_online_bool)
+        
+        if price_type and price_type != 'undefined':
             if price_type.lower() == 'free':
                 query = query.filter(Events.ticket_price == 0)
             elif price_type.lower() == 'paid':
                 query = query.filter(Events.ticket_price > 0)
-                
-        if age_classification and age_classification != "Todos":
+        
+        if age_classification and age_classification != 'undefined' and age_classification != "Todos":
             query = query.filter_by(age_classification=age_classification)
-
+        
         # Filtrar eventos 18+ si el usuario no está logueado o si es menor de 18 años
         if not is_adult:
             query = query.filter(Events.age_classification != '18+')
-
+        
         events = query.all()
-
+        
         return jsonify([event.serialize() for event in events]), 200
+        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 
