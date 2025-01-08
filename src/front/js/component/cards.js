@@ -14,84 +14,65 @@ const AutoScrollGallery = ({ filters }) => {
   const [showEvents, setShowEvents] = useState(false);
   const galleryRef = useRef(null);
   const { store } = useContext(Context);
-  const { userCountry, token } = store;
+  const { userCountry, token, user } = store;
 
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        let API_BASE_URL = `${backend}/api/events/filter?`;
-
-        // Si hay filtros, se usan
-        if (filters) {
-          if (filters.country && filters.country !== "Todos") {
-            API_BASE_URL += `country=${filters.country}&`;
-          }
-          if (filters.category && filters.category !== "Todos") {
-            API_BASE_URL += `category=${filters.category}&`;
-          }
-          if (filters.isOnline !== null) {
-            API_BASE_URL += `isOnline=${filters.isOnline}&`;
-          }
-          if (filters.price && filters.price !== "Todos") {
-            API_BASE_URL += `price=${filters.price}&`;
-          }
-        } 
-        // Si no hay filtros pero hay un usuario logueado, se usa userCountry
-        else if (token && userCountry) {
-          API_BASE_URL += `country=${userCountry}`;
-        }
-        // Si no hay filtros ni usuario, muestra todos los eventos
-
-        const response = await fetch(API_BASE_URL, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Error al cargar los Eventos");
-        }
-
-        const eventsData = await response.json();
-        setEvents(eventsData);
-      } catch (err) {
-        console.error("Error occurred during fetch:", err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchEvents = async () => {
+    try {
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        throw new Error("Inicia Sesión para ver los Eventos");
       }
-    };
-
-    fetchEvents();
-  }, [filters, userCountry, token, backend]);
+  
+      const queryParams = new URLSearchParams({
+        status: "approved",
+        category: filters.category !== "Todos" ? filters.category : undefined,
+        is_online: filters.isOnline !== null ? filters.isOnline : undefined,  
+        price_type: filters.price !== "Todos" ? filters.price : undefined,  
+        age_classification: filters.ageClassification !== "Todos" ? filters.ageClassification : undefined,
+      });
+      
+  
+      const API_BASE_URL = `${backend}/api/events?${queryParams.toString()}`;
+  
+      const response = await fetch(API_BASE_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Inicia Sesión para ver los Eventos");
+      }
+  
+      const eventsData = await response.json();
+      const sortedEvents = eventsData.sort((a, b) => new Date(a.date) - new Date(b.date));
+      setEvents(sortedEvents);
+    } catch (err) {
+      console.error("Error occurred during fetch:", err.message);
+      setError(err.message);
+    }
+  };
 
   useEffect(() => {
     const filterAndSortEvents = () => {
-      let filteredEvents = events;
 
-      // Solo aplica filtros adicionales si se proporcionaron filtros
+      let filteredEvents = events.filter(event => event.status === "approved");
+  
       if (filters) {
-        const country = filters.country || (token && userCountry);
-        if (country && country !== "Todos") {
-          filteredEvents = filteredEvents.filter(event => {
-            const eventCountry = event.location.split(",").pop().trim();
-            return eventCountry === country;
-          });
-        }
-
         if (filters.category && filters.category !== "Todos") {
           filteredEvents = filteredEvents.filter(event => event.category === filters.category);
         }
-
+  
         if (filters.isOnline !== null) {
-          filteredEvents = filteredEvents.filter(event => event.isOnline === filters.isOnline);
+          filteredEvents = filteredEvents.filter(event => event.is_online === filters.isOnline);
         }
-
+  
         if (filters.price && filters.price !== "Todos") {
           filteredEvents = filteredEvents.filter(event => {
             if (filters.price === "De Pago") {
@@ -102,15 +83,23 @@ const AutoScrollGallery = ({ filters }) => {
             return true;
           });
         }
+  
+        if (filters.ageClassification && filters.ageClassification !== "Todos") {
+          filteredEvents = filteredEvents.filter(event => event.age_classification === filters.ageClassification);
+        }
+  
+        if (user?.age < 18) {
+          filteredEvents = filteredEvents.filter(event => event.age_classification !== "18+");
+        }
       }
-
+  
       const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
       setVisibleEvents(sortedEvents);
       setShowEvents(true);
     };
-
+  
     filterAndSortEvents();
-  }, [events, filters, userCountry, token]);
+  }, [events, filters, userCountry, token, user]);
 
   const handleCardClick = (eventId) => {
     navigate(`/EventsDetails/${eventId}`);
@@ -146,8 +135,7 @@ const AutoScrollGallery = ({ filters }) => {
     });
   };
 
-
-    const navButtonStyle = {
+  const navButtonStyle = {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
@@ -166,7 +154,6 @@ const AutoScrollGallery = ({ filters }) => {
         <h1 className="ml-4">
           {
             filters?.country && filters.country !== "Todos"
-
             ? `Próximos Eventos en ${filters.country}`
             : token
             ? `Próximos Eventos en ${userCountry}`
@@ -221,9 +208,9 @@ const AutoScrollGallery = ({ filters }) => {
               style={{ cursor: "pointer", position: "relative" }}
             >
               <img
-                src={event.flyer_img_url}
+                src={event.flyer_img_url || "https://via.placeholder.com/600x400?text=Event+Image"}
                 className="card-img-top"
-                alt={event.event_name}
+                alt={event.event_name || "Placeholder image"}
                 style={{ height: "300px", objectFit: "cover" }}
               />
               
