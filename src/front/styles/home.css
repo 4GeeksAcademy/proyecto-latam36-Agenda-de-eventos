@@ -91,41 +91,46 @@
    }
 }
 
-
 .boton-1 {
-  background-color: #391679c7; 
+  background: linear-gradient(90deg, #250764, #b084ff); /* Degradado sutil y moderno */
   color: white; 
-  border: 2px solid white; 
-  border-radius: 20px; 
-  padding: 9px 30px; 
+  border: none; /* Sin borde para un look limpio */
+  border-radius: 50px; /* Bordes completamente redondeados */
+  padding: 12px 40px; 
   font-size: 18px; 
+  font-family: 'Poppins', sans-serif; /* Fuente minimalista y elegante */
+  font-weight: 500; /* Peso medio para la tipografía */
+  text-transform: none; /* Mantiene el texto en formato normal */
   cursor: pointer; 
-  
-   transition: background-color .1s ease, transform .1s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Sombra ligera para destacar */
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; 
 }
 
 .boton-1:hover {
-   background-color: #4c269ebb; 
-   transform: scale(1.05); 
+  background: linear-gradient(90deg, #622fb4, #d3b3ff); /* Degradado más claro al pasar el cursor */
+  transform: translateY(-3px); /* Pequeño desplazamiento hacia arriba */
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3); /* Intensifica la sombra */
 }
 
 .boton-1:active {
-   transform: scale(0.95);  
+  transform: translateY(2px); /* Desplazamiento hacia abajo al hacer clic */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Reduce la sombra */
 }
 
 @media (max-width: 768px) { 
- .boton-1 {
-     padding: 10px 20px; 
-     font-size: 16px; 
- }
+  .boton-1 {
+    padding: 10px 30px; 
+    font-size: 16px; 
+  }
 }
 
 @media (max-width: 480px) { 
- .boton-1 {
-     padding: 8px 15px; 
-     font-size: 14px; 
- }
+  .boton-1 {
+    padding: 8px 25px; 
+    font-size: 14px; 
+  }
 }
+
 
 @media only screen and (max-width: 600px) {
 }
