@@ -50,12 +50,17 @@ const Login = () => {
                     <div className=" Login card p-4" style={{ maxWidth: '400px', width: '100%' }}>
                         <div className="mb-3">
                             <Link className="navbar-brand d-block" to="/" style={{ width: '100%' }}>
-                                <img
-                                    className="object-cover object-center"
-                                    style={{ width: '160px' }}
-                                    src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/culturalwavelogo"
-                                    alt="logo-culturalWave"
-                                />
+                            <img
+                                className="object-cover object-center"
+                                style={{
+                                    width: '180px',
+                                    display: 'block', 
+                                    margin: '0 auto', 
+                                    position: 'relative', 
+                                }}
+                                src="https://res.cloudinary.com/dj6gqmozm/image/upload/f_auto,q_auto/nqyo2gpte9c8kwsgqlbn"
+                                alt="logo-culturalWave"
+                            />
                             </Link>
                         </div>
                         <h3 className="text-center fw-bold">Iniciar Sesión</h3>
@@ -90,7 +95,7 @@ const Login = () => {
                                 />
                             </div>
                             <div className="d-grid">
-                                <button type="submit" className="btn btn-primary rounded-pill">Ingresar</button>
+                                <button type="submit" className="btn btn-primary">Ingresar</button>
                             </div>
                         </form>
                         <div className="text-center mt-3">

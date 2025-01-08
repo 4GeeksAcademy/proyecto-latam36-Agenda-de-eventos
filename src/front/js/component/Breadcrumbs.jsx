@@ -58,7 +58,7 @@ const Breadcrumbs = ({ eventName }) => {
       {/* Botón Volver */}
       <button
         onClick={() => navigate(-1)}
-        className="rounded btn-primary fw-bold mt-1"
+        className="boton-2"
       >
         Volver
       </button>

@@ -16,6 +16,14 @@ function Home() {
               alt="texto"
             />
           </div>
+          <div className="principal__crearEvento">
+            <div className="principal__crearEvento__texto">
+              <p className="parrafo-publica">Publica<br/>tu evento</p>
+              <Link to={"/EventsForm"}>
+                <button className="boton-1">Crea tu evento</button>
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
       <Filters visibleFilters={["sportsAndWellness", "technology"]} />

@@ -7,7 +7,7 @@ import "../../styles/eventForm.css";
 function EventsForm() {
   return (
     <>
-      <Navbar />
+      
       <Breadcrumbs />
       <Form />
     </>
