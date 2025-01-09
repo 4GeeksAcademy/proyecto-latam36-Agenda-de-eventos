@@ -1,88 +1,245 @@
-/* Estilos globales para el botón del Navbar */
-nav div {
+.logo-home {
+  height: auto;
+  max-height: 55px;
+  width: auto;
+  max-width: 100%;
+  position: absolute;
+  top: 15px;
+  left: 25px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
 }
 
 
-.navbar-nav {
+@media (max-width: 768px) {
+ 
+  .logo-home {
+    max-height: 30px; 
+    position: static;
+  }
+
+  
+  .navbar-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .navbar-button {
+    font-size: 14px;
+    padding: 6px 15px;
+    margin-top: 10px;
+    width: 100%; 
+  }
+
+  
+  .profile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-dropdown {
+    position: relative;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    z-index: 100;
+    padding: 5px;
+    font-size: 14px; 
+  }
+
+  .profile-dropdown ul {
+    padding-left: 0;
+    margin: 0;
+  }
+
+  
+  .profile-dropdown li {
+    margin-bottom: 5px; 
+  }
+
+  .profile-dropdown li a,
+  .profile-dropdown li button {
+    font-size: 14px;
+    padding: 8px 12px; 
+    display: block;
+    text-align: center;
+    background-color: #4b1f69;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+   }
+
+  
+  .profile-dropdown li a:hover,
+  .profile-dropdown li button:hover {
+    background-color: #6b2f8a;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .navbar-button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2px 10px;
-  background-color: rgba(0, 0, 0, 0.479);
-  border-radius: 50px;
-  gap: 10px;
-}
-
-
-.logo-home {
-  height: auto; 
-  max-height: 40px; 
-  width: auto; 
-  max-width: 100%; 
-}
-
-@media (max-width: 768px) { 
-  .logo-home {
-      max-height: 30px; 
-  }
-}
-
-@media (max-width: 480px) { 
-  .logo-home {
-      max-height: 25px; 
-  }
-}
-
-
-.navbar .btn {
-    background-color: #3a3a3a; 
-    color: white; 
-    border: none;
-    border-radius: 4px;
-  }
+  padding: 10px 20px;
+  position: relative;
+  width: 100%;
   
-.navbar .btn:hover {
-    background-color: #0c0c0c; 
-    color: #f8f9fa; 
-  }
+}
 
-.navbar .nav-link {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: rgb(255, 255, 255);
-    font-size: 16px;
-    font-weight: lighter;
-  }
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+
+.navbar-links {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+
+.navbar-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+  color: white;
+  background-color: #4b1f69;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-button:hover {
+  background-color: #6b2f8a;
+}
+
+
+.login-btn {
+  background-color: transparent;
+  border: 2px solid #4e2a84;
+}
+
+.login-btn:hover {
+  background-color: #4e2a84;
+  color: white;
+  transform: translateY(-3px);
+}
+
+
+.signup-btn {
+  background-color: #4e2a84;
+  border: 2px solid transparent;
+}
+
+.signup-btn:hover {
+  background-color: white;
+  color: #4e2a84;
+  transform: translateY(-3px);
+}
+
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
   
-.navbar .nav-link:hover {
-    color: #f8f9fa;
-    }
+}
 
+.profile-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #333;
+  border-radius: 5px;
+  padding: 10px;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
 
-/* Link en Navbar para ADMIN */
-.navbar .nav-link.admin-link {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+.profile-dropdown ul {
+  list-style: none;
+  padding: 0;
+}
+
+.profile-dropdown li {
+  margin: 5px 0;
+}
+
+.nav-link {
   color: white;
-  font-weight: bold;
-  margin-left: 15px; 
   text-decoration: none;
-}
-.navbar .nav-link.admin-link:hover {
-    color: #ff00ff;
+  padding: 10px;
+  display: block;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Link en Navbar para User */
-.navbar .nav-link.user-link {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+.nav-link:hover {
+  background-color: #4e2a84;
   color: white;
-  font-weight: bold;
-  margin-left: 15px; 
-  text-decoration: none;
-}
-.navbar .nav-link.user-link:hover {
-  color: #ff00ff;
 }
 
+
+.logout-btn {
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #4e2a84;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #4e2a84;
+  color: white;
+}
+
+
+.admin-panel {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.admin-btn {
+  padding: 12px 25px;
+  background-color: #4e2a84;
+  border: 2px solid transparent;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.admin-btn:hover {
+  background-color: white;
+  color: #4e2a84;
+  transform: translateY(-3px);
+}

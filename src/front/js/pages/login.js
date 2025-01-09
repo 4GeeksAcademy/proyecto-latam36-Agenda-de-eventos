@@ -95,7 +95,7 @@ const Login = () => {
                                 />
                             </div>
                             <div className="d-grid">
-                                <button type="submit" className="btn btn-primary">Ingresar</button>
+                                <button type="submit">Ingresar</button>
                             </div>
                         </form>
                         <div className="text-center mt-3">

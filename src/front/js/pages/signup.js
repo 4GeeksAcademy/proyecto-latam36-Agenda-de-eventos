@@ -238,7 +238,7 @@ function Signup() {
                             Acepto los términos y condiciones
                         </label>
                     </div>
-                    <button type="submit" className="btn btn-primary w-100">
+                    <button type="submit">
                         Registrarse
                     </button>
                 </form>

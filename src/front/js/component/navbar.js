@@ -2,17 +2,21 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Navbar.css";
+import { FaUserCircle } from "react-icons/fa"; 
 
 const Navbar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const [profileMenuVisible, setProfileMenuVisible] = useState(false); 
 
+    
     useEffect(() => {
         if (store.token && !store.isAdmin) {
             actions.checkAdmin();
         }
     }, []);
 
+    
     const handleLogout = () => {
         const userConfirmed = window.confirm(`Are you sure you want to Logout, ${store.username || "user"}?`);
         if (userConfirmed) {
@@ -32,78 +36,53 @@ const Navbar = () => {
                     />
                 </Link>
 
-                <button
-                    className="navbar-toggler navbar-light"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-
-                <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <div className="navbar-content">
                     {store.loading ? (
-                        <div className="spinner-border text-light" role="status">
-                            <span className="visually-hidden">Loading...</span>
+                        <div className="spinner">
+                            <div className="spinner-border text-light" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
                         </div>
                     ) : (
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Conciertos</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Teatro</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Museos</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Familia</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Turismo</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Vida Nocturna</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Infantil</a>
-                            </li>
-                            {store.token && (
-                                <li className="nav-item">
-                                    <Link className="nav-link user-link" to="/perfil">
-                                        Perfil
-                                    </Link>
-                                </li>
-                            )}
-                            {store.isAdmin && (
-                                <li className="nav-item">
-                                    <Link className="nav-link admin-link" to="/admineventrequests">
-                                        Panel Admin
-                                    </Link>
-                                </li>
-                            )}
-                        </ul>
-                    )}
-                </div>
+                        <div className="navbar-links">
+                            {store.token ? (
+                                <>
+                                    
+                                    <div className="profile-menu">
+                                        <button
+                                            className="profile-icon"
+                                            onClick={() => setProfileMenuVisible(!profileMenuVisible)}
+                                        >
+                                            <FaUserCircle size={30} />
+                                        </button>
+                                        {profileMenuVisible && (
+                                            <div className="profile-dropdown">
+                                                <ul>
+                                                    <li>
+                                                        <Link to="/perfil" className="nav-link">Perfil</Link>
+                                                    </li>
+                                                    <li>
+                                                        <button onClick={handleLogout} className="logout-btn">Logout</button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
 
-                <div className="d-flex align-items-center">
-                    {store.token ? (
-                        <button className="btn btn-danger" onClick={handleLogout}>
-                            Logout
-                        </button>
-                    ) : (
-                        <>
-                            <Link to="/login" className="btn btn-outline-light bg-whithe fw-bold mr-2">
-                                Login
-                            </Link>
-                            <Link to="/signup" className="btn btn-outline-light bg-whithe fw-bold">
-                                SignUp
-                            </Link>
-                        </>
+                                    
+                                    {store.isAdmin && (
+                                        <div className="admin-panel">
+                                            <Link to="/admineventrequests" className="admin-btn">Panel Admin</Link>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <Link to="/login" className="navbar-button login-btn">Login</Link>
+                                    <Link to="/signup" className="navbar-button signup-btn">SignUp</Link>
+                                </>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
