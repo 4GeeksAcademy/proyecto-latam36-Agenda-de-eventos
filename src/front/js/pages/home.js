@@ -29,6 +29,7 @@ function Home() {
           </div>
         </section>
       </main>
+      <Carrusel/>
       <Filters visibleFilters={["sportsAndWellness", "technology", "gastronomy", "entertainmentAndCulture", "educationalAndProfessional", "socialAndCommunity", "fashionAndLifestyle", "festivalsAndFestivities"]} 
       title={`Explora eventos por Categorías`} />
     </>
