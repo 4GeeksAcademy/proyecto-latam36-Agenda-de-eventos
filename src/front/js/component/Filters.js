@@ -89,7 +89,7 @@ const Filters = ({ visibleFilters = [] }) => {
         const { title, filter } = filtersConfig[filterKey] || {};
         return (
           title && (
-            <div key={filterKey} className="scroll-gallery mt-5">
+            <div key={filterKey} className="scroll-gallery">
               <h3>{title}</h3>
               <AutoScrollGallery filters={filter} />
             </div>
