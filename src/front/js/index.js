@@ -15,6 +15,7 @@ import "../styles/footer.css";
 import "../styles/eventForm.css";
 import "../styles/login.css";
 import "../styles/signup.css";
+import "../styles/Carrusel.css";
 //import your own components
 import Layout from "./layout";
 

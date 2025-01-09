@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../component/navbar';
 import Breadcrumbs from "../component/Breadcrumbs.jsx";
+import '../../styles/perfil.css'
 
 const Perfil = () => {
     const [user, setUser] = useState(null);
@@ -104,8 +105,8 @@ const Perfil = () => {
             <Navbar />
             <Breadcrumbs />
             <div className="container mt-5">
-                <div className="card-header bg-dark mb-5 text-white">
-                    <h2>Perfil del Usuario</h2>
+                <div className="card-header mb-5 text-white">
+                    <h1>Perfil del Usuario</h1>
                 </div>
                 <ul className="nav nav-tabs mb-3">
                     <li className="nav-item">

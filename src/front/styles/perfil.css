@@ -1,0 +1,168 @@
+
+.perfil-container {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .card-header {
+    text-align: center;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .card-body {
+    padding: 20px;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body p {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .card-body img {
+    border: 2px solid #4e2a84;
+  }
+  
+ 
+  .nav-tabs {
+    border-bottom: 2px solid #4e2a84;
+  }
+  
+  .nav-tabs .nav-link {
+    color: #885bf1;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+  }
+  
+  .nav-tabs .nav-link:hover {
+    background-color: #e6d7ff;
+    color: #4e2a84;
+    border-radius: 5px;
+  }
+  
+  .nav-tabs .nav-link.active {
+    background-color: #885bf1;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+  
+  
+  .card.mb-5 {
+    margin-bottom: 30px;
+  }
+  
+  .card-body h4 {
+    color: #4e2a84;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  .card-body p {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  
+  .profile-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .profile-info {
+    flex: 1;
+    padding-right: 20px;
+  }
+  
+  .profile-info p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .profile-image {
+    flex: 0 0 150px;
+    text-align: center;
+  }
+  
+  .profile-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  .boton-perfil {
+    background-color: #4e2a84;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .boton-perfil:hover {
+    background-color: #6b2f8a;
+    transform: translateY(-3px);
+  }
+  
+  .boton-perfil:active {
+    transform: translateY(2px);
+    background-color: #6b2f8a;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+ 
+  @media (max-width: 768px) {
+    .perfil-container {
+      padding: 20px;
+    }
+  
+    .profile-details {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .profile-info {
+      padding-right: 0;
+      margin-bottom: 20px;
+    }
+  
+    .profile-image {
+      margin-bottom: 20px;
+    }
+  }
+  
+ 
+  @media (max-width: 480px) {
+    .card-header h2 {
+      font-size: 22px;
+    }
+  
+    .card-body h4 {
+      font-size: 20px;
+    }
+  
+    .nav-tabs .nav-link {
+      font-size: 16px;
+    }
+  }
+  

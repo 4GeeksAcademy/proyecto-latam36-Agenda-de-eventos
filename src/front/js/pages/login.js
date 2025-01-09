@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext";
 import "../../styles/login.css";
 
+
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -95,7 +96,7 @@ const Login = () => {
                                 />
                             </div>
                             <div className="d-grid">
-                                <button type="submit" className="btn btn-primary">Ingresar</button>
+                                <button type="submit">Ingresar</button>
                             </div>
                         </form>
                         <div className="text-center mt-3">

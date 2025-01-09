@@ -1,0 +1,64 @@
+.carousel-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000000;
+  }
+  
+  .carousel-container {
+    width: 100%;
+    max-width: 7500px; /* Ajustar según el tamaño máximo deseado */
+    padding: 20px;
+  }
+  
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 1000px; /* Ajustar según el tamaño deseado */
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #000;
+  }
+  
+  .slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .slide {
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .slide img {
+    width: 100%;
+    border-radius: 15px;
+  }
+  
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 2rem;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .prev:hover, .next:hover {
+    color: #575657;
+  }
+  
+  .prev {
+    left: 10px;
+  }
+  
+  .next {
+    right: 10px;
+  }
+  
