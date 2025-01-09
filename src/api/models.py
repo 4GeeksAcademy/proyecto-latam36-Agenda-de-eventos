@@ -64,7 +64,15 @@ class User(db.Model):
     def has_admin_privileges(self):
         return self.is_admin
 
-    
+    def favorites_serialize(self):
+        favs_serialized=[]
+        for favs_list in self.favorites:
+            print(favs_list.event_id)
+            favs_serialized.append(favs_list.event_id) 
+        return {"user_id":self.id,
+                "favorites_event_id":favs_serialized}
+
+
 class Events(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(100),unique=False, nullable=False)

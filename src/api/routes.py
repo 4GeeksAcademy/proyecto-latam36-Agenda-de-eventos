@@ -481,6 +481,15 @@ def add_favorite(event_id):
                      'user_id':user_id,
                      'event_id':event_id})
 
+
+# Obtener los favoritos de un usuario
+@api.route('/user/favorite', methods=['GET'])
+@jwt_required()
+def user_favorites():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    return jsonify(user.favorites_serialize())
+
 # APROBACION y RECHAZO de Eventos [ADMIN]
 @api.route('/events/<int:event_id>/status', methods=['PUT']) 
 @jwt_required()
