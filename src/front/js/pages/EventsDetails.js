@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from "../component/navbar";
 import Modal from "../component/Modal";
-import AutoScrollGallery from "../component/cards";
+import Filters from "../component/Filters";
 import Breadcrumbs from "../component/Breadcrumbs.jsx";
-
 
 const backend = process.env.BACKEND_URL;
 
@@ -17,27 +16,60 @@ const EventsDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalAction, setModalAction] = useState("");
   const [justification, setJustification] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const getCategoryFilterKey = (category) => {
+    const categoryMappings = {
+      'Deportes': 'sportsAndWellness',
+      'Fitness': 'sportsAndWellness',
+      'Salud': 'sportsAndWellness',
+      'Deportes extremos': 'sportsAndWellness',
+      'Artes Marciales': 'sportsAndWellness',
+      'Tecnología': 'technology',
+      'Ciencia': 'technology',
+      'Gastronomía': 'gastronomy',
+      'Bebidas': 'gastronomy',
+      'Música': 'entertainmentAndCulture',
+      'Teatro': 'entertainmentAndCulture',
+      'Danza': 'entertainmentAndCulture',
+      'Cine': 'entertainmentAndCulture',
+      'Arte': 'entertainmentAndCulture',
+      'Eventos Literarios': 'entertainmentAndCulture',
+      'Conferencias': 'educationalAndProfessional',
+      'Talleres': 'educationalAndProfessional',
+      'Seminarios': 'educationalAndProfessional',
+      'Educación': 'educationalAndProfessional',
+      'Negocios': 'educationalAndProfessional',
+      'Eventos Familiares': 'socialAndCommunity',
+      'Caridad': 'socialAndCommunity',
+      'Voluntariado': 'socialAndCommunity',
+      'Religión': 'socialAndCommunity',
+      'Moda': 'fashionAndLifestyle',
+      'Estilo de Vida': 'fashionAndLifestyle',
+      'Festivales': 'festivalsAndFestivities',
+      'Carnavales': 'festivalsAndFestivities',
+      'Celebraciones': 'festivalsAndFestivities'
+    };
+    
+    return categoryMappings[category] || null;
+  };
 
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          navigate("/login");
-          return;
+        setIsLoggedIn(!!token);
+
+        // Check if user is admin only if logged in
+        if (token) {
+          const responseAdmin = await fetch(`${backend}/api/users/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const isAdminResponse = await responseAdmin.json();
+          setIsAdmin(isAdminResponse.is_admin);
         }
 
-        // Verificar si el usuario es admin
-        const responseAdmin = await fetch(`${backend}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const isAdminResponse = await responseAdmin.json();
-        setIsAdmin(isAdminResponse.is_admin);
-
-        const response = await fetch(`${backend}/api/events/${id}?details=true`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await fetch(`${backend}/api/events/${id}?details=true`);
 
         if (response.ok) {
           const data = await response.json();
@@ -53,16 +85,16 @@ const EventsDetails = () => {
     };
 
     fetchEventDetails();
-  }, [id, navigate]);
+  }, [id]);
 
   const handleStatusChange = async () => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
       const newStatus = modalAction === "approve" ? "approved" : "rejected";
 
       const response = await fetch(`${backend}/api/events/${id}/status`, {
@@ -95,8 +127,12 @@ const EventsDetails = () => {
   };
 
   const handleModalOpen = (action) => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
     setModalAction(action);
-    setJustification(eventDetails.event_admin_msg || "");
+    setJustification(eventDetails?.event_admin_msg || "");
     setShowModal(true);
   };
 
@@ -150,7 +186,7 @@ const EventsDetails = () => {
                 </div>
               )}
               {/* Otras imágenes: media_files */}
-              {media_files && media_files.length > 0 ? (
+              {media_files && media_files.length > 0 && 
                 media_files.map((media, index) => (
                   <div
                     key={index}
@@ -169,18 +205,7 @@ const EventsDetails = () => {
                     </div>
                   </div>
                 ))
-              ) : (
-                // Imagen placeholder si no hay media_files
-                !flyer_img_url && (
-                  <div className="carousel-item active event-image">
-                    <img
-                      src="https://placehold.co/600x400"
-                      alt="Placeholder image"
-                      className="d-block w-100"
-                    />
-                  </div>
-                )
-              )}
+              }
             </div>
             <button className="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
               <span className="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -199,26 +224,44 @@ const EventsDetails = () => {
           </div>
 
           <div className="col-md-4">
-            <div className="event-info">
-              <h5>{location}</h5>
-              <p>
-                <i className="fas fa-calendar-alt"></i>{" "}
-                {new Date(date).toLocaleString("en-US", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-              <p>
-                <strong>Categoria :</strong> {category}
-              </p>
-              <p>
-                <strong>Clasificación :</strong> {age_classification}
-              </p>
-              <p className="price">$ {ticket_price}</p>
-              <button className="btn btn-primary">Buscar tickets</button>
-            </div>
+          <div className="event-info">
+            <h5>{location}</h5>
+            <p>
+              <i className="fas fa-calendar-alt"></i>{" "}
+              {new Date(date).toLocaleString("en-US", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+            <p>
+              <strong>Categoria:</strong> {category}
+            </p>
+            <p>
+              <strong>Clasificación:</strong> {age_classification}
+            </p>
+            <p className="price">$ {ticket_price}</p>
+            
+            {isLoggedIn ? (
+              <button className="btn btn-primary w-100">
+                <i className="fas fa-heart me-2"></i>
+                Agregar a favoritos
+              </button>
+            ) : (
+              <div className="alert alert-info" role="alert">
+                <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
+                <div className="d-flex gap-2">
+                  <a href="/login" className="btn btn-primary btn-sm">
+                    Iniciar sesión
+                  </a>
+                  <a href="/signup" className="btn btn-outline-primary btn-sm">
+                    Registrarse
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
             <div className="producer-info">
               <h4 className="fw-bold">Productor :</h4>
               <p>
@@ -280,9 +323,13 @@ const EventsDetails = () => {
           )}
         </div>
       </div>
-      <AutoScrollGallery />
+      {eventDetails && (
+        <Filters 
+          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)} 
+        />
+      )}
 
-      {showModal && (
+      {showModal && isLoggedIn && (
         <Modal
           title={modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"}
           onClose={() => setShowModal(false)}
