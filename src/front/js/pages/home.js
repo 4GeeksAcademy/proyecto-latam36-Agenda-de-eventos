@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 import Navbar from "../component/navbar";
+import Carrusel from "../component/Carrusel";
 import Filters from "../component/Filters";
 import "../../styles/home.css";
+
 
 function Home() {
   return (
@@ -27,6 +29,7 @@ function Home() {
           </div>
         </section>
       </main>
+       <Carrusel />
       <Filters visibleFilters={["sportsAndWellness", "technology", "gastronomy", "entertainmentAndCulture", "educationalAndProfessional", "socialAndCommunity", "fashionAndLifestyle", "festivalsAndFestivities"]} />
     </>
   );
