@@ -60,7 +60,7 @@ const Breadcrumbs = ({ eventName }) => {
         onClick={() => navigate(-1)}
         className="boton-2"
       >
-        Volver
+        <i className="fas fa-arrow-left"></i>
       </button>
     </div>
   );
