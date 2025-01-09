@@ -23,6 +23,8 @@ class User(db.Model):
 # Child:Events relationship
     events=db.relationship("Events",back_populates="user")
 
+#Child: Favorites relationship
+    favorites=db.relationship("Favorites",back_populates="user")
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -91,6 +93,9 @@ class Events(db.Model):
 #Child: ContactInfo relationship
     contact_info=db.relationship("ContactInfo", back_populates="event")
 
+#Child: Favorites relationship
+    favorites=db.relationship("Favorites",back_populates="event")
+
     def __repr__(self):
         return f'<Events {self.event_name}>'
 
@@ -145,8 +150,23 @@ class Favorites(db.Model):
     user_id = db.Column(db.Integer, ForeignKey(User.id), unique=False, nullable=False)
     event_id = db.Column(db.Integer, ForeignKey(Events.id), unique=False, nullable=False)
 
+    #Parent: User relatioship
+    user=db.relationship(User,back_populates="favorites")
+
+    #Parent: Events relationship
+    event=db.relationship(Events,back_populates="favorites")
+
     def __repr__(self):
         return f'<{self.event_id} : {self.user_id}>'
+    
+    def __init__(self,user_id,event_id):
+        self.user_id=user_id
+        self.event_id=event_id
+
+    def serialiaze(self):
+        return {"user_id":self.user_id,
+                "event_id":self.event_id
+                }
 
 class EventMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
