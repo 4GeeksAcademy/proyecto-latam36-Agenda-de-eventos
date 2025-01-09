@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 
 const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
   const images = [
     "https://via.placeholder.com/800x400",
     "https://via.placeholder.com/800x400",
@@ -27,6 +28,10 @@ const Carousel = () => {
     showSlide(currentSlide - 1);
   };
 
+  const goToEventDetails = () => {
+    navigate('/EventsDetails');
+  };
+
   return (
     <div className="carousel-wrapper">
       <div className="carousel-container">
@@ -34,7 +39,7 @@ const Carousel = () => {
           <div className="slides" style={{ transform: `translateX(${-currentSlide * 100}%)` }}>
             {images.map((img, index) => (
               <div className="slide" key={index}>
-                <img src={img} alt={`Slide ${index + 1}`} />
+                <img src={img} alt={`Slide ${index + 1}`} onClick={goToEventDetails} />
               </div>
             ))}
           </div>
