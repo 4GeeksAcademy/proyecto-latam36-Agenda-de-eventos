@@ -40,9 +40,8 @@ button[type="submit"]:hover {
 }
 
 button[type="submit"]:active {
-  background-color: #7e4dd3; /* Color un poco más oscuro cuando se hace clic */
-  transform: scale(0.98); /* Efecto de presionado */
-}
+  background-color: #7e4dd3; 
+  transform: scale(0.98); 
 
 
 h1 {

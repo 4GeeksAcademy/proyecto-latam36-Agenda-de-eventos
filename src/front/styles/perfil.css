@@ -1,6 +1,4 @@
-/* Hoja de Estilos para el Perfil del Usuario */
 
-/* Estilo general para el perfil */
 .perfil-container {
     background-color: #f8f9fa;
     padding: 30px;
@@ -34,7 +32,7 @@
     border: 2px solid #4e2a84;
   }
   
-  /* Estilo para las pestañas de navegación */
+ 
   .nav-tabs {
     border-bottom: 2px solid #4e2a84;
   }
@@ -61,7 +59,7 @@
     border-radius: 5px;
   }
   
-  /* Estilo de las tarjetas dentro de las pestañas */
+  
   .card.mb-5 {
     margin-bottom: 30px;
   }
@@ -78,7 +76,7 @@
     color: #555;
   }
   
-  /* Estilo de la sección de perfil */
+  
   .profile-details {
     display: flex;
     flex-wrap: wrap;
@@ -108,7 +106,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  /* Estilos para botones dentro del perfil */
+  
   .boton-perfil {
     background-color: #4e2a84;
     color: white;
@@ -132,7 +130,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  /* Para pantallas pequeñas */
+ 
   @media (max-width: 768px) {
     .perfil-container {
       padding: 20px;
@@ -153,7 +151,7 @@
     }
   }
   
-  /* Para pantallas muy pequeñas */
+ 
   @media (max-width: 480px) {
     .card-header h2 {
       font-size: 22px;

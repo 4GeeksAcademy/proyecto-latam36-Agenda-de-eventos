@@ -92,33 +92,32 @@
 }
 
 .boton-1 {
-  background: linear-gradient(45deg, #885bf1, #4b1f69); /* Gradiente suave y elegante */
+  background: linear-gradient(45deg, #885bf1, #4b1f69); 
   color: white;
   border: none;
-  border-radius: 10px; /* Borde más redondeado para un toque más suave */
+  border-radius: 10px; 
   padding: 14px 40px;
   font-size: 18px;
-  font-family: 'Poppins', sans-serif; /* Tipografía Poppins */
-  font-weight: 300; /* Peso de fuente más ligero */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300; 
   text-transform: none;
   cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
   transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  letter-spacing: 1px; /* Espaciado en las letras para más claridad */
+  letter-spacing: 1px; 
 }
 
 .boton-1:hover {
-  background: linear-gradient(45deg, #885bf1, #6c1d8c); /* Gradiente más claro al pasar el cursor */
-  transform: translateY(-4px); /* Desplazamiento hacia arriba más notorio */
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
-  filter: brightness(1.1); /* Aumenta el brillo al pasar el mouse */
+  background: linear-gradient(45deg, #885bf1, #6c1d8c); 
+  transform: translateY(-4px); 
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3); 
+  filter: brightness(1.1); 
 }
 
 .boton-1:active {
-  transform: translateY(2px); /* Efecto de presión hacia abajo */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Vuelve la sombra a su tamaño original */
-  filter: brightness(0.9); /* Hace que el botón se oscurezca un poco al hacer clic */
-}
+  transform: translateY(2px);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
+  filter: brightness(0.9); 
 
 @media (max-width: 768px) {
   .boton-1 {

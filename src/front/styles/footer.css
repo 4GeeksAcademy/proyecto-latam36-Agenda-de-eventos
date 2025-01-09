@@ -3,7 +3,7 @@
   background-color: #222;
   color: white;
   padding: 15px 0;
-  border-top: 4px solid #885bf1; /* Detalle morado */
+  border-top: 4px solid #885bf1; 
 }
 
 
@@ -26,7 +26,7 @@
 }
 
 .footer-link:hover {
-  color: #6b2f8a; /* Tono morado más oscuro */
+  color: #6b2f8a; 
 }
 
 .footer-info p {
