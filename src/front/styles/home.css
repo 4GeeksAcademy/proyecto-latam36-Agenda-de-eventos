@@ -98,7 +98,7 @@
   border-radius: 10px; 
   padding: 14px 40px;
   font-size: 18px;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif; 
   font-weight: 300; 
   text-transform: none;
   cursor: pointer;
@@ -108,16 +108,17 @@
 }
 
 .boton-1:hover {
-  background: linear-gradient(45deg, #885bf1, #6c1d8c); 
+  background: linear-gradient(45deg, #9c43f3, #6c1d8c); 
   transform: translateY(-4px); 
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3); 
   filter: brightness(1.1); 
 }
 
 .boton-1:active {
-  transform: translateY(2px);
+  transform: translateY(2px); 
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
   filter: brightness(0.9); 
+}
 
 @media (max-width: 768px) {
   .boton-1 {
