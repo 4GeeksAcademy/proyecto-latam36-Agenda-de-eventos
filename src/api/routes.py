@@ -452,6 +452,8 @@ def get_event(event_id):
         return protected_action()
 
 
+#FAVORITES endpoints
+
 # Agregar evento favorito a un usuario
 @api.route('/favorite/<int:event_id>', methods=['POST'])
 @jwt_required()
@@ -482,6 +484,30 @@ def add_favorite(event_id):
                      'event_id':event_id})
 
 
+# Eliminar evento de favoritos de un usuario
+@api.route('/favorite/<int:event_id>', methods=['DELETE'])
+@jwt_required()
+def remove_favorite(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    if not user:
+        return jsonify({"message": "Usuario no encontrado"}), 404
+    
+    favorite = Favorites.query.filter_by(user_id=user.id, event_id=event_id).first()
+    if not favorite:
+        return jsonify({"message": "Favorito no encontrado"}), 404
+    
+    try:
+        db.session.delete(favorite)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        print("Database error:", error)
+        return jsonify({"message": "Error al eliminar de favoritos"}), 500
+    
+    return jsonify({"msg": "Favorito eliminado"})
+
+
 # Obtener los favoritos de un usuario
 @api.route('/user/favorite', methods=['GET'])
 @jwt_required()
@@ -489,6 +515,7 @@ def user_favorites():
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
     return jsonify(user.favorites_serialize())
+
 
 # APROBACION y RECHAZO de Eventos [ADMIN]
 @api.route('/events/<int:event_id>/status', methods=['PUT']) 

@@ -17,6 +17,7 @@ const EventsDetails = () => {
   const [modalAction, setModalAction] = useState("");
   const [justification, setJustification] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const getCategoryFilterKey = (category) => {
     const categoryMappings = {
@@ -86,6 +87,60 @@ const EventsDetails = () => {
 
     fetchEventDetails();
   }, [id]);
+
+// Función para manejar el clic en el botón de favoritos
+const handleFavoriteToggle = async () => {
+    if (!isLoggedIn) {
+        navigate("/login");
+        return;
+    }
+
+    const token = localStorage.getItem("token");
+    const method = isFavorite ? "DELETE" : "POST";
+    const url = `${backend}/api/favorite/${id}`;
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Error al actualizar favoritos");
+        }
+        
+        setIsFavorite(!isFavorite);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+useEffect(() => {
+    const checkFavoriteStatus = async () => {
+        if (!isLoggedIn) return;
+
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${backend}/api/user/favorite`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const favorites = await response.json();
+            const isEventFavorite = favorites.some(fav => fav.event_id === id);
+            setIsFavorite(isEventFavorite);
+        }
+    };
+
+    checkFavoriteStatus();
+}, [isLoggedIn, id]);
+
+
 
   const handleStatusChange = async () => {
     if (!isLoggedIn) {
@@ -244,9 +299,9 @@ const EventsDetails = () => {
             <p className="price">$ {ticket_price}</p>
             
             {isLoggedIn ? (
-              <button className="btn btn-primary w-100">
-                <i className="fas fa-heart me-2"></i>
-                Agregar a favoritos
+              <button className="btn btn-primary w-100" onClick={handleFavoriteToggle}>
+                  <i className={`fas fa-heart me-2 ${isFavorite ? 'text-danger' : ''}`}></i>
+                  {isFavorite ? 'Eliminar de favoritos' : 'Agregar a favoritos'}
               </button>
             ) : (
               <div className="alert alert-info" role="alert">
