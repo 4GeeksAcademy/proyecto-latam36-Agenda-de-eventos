@@ -1,9 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from "../component/navbar";
 import Modal from "../component/Modal";
 import Filters from "../component/Filters";
 import Breadcrumbs from "../component/Breadcrumbs.jsx";
+
+const CATEGORY_MAPPINGS = {
+  'Deportes': 'sportsAndWellness',
+  'Fitness': 'sportsAndWellness',
+  'Salud': 'sportsAndWellness',
+  'Deportes extremos': 'sportsAndWellness',
+  'Artes Marciales': 'sportsAndWellness',
+  'Tecnología': 'technology',
+  'Ciencia': 'technology',
+  'Gastronomía': 'gastronomy',
+  'Bebidas': 'gastronomy',
+  'Música': 'entertainmentAndCulture',
+  'Teatro': 'entertainmentAndCulture',
+  'Danza': 'entertainmentAndCulture',
+  'Cine': 'entertainmentAndCulture',
+  'Arte': 'entertainmentAndCulture',
+  'Eventos Literarios': 'entertainmentAndCulture',
+  'Conferencias': 'educationalAndProfessional',
+  'Talleres': 'educationalAndProfessional',
+  'Seminarios': 'educationalAndProfessional',
+  'Educación': 'educationalAndProfessional',
+  'Negocios': 'educationalAndProfessional',
+  'Eventos Familiares': 'socialAndCommunity',
+  'Caridad': 'socialAndCommunity',
+  'Voluntariado': 'socialAndCommunity',
+  'Religión': 'socialAndCommunity',
+  'Moda': 'fashionAndLifestyle',
+  'Estilo de Vida': 'fashionAndLifestyle',
+  'Festivales': 'festivalsAndFestivities',
+  'Carnavales': 'festivalsAndFestivities',
+  'Celebraciones': 'festivalsAndFestivities'
+};
 
 const backend = process.env.BACKEND_URL;
 
@@ -18,129 +50,91 @@ const EventsDetails = () => {
   const [justification, setJustification] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteMessage, setFavoriteMessage] = useState("");
+  const [error, setError] = useState(null);
 
-  const getCategoryFilterKey = (category) => {
-    const categoryMappings = {
-      'Deportes': 'sportsAndWellness',
-      'Fitness': 'sportsAndWellness',
-      'Salud': 'sportsAndWellness',
-      'Deportes extremos': 'sportsAndWellness',
-      'Artes Marciales': 'sportsAndWellness',
-      'Tecnología': 'technology',
-      'Ciencia': 'technology',
-      'Gastronomía': 'gastronomy',
-      'Bebidas': 'gastronomy',
-      'Música': 'entertainmentAndCulture',
-      'Teatro': 'entertainmentAndCulture',
-      'Danza': 'entertainmentAndCulture',
-      'Cine': 'entertainmentAndCulture',
-      'Arte': 'entertainmentAndCulture',
-      'Eventos Literarios': 'entertainmentAndCulture',
-      'Conferencias': 'educationalAndProfessional',
-      'Talleres': 'educationalAndProfessional',
-      'Seminarios': 'educationalAndProfessional',
-      'Educación': 'educationalAndProfessional',
-      'Negocios': 'educationalAndProfessional',
-      'Eventos Familiares': 'socialAndCommunity',
-      'Caridad': 'socialAndCommunity',
-      'Voluntariado': 'socialAndCommunity',
-      'Religión': 'socialAndCommunity',
-      'Moda': 'fashionAndLifestyle',
-      'Estilo de Vida': 'fashionAndLifestyle',
-      'Festivales': 'festivalsAndFestivities',
-      'Carnavales': 'festivalsAndFestivities',
-      'Celebraciones': 'festivalsAndFestivities'
-    };
-    
-    return categoryMappings[category] || null;
-  };
+  const getCategoryFilterKey = useCallback((category) => {
+    return CATEGORY_MAPPINGS[category] || null;
+  }, []);
 
-  useEffect(() => {
-    const fetchEventDetails = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
+  const fetchEventDetails = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
 
-        // Check if user is admin only if logged in
-        if (token) {
-          const responseAdmin = await fetch(`${backend}/api/users/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const isAdminResponse = await responseAdmin.json();
-          setIsAdmin(isAdminResponse.is_admin);
-        }
-
-        const response = await fetch(`${backend}/api/events/${id}?details=true`);
-
-        if (response.ok) {
-          const data = await response.json();
-          setEventDetails(data);
-        } else {
-          console.error("Failed to fetch event details:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching event details:", error);
-      } finally {
-        setIsLoading(false);
+      if (token) {
+        const responseAdmin = await fetch(`${backend}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!responseAdmin.ok) throw new Error('Failed to fetch admin status');
+        const isAdminResponse = await responseAdmin.json();
+        setIsAdmin(isAdminResponse.is_admin);
       }
-    };
 
-    fetchEventDetails();
+      const response = await fetch(`${backend}/api/events/${id}?details=true`);
+      if (!response.ok) throw new Error('Failed to fetch event details');
+      
+      const data = await response.json();
+      setEventDetails(data);
+    } catch (error) {
+      setError(error.message);
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [id]);
 
-// Función para manejar el clic en el botón de favoritos
-const handleFavoriteToggle = async () => {
+  const checkFavoriteStatus = useCallback(async () => {
+    if (!isLoggedIn) return;
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${backend}/api/user/favorite`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch favorites');
+      
+      const data = await response.json();
+      const favorites = data.favorites_event_id || [];
+      const eventId = parseInt(id);
+      const isEventFavorite = favorites.some(favId => parseInt(favId) === eventId);
+      setIsFavorite(isEventFavorite);
+    } catch (error) {
+      console.error("Error checking favorite status:", error);
+    }
+  }, [isLoggedIn, id]);
+
+  const handleFavoriteToggle = async () => {
     if (!isLoggedIn) {
-        navigate("/login");
-        return;
+      navigate("/login");
+      return;
     }
 
     const token = localStorage.getItem("token");
     const method = isFavorite ? "DELETE" : "POST";
-    const url = `${backend}/api/favorite/${id}`;
-
+    
     try {
-        const response = await fetch(url, {
-            method,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
+      const response = await fetch(`${backend}/api/favorite/${id}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-            throw new Error("Error al actualizar favoritos");
-        }
-        
-        setIsFavorite(!isFavorite);
+      if (!response.ok) throw new Error("Error al actualizar favoritos");
+      
+      setIsFavorite(!isFavorite);
+      const message = isFavorite ? "Eliminado de Favoritos" : "Agregado a Favoritos";
+      setFavoriteMessage(message);
+      setTimeout(() => setFavoriteMessage(""), 3000);
     } catch (error) {
-        console.error(error);
+      console.error(error);
+      setFavoriteMessage("Error al actualizar favoritos");
+      setTimeout(() => setFavoriteMessage(""), 3000);
     }
-};
-
-useEffect(() => {
-    const checkFavoriteStatus = async () => {
-        if (!isLoggedIn) return;
-
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${backend}/api/user/favorite`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (response.ok) {
-            const favorites = await response.json();
-            const isEventFavorite = favorites.some(fav => fav.event_id === id);
-            setIsFavorite(isEventFavorite);
-        }
-    };
-
-    checkFavoriteStatus();
-}, [isLoggedIn, id]);
-
-
+  };
 
   const handleStatusChange = async () => {
     if (!isLoggedIn) {
@@ -164,11 +158,9 @@ useEffect(() => {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Error al actualizar el evento");
-      }
+      if (!response.ok) throw new Error("Error al actualizar el estado del evento");
 
-      setEventDetails((prev) => ({
+      setEventDetails(prev => ({
         ...prev,
         status: newStatus,
         event_admin_msg: justification,
@@ -176,8 +168,10 @@ useEffect(() => {
 
       setShowModal(false);
       setJustification("");
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      setFavoriteMessage("Error al actualizar el estado");
+      setTimeout(() => setFavoriteMessage(""), 3000);
     }
   };
 
@@ -191,12 +185,38 @@ useEffect(() => {
     setShowModal(true);
   };
 
+  useEffect(() => {
+    fetchEventDetails();
+  }, [fetchEventDetails]);
+
+  useEffect(() => {
+    checkFavoriteStatus();
+  }, [checkFavoriteStatus]);
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger m-5" role="alert">
+        {error}
+      </div>
+    );
   }
 
   if (!eventDetails) {
-    return <div>Event not found.</div>;
+    return (
+      <div className="alert alert-warning m-5" role="alert">
+        Evento no encontrado.
+      </div>
+    );
   }
 
   const {
@@ -215,149 +235,183 @@ useEffect(() => {
     status,
   } = eventDetails;
 
+  const renderCarouselItems = () => {
+    const items = [];
+    
+    if (flyer_img_url) {
+      items.push(
+        <div key="flyer" className="carousel-item active event-image">
+          <img src={flyer_img_url} alt="Event flyer" className="d-block w-100" />
+          <div className="event-date">
+            <div className="month">
+              {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
+            </div>
+            <div className="day">{new Date(date).getDate()}</div>
+          </div>
+        </div>
+      );
+    }
+
+    if (media_files?.length) {
+      media_files.forEach((media, index) => {
+        items.push(
+          <div
+            key={index}
+            className={`carousel-item ${!flyer_img_url && index === 0 ? "active" : ""} event-image`}
+          >
+            <img src={media.url} alt={`Event media ${index + 1}`} className="d-block w-100" />
+            <div className="event-date">
+              <div className="month">
+                {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
+              </div>
+              <div className="day">{new Date(date).getDate()}</div>
+            </div>
+          </div>
+        );
+      });
+    }
+
+    return items;
+  };
+
+  const renderAdminButtons = () => {
+    if (!isAdmin) return null;
+
+    if (status === "approved") {
+      return (
+        <button
+          className="btn btn-danger w-100"
+          onClick={() => handleModalOpen("reject")}
+        >
+          Cambiar a Rechazado
+        </button>
+      );
+    }
+
+    if (status === "rejected") {
+      return (
+        <button
+          className="btn btn-success w-100"
+          onClick={() => handleModalOpen("approve")}
+        >
+          Cambiar a Aprobado
+        </button>
+      );
+    }
+
+    return (
+      <div className="d-flex justify-content-between gap-2">
+        <button
+          className="btn btn-success flex-grow-1"
+          onClick={() => handleModalOpen("approve")}
+        >
+          Aprobar
+        </button>
+        <button
+          className="btn btn-danger flex-grow-1"
+          onClick={() => handleModalOpen("reject")}
+        >
+          Rechazar
+        </button>
+      </div>
+    );
+  };
+
   return (
     <>
       <Navbar />
-      <Breadcrumbs eventName={eventDetails?.event_name} />
+      <Breadcrumbs eventName={event_name} />
+      
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-8">
-          <div id="eventCarousel" className="carousel slide event-card" data-bs-ride="carousel">
-            <div className="carousel-inner">
-              {/* Primera imagen: flyer */}
-              {flyer_img_url && (
-                <div className="carousel-item active event-image">
-                  <img
-                    src={flyer_img_url}
-                    alt="Event flyer"
-                    className="d-block w-100"
-                  />
-                  <div className="event-date">
-                    <div className="month">
-                      {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
-                    </div>
-                    <div className="day">{new Date(date).getDate()}</div>
-                  </div>
-                </div>
+            <div id="eventCarousel" className="carousel slide event-card" data-bs-ride="carousel">
+              <div className="carousel-inner">
+                {renderCarouselItems()}
+              </div>
+              {(flyer_img_url || media_files?.length > 1) && (
+                <>
+                  <button className="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span className="visually-hidden">Previous</span>
+                  </button>
+                  <button className="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span className="visually-hidden">Next</span>
+                  </button>
+                </>
               )}
-              {/* Otras imágenes: media_files */}
-              {media_files && media_files.length > 0 && 
-                media_files.map((media, index) => (
-                  <div
-                    key={index}
-                    className={`carousel-item ${!flyer_img_url && index === 0 ? "active" : ""} event-image`}
-                  >
-                    <img
-                      src={media.url}
-                      alt={media.media_type}
-                      className="d-block w-100"
-                    />
-                    <div className="event-date">
-                      <div className="month">
-                        {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
-                      </div>
-                      <div className="day">{new Date(date).getDate()}</div>
-                    </div>
-                  </div>
-                ))
-              }
             </div>
-            <button className="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
-              <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span className="visually-hidden">Previous</span>
-            </button>
-            <button className="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
-              <span className="carousel-control-next-icon" aria-hidden="true"></span>
-              <span className="visually-hidden">Next</span>
-            </button>
-          </div>
 
-            <div className="event-details">
+            <div className="event-details mt-4">
               <h3>{event_name}</h3>
               <p>{description}</p>
             </div>
           </div>
 
           <div className="col-md-4">
-          <div className="event-info">
-            <h5>{location}</h5>
-            <p>
-              <i className="fas fa-calendar-alt"></i>{" "}
-              {new Date(date).toLocaleString("en-US", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-            <p>
-              <strong>Categoria:</strong> {category}
-            </p>
-            <p>
-              <strong>Clasificación:</strong> {age_classification}
-            </p>
-            <p className="price">$ {ticket_price}</p>
-            
-            {isLoggedIn ? (
-              <button className="btn btn-primary w-100" onClick={handleFavoriteToggle}>
-                  <i className={`fas fa-heart me-2 ${isFavorite ? 'text-danger' : ''}`}></i>
-                  {isFavorite ? 'Eliminar de favoritos' : 'Agregar a favoritos'}
-              </button>
-            ) : (
-              <div className="alert alert-info" role="alert">
-                <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
-                <div className="d-flex gap-2">
-                  <a href="/login" className="btn btn-primary btn-sm">
-                    Iniciar sesión
-                  </a>
-                  <a href="/signup" className="btn btn-outline-primary btn-sm">
-                    Registrarse
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
-            <div className="producer-info">
-              <h4 className="fw-bold">Productor :</h4>
+            <div className="event-info card p-4 mb-4">
+              <h5>{location}</h5>
               <p>
-                <strong>Nombre :</strong> {organizer_name}
+                <i className="fas fa-calendar-alt"></i>{" "}
+                {new Date(date).toLocaleString("en-US", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </p>
               <p>
-                <strong>Email :</strong> {organizer_email}
+                <strong>Categoria:</strong> {category}
+              </p>
+              <p>
+                <strong>Clasificación:</strong> {age_classification}
+              </p>
+              <p className="price">$ {ticket_price}</p>
+              
+              {isLoggedIn ? (
+                <div>
+                  <button 
+                    className="btn btn-primary w-100" 
+                    onClick={handleFavoriteToggle}
+                  >
+                    <i className={`fas fa-heart me-2 ${isFavorite ? 'text-danger' : ''}`}></i>
+                    {isFavorite ? 'Eliminar de favoritos' : 'Agregar a favoritos'}
+                  </button>
+                  {favoriteMessage && (
+                    <div className="alert alert-info mt-2">
+                      {favoriteMessage}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="alert alert-info" role="alert">
+                  <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
+                  <div className="d-flex gap-2">
+                    <a href="/login" className="btn btn-primary btn-sm">
+                      Iniciar sesión
+                    </a>
+                    <a href="/signup" className="btn btn-outline-primary btn-sm">
+                      Registrarse
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="producer-info card p-4 mb-4">
+              <h4 className="fw-bold">Productor</h4>
+              <p>
+                <strong>Nombre:</strong> {organizer_name}
+              </p>
+              <p>
+                <strong>Email:</strong> {organizer_email}
               </p>
             </div>
+
             {isAdmin && (
               <div className="admin-buttons mt-3">
-                {status === "approved" ? (
-                  <button
-                    className="btn btn-danger w-100"
-                    onClick={() => handleModalOpen("reject")}
-                  >
-                    Cambiar a Rechazado
-                  </button>
-                ) : status === "rejected" ? (
-                  <button
-                    className="btn btn-success w-100"
-                    onClick={() => handleModalOpen("approve")}
-                  >
-                    Cambiar a Aprobado
-                  </button>
-                ) : (
-                  <div className="d-flex justify-content-between gap-2">
-                    <button
-                      className="btn btn-success flex-grow-1"
-                      onClick={() => handleModalOpen("approve")}
-                    >
-                      Aprobar
-                    </button>
-                    <button
-                      className="btn btn-danger flex-grow-1"
-                      onClick={() => handleModalOpen("reject")}
-                    >
-                      Rechazar
-                    </button>
-                  </div>
-                )}
+                {renderAdminButtons()}
               </div>
             )}
           </div>
@@ -365,25 +419,29 @@ useEffect(() => {
 
         <div className="mt-5 mb-5">
           <h4>Información de contacto</h4>
-          {contact_info && contact_info.length > 0 ? (
-            <ul>
+          {contact_info?.length > 0 ? (
+            <ul className="list-unstyled">
               {contact_info.map((contact, index) => (
-                <li key={index}>
+                <li key={index} className="mb-2">
                   <strong>{contact.contact_media}:</strong> {contact.contact_data}
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No hay información de contacto disponible.</p>
+            <p className="text-muted">
+              No hay información de contacto disponible.
+            </p>
           )}
         </div>
       </div>
+
       {eventDetails && (
         <Filters 
-          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)} title={`Explora más eventos de ${eventDetails.category}`}
+          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)}
+          title={`Explora más eventos de ${eventDetails.category}`}
         />
       )}
-
+      <p className="text-muted"></p>
       {showModal && isLoggedIn && (
         <Modal
           title={modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"}
@@ -406,6 +464,7 @@ useEffect(() => {
               <textarea
                 className="form-control"
                 rows="4"
+                value={justification}
                 onChange={(e) => setJustification(e.target.value)}
                 placeholder="Escribe tu justificación aquí..."
               ></textarea>
@@ -418,3 +477,4 @@ useEffect(() => {
 };
 
 export default EventsDetails;
+

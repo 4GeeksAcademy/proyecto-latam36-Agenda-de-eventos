@@ -452,6 +452,43 @@ def get_event(event_id):
         return protected_action()
 
 
+# APROBACION y RECHAZO de Eventos [ADMIN]
+@api.route('/events/<int:event_id>/status', methods=['PUT']) 
+@jwt_required()
+def update_event_status(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user or not user.has_admin_privileges():
+        return jsonify({"message": "Acceso denegado"}), 403
+
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"message": "Evento no encontrado"}), 404
+
+    data = request.get_json()
+    new_status = data.get("status")
+    justification = data.get("justification")
+
+    if new_status not in ["approved", "rejected"]:
+        return jsonify({"message": "Estado inválido"}), 400
+
+    if new_status == "rejected" and (not justification or justification.strip() == ""):
+        return jsonify({"message": "La justificación es requerida para rechazar"}), 400
+
+    try:
+        event.status = new_status
+        event.event_admin_msg = justification.strip() if justification else None
+        db.session.commit()
+        return jsonify({
+            "message": f"Evento '{event.event_name}' {new_status}",
+            "justification": justification
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error al actualizar el estado del evento: {str(e)}"}), 500
+
+
 #FAVORITES endpoints
 
 # Agregar evento favorito a un usuario
@@ -516,42 +553,6 @@ def user_favorites():
     user = User.query.filter_by(email=current_user_email).first()
     return jsonify(user.favorites_serialize())
 
-
-# APROBACION y RECHAZO de Eventos [ADMIN]
-@api.route('/events/<int:event_id>/status', methods=['PUT']) 
-@jwt_required()
-def update_event_status(event_id):
-    current_user_email = get_jwt_identity()
-    user = User.query.filter_by(email=current_user_email).first()
-
-    if not user or not user.has_admin_privileges():
-        return jsonify({"message": "Acceso denegado"}), 403
-
-    event = Events.query.get(event_id)
-    if not event:
-        return jsonify({"message": "Evento no encontrado"}), 404
-
-    data = request.get_json()
-    new_status = data.get("status")
-    justification = data.get("justification")
-
-    if new_status not in ["approved", "rejected"]:
-        return jsonify({"message": "Estado inválido"}), 400
-
-    if new_status == "rejected" and (not justification or justification.strip() == ""):
-        return jsonify({"message": "La justificación es requerida para rechazar"}), 400
-
-    try:
-        event.status = new_status
-        event.event_admin_msg = justification.strip() if justification else None
-        db.session.commit()
-        return jsonify({
-            "message": f"Evento '{event.event_name}' {new_status}",
-            "justification": justification
-        }), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"Error al actualizar el estado del evento: {str(e)}"}), 500
 
 
 
