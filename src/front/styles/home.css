@@ -1,6 +1,6 @@
 .principal {
   min-height: 90vh;
-  background-image: url("https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg");
+  background-image: url("https://res.cloudinary.com/dijfzjssm/image/upload/v1736307196/fondo_page_andre_necdvq.png ");
   background-size: cover;
   background-position: bottom;
   color: white;
@@ -20,38 +20,125 @@
 }
 
 .slogan-png {
-  width: 70%;
+  width: 70%; 
+  max-width: 800px; 
+  height: auto; 
   object-fit: cover;
 }
 
+@media (max-width: 768px) { 
+ .slogan-png {
+   width: 80%; 
+ }
+}
+
+@media (max-width: 480px) { 
+ .slogan-png {
+   width: 90%; 
+ }
+}
+
 .principal__crearEvento__texto {
-  background-color: rgba(0, 0, 0, 0.609);
+  background-color: rgba(0, 0, 0, 0.582);
   border-radius: 45px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   justify-content: center;
   align-items: center;
+  padding: 10px; 
+  width: calc(80% - (20px)); 
+  max-width: 400px; 
+  margin-left:auto;      
+  margin-right:auto;      
+ 
+}
+
+@media (max-width:768px){
+.principal__crearEvento__texto{
+   width : calc(90% - (20px)); 
+   margin-left:auto;          
+   margin-right:auto;         
+}
+}
+
+@media (max-width :480px){
+.principal__crearEvento__texto{
+   width : auto ; 
+   margin-left:auto ;          
+   margin-right:auto ;         
+}
+}
+
+
+.parrafo-publica {
+  color: rgb(255, 255, 255); 
+  font-size: 50px; 
+  font-weight: bold; 
+  text-align: center; 
+  margin: 20px auto;
+  line-height: 1; 
+}
+    @media (max-width: 768px) { 
+      .parrafo-publica{
+      font-size: 35px;
+  }
+  }
+
+   @media (max-width: 480px) { 
+    .parrafo-publica{
+    font-size: 24px; 
+   }
 }
 
 .boton-1 {
-  background-color: rgb(118, 44, 186);
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 2px 8px;
-  border-radius: 25px;
+  background: linear-gradient(90deg, #250764, #b084ff); 
+  color: white; 
+  border: none; 
+  border-radius: 15px; 
+  padding: 12px 40px; 
+  font-size: 18px; 
+  font-family: 'Poppins', sans-serif; 
+  font-weight: 500; 
+  text-transform: none; 
+  cursor: pointer; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); 
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; 
 }
 
-  /* Extra small devices (phones, 600px and down) */
+.boton-1:hover {
+  background: linear-gradient(90deg, #622fb4, #d3b3ff); /* Degradado más claro al pasar el cursor */
+  transform: translateY(-3px); /* Pequeño desplazamiento hacia arriba */
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3); /* Intensifica la sombra */
+}
+
+.boton-1:active {
+  transform: translateY(2px); /* Desplazamiento hacia abajo al hacer clic */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Reduce la sombra */
+}
+
+@media (max-width: 768px) { 
+  .boton-1 {
+    padding: 10px 30px; 
+    font-size: 16px; 
+  }
+}
+
+@media (max-width: 480px) { 
+  .boton-1 {
+    padding: 8px 25px; 
+    font-size: 14px; 
+  }
+}
+
+
 @media only screen and (max-width: 600px) {
 }
 
-/* Small devices (portrait tablets and large phones, 600px and up) */
+
 @media only screen and (min-width: 600px) {
 }
 
-/* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
   .principal__banner {
     grid-template-columns: 1fr 1fr 1fr;
@@ -78,11 +165,9 @@
   }
 }
 
-/* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
 }
 
-/* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
 }
 

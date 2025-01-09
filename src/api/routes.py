@@ -3,6 +3,9 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
+
+
 
 from api.models import db, User, Events, EventMedia, ContactInfo
 from api.utils import generate_sitemap, APIException
@@ -175,48 +178,87 @@ def private():
 # EVENTS endpoints
 
 # EVENT creation
-@api.route('/events',methods=['POST'])
+@api.route('/events', methods=['POST'])
 @jwt_required()
 def add_event():
-    email=get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(email=email)).one_or_none()[0]
-    data=request.json
-    event_name = data.get("event_name")
-    event_description = data.get("event_description")
-    event_date = data.get("event_date")
-    event_start_time = data.get("event_start_time")
-    event_duration = data.get("event_duration")
-    ticket_price = data.get("ticket_price")
-    event_address = data.get("event_address")
-    event_city = data.get("event_city")
-    event_country = data.get("event_country")
-    event_category = data.get("event_category")
-    age_clasification = data.get("age_clasification")
-    flyer_img_url = data.get("flyer_img_url")
-    event_media = data.get("event_media")
-    contact_info = data.get("contact_info")
+    email = get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+    
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
-    print("This is the event media variable:",type(event_media))
-    print("this is the event media data:",event_media)
+    data = request.json
+
+    # Campos requeridos
+    required_fields = ["event_name", "event_description", "event_date", "event_start_time",
+                       "event_address", "event_city", "event_country", "event_category",
+                       "flyer_img_url"]
+    missing_fields = [field for field in required_fields if not data.get(field)]
+    if missing_fields:
+        return jsonify({"message": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+
+    # Validación de clasificación por edades
+    valid_classifications = ["Todo Público", "13+", "16+", "18+", "Infantiles", "Adultos Mayores"]
+    age_classification = data.get("age_classification", "Todo Público")
+    if age_classification not in valid_classifications:
+        return jsonify({
+            "message": f"Invalid age classification. Allowed values are: {', '.join(valid_classifications)}"
+        }), 400
+
+    # Validación de categorías predefinidas
+    valid_categories = [
+        "Música",
+        "Teatro y Danza",
+        "Cine",
+        "Arte y Exposiciones",
+        "Literarios",
+        "Conferencias",
+        "Talleres y Seminarios",
+        "Educación y Aprendizaje",
+        "Negocios y Emprendimiento",
+        "Deportes",
+        "Fitness y Salud",
+        "Deportes extremos",
+        "Artes Marciales",
+        "Familiares",
+        "Caridad y Voluntariado",
+        "Religión y Espiritualidad",
+        "Tecnología",
+        "Ciencia",
+        "Gastronomía",
+        "Bebidas",
+        "Moda",
+        "Estilo de Vida",
+        "Festivales y Carnavales",
+        "Celebraciones"
+    ]
+    event_category = data["event_category"]
+    if event_category not in valid_categories:
+        return jsonify({
+            "message": f"Invalid category. Allowed values are: {', '.join(valid_categories)}"
+        }), 400
+
+    # Validación de fecha
     try:
-        event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
+        event_date_obj = datetime.strptime(data["event_date"], "%Y-%m-%d").date()
     except ValueError:
-        return jsonify({"message": "Invalid birthdate format. Use YYYY-MM-DD"}), 400
+        return jsonify({"message": "Invalid date format. Use YYYY-MM-DD"}), 400
 
     new_event = Events(
-        event_name = event_name,
-        event_description = event_description,
-        organizer_user_id = user.id,
-        event_date = event_date_obj,
-        event_start_time = event_start_time,
-        event_duration = event_duration,
-        ticket_price = ticket_price,
-        event_address = event_address,
-        event_city = event_city,
-        event_country = event_country,
-        event_category = event_category,
-        age_clasification = age_clasification,
-        flyer_img_url = flyer_img_url
+        event_name=data["event_name"],
+        event_description=data["event_description"],
+        organizer_user_id=user.id,
+        event_date=event_date_obj,
+        event_start_time=data["event_start_time"],
+        event_duration=data.get("event_duration"),
+        ticket_price=data.get("ticket_price"),
+        event_address=data["event_address"],
+        event_city=data["event_city"],
+        event_country=data["event_country"],
+        event_category=event_category,
+        age_classification=age_classification,
+        is_online=data.get("is_online", False),
+        flyer_img_url=data["flyer_img_url"]
     )
 
     try:
@@ -226,17 +268,16 @@ def add_event():
         db.session.rollback()
         print("Database error:", error)
         return jsonify({"message": "Error saving event to database"}), 500
-    
-    serialized_event=new_event.serialize()
-    print("serialized event",serialized_event)
-    new_event_id=serialized_event.get("id")
-    print("this is the new event id:",new_event_id)
-    
-    for media in event_media:
-        new_media = EventMedia (
-            media_type = media.get("media_type"),
-            media_url = media.get("media_url"),
-            event_id = new_event_id
+
+    serialized_event = new_event.serialize()
+    new_event_id = serialized_event["id"]
+
+    # Procesar media
+    for media in data.get("event_media", []):
+        new_media = EventMedia(
+            media_type=media.get("media_type"),
+            media_url=media.get("media_url"),
+            event_id=new_event_id
         )
         try:
             db.session.add(new_media)
@@ -245,13 +286,13 @@ def add_event():
             db.session.rollback()
             print("Database error:", error)
             return jsonify({"message": "Error saving media to database"}), 500
-    
-    for contact in contact_info:
-        new_contact_info = ContactInfo(contact_media=contact.get("contact_media"),
-                                        contact_data=contact.get("contact_data"), 
-                                        contact_event_id = new_event_id
-        )
 
+    for contact in data.get("contact_info", []):
+        new_contact_info = ContactInfo(
+            contact_media=contact.get("contact_media"),
+            contact_data=contact.get("contact_data"),
+            contact_event_id=new_event_id
+        )
         try:
             db.session.add(new_contact_info)
             db.session.commit()
@@ -260,29 +301,76 @@ def add_event():
             print("Database error:", error)
             return jsonify({"message": "Error saving contact info to database"}), 500
 
-    return jsonify (serialized_event)
+    return jsonify(serialized_event), 201
 
 
-# Obtener todos los eventos [Todos o por status]
+
+# Obtener todos los eventos [Filtros]
 @api.route('/events', methods=['GET'])
-@jwt_required()
+@jwt_required(optional=True)
 def get_all_events():
     status = request.args.get('status')
+    categories = request.args.getlist('category')
+    is_online = request.args.get('is_online')
+    price_type = request.args.get('price_type')
+    age_classification = request.args.get('age_classification')
     
     # Lista de status válidos
     valid_statuses = ['submitted', 'approved', 'rejected']
     
+    # Verificar si el usuario está logueado y es mayor de 18 años
+    current_user = None
+    is_adult = True
+    
+    if get_jwt_identity():
+        current_user = get_jwt_identity()
+        user_age = current_user.get('age', 0) if isinstance(current_user, dict) else 0
+        if user_age < 18:
+            is_adult = False
+    
     try:
-        if status:
+        query = Events.query
+        
+        # Aplicar filtros solo si tienen valores válidos
+        if status and status != 'undefined':
             if status not in valid_statuses:
                 return jsonify({"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}"}), 400
-            events = Events.query.filter_by(status=status).all()
-        else:
-            events = Events.query.all()
+            query = query.filter_by(status=status)
+        
+        if categories and categories != ['undefined']:
+            processed_categories = []
+            for category in categories:
+                
+                subcategories = [cat.strip() for cat in category.split(',')]
+                processed_categories.extend(subcategories)
             
+            query = query.filter(or_(*[Events.event_category == cat for cat in processed_categories]))
+        
+        if is_online and is_online != 'undefined':
+            is_online_bool = is_online.lower() == 'true'
+            query = query.filter_by(is_online=is_online_bool)
+        
+        if price_type and price_type != 'undefined':
+            if price_type.lower() == 'free':
+                query = query.filter(Events.ticket_price == 0)
+            elif price_type.lower() == 'paid':
+                query = query.filter(Events.ticket_price > 0)
+        
+        if age_classification and age_classification != 'undefined' and age_classification != "Todos":
+            query = query.filter_by(age_classification=age_classification)
+        
+        # Filtrar eventos 18+ si el usuario no está logueado o si es menor de 18 años
+        if not is_adult:
+            query = query.filter(Events.age_classification != '18+')
+        
+        events = query.all()
+        
         return jsonify([event.serialize() for event in events]), 200
+        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
 
 
 
@@ -303,7 +391,7 @@ def get_event(event_id):
             except Exception as e:
                 pass
 
-        if user is None and event.age_clasification == "18+":
+        if user is None and event.age_classification == "18+":
             return jsonify({"msg": "Event restricted due to age classification"}), 403
 
         if user:
@@ -311,7 +399,7 @@ def get_event(event_id):
             user_age = today.year - user.birthdate.year
             if (today.month, today.day) < (user.birthdate.month, user.birthdate.day):
                 user_age -= 1
-            if user_age < 18 and event.age_clasification == "18+":
+            if user_age < 18 and event.age_classification == "18+":
                 return jsonify({"msg": "Event classified as 18+"}), 403
 
         # Verificar si se necesitan detalles completos
@@ -344,7 +432,7 @@ def get_event(event_id):
                     event.event_city = data.get('event_city', event.event_city)
                     event.event_country = data.get('event_country', event.event_country)
                     event.event_category = data.get('event_category', event.event_category)
-                    event.age_clasification = data.get('age_clasification', event.age_clasification)
+                    event.age_classification = data.get('age_classification', event.age_classification)
                     event.flyer_img_url = data.get('flyer_img_url', event.flyer_img_url)
                     db.session.commit()
                     return jsonify(event.serialize()), 200
@@ -403,40 +491,9 @@ def update_event_status(event_id):
 
 
 
-# Filtrar eventos por país, categoría y precio
-@api.route('/events/filter', methods=['GET'])
-def filter_events():
-    country = request.args.get('country')
-    category = request.args.get('category')
-    price_type = request.args.get('price')  
-
-    try:
-        query = Events.query
-
-        if country:
-            query = query.filter_by(event_country=country)
-
-        if category:
-            query = query.filter_by(event_category=category)
-
-        if price_type:
-            if price_type == "De Pago":
-                query = query.filter(Events.ticket_price > 0)
-            elif price_type == "Gratis":
-                query = query.filter(Events.ticket_price == 0)
-
-        events = query.all()
-        return jsonify([event.serialize() for event in events]), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-
-
-
-
 # RESOURCES endpoints
 
+# Image Uploads
 @api.route('/image', methods=['POST'])
 def upload_file():
     user = request.args.get('user')
