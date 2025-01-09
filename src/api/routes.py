@@ -497,52 +497,58 @@ def update_event_status(event_id):
 def add_favorite(event_id):
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
-    user_id=user.id
+    if not user:
+        return jsonify({"message": "Usuario no encontrado"}), 404
+
     event = Events.query.get(event_id)
     if not event:
         return jsonify({"message": "Evento no encontrado"}), 404
-    event_id=event.id
 
-    new_favorite=Favorites(
-        user_id=user_id,
-        event_id=event_id
-    )
+    # Verificar si ya existe el favorito
+    existing_favorite = Favorites.query.filter_by(user_id=user.id, event_id=event_id).first()
+    if existing_favorite:
+        return jsonify({"message": "El evento ya está en favoritos"}), 400
 
+    new_favorite = Favorites(user_id=user.id, event_id=event_id)
     try:
         db.session.add(new_favorite)
+        # Incrementar el contador de favoritos
+        event.favorite_count += 1
         db.session.commit()
     except Exception as error:
         db.session.rollback()
-        print("Database error:", error)
-        return jsonify({"message": "Error saving media to database"}), 500
-    
-    return jsonify ({'msg':'favorite added',
-                     'user_id':user_id,
-                     'event_id':event_id})
+        return jsonify({"message": "Error al guardar en favoritos"}), 500
+
+    return jsonify({'msg':'favorite added',
+                     'user_id':user.id,
+                     'event_id':event_id}), 201
 
 
 # Eliminar evento de favoritos de un usuario
-@api.route('/favorite/<int:event_id>', methods=['DELETE'])
+api.route('/favorite/<int:event_id>', methods=['DELETE'])
 @jwt_required()
 def remove_favorite(event_id):
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
     if not user:
         return jsonify({"message": "Usuario no encontrado"}), 404
-    
+
     favorite = Favorites.query.filter_by(user_id=user.id, event_id=event_id).first()
     if not favorite:
         return jsonify({"message": "Favorito no encontrado"}), 404
-    
+
     try:
         db.session.delete(favorite)
+        # Decrementar el contador de favoritos
+        event = Events.query.get(event_id)
+        if event.favorite_count > 0:
+            event.favorite_count -= 1
         db.session.commit()
     except Exception as error:
         db.session.rollback()
-        print("Database error:", error)
         return jsonify({"message": "Error al eliminar de favoritos"}), 500
-    
-    return jsonify({"msg": "Favorito eliminado"})
+
+    return jsonify({"msg": "Evento eliminado de favoritos"}), 200
 
 
 # Obtener los favoritos de un usuario

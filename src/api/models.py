@@ -91,6 +91,7 @@ class Events(db.Model):
     status = db.Column(db.String(10), unique=False, nullable=False)
     flyer_img_url = db.Column(db.String(150),unique=False, nullable=False)
     event_admin_msg = db.Column(db.String(250), unique=False, nullable=True)
+    favorite_count = db.Column(db.Integer, unique=False, nullable=False, default=0)
 
 #Parent: User relatioship
     user=db.relationship(User, back_populates="events")
