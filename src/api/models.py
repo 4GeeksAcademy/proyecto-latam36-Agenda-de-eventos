@@ -137,6 +137,13 @@ class Events(db.Model):
 
         return base_data
 
+class Favorites(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey(User.id), unique=False, nullable=False)
+    event_id = db.Column(db.Integer, ForeignKey(Events.id), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<{self.event_id} : {self.user_id}>'
 
 class EventMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
