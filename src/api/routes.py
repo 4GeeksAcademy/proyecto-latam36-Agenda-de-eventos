@@ -7,7 +7,7 @@ from sqlalchemy import or_
 
 
 
-from api.models import db, User, Events, EventMedia, ContactInfo
+from api.models import db, User, Events, EventMedia, ContactInfo, Favorites
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -452,6 +452,43 @@ def get_event(event_id):
         return protected_action()
 
 
+# Agregar evento favorito a un usuario
+@api.route('/favorite/<int:event_id>', methods=['POST'])
+@jwt_required()
+def add_favorite(event_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    user_id=user.id
+    event = Events.query.get(event_id)
+    if not event:
+        return jsonify({"message": "Evento no encontrado"}), 404
+    event_id=event.id
+
+    new_favorite=Favorites(
+        user_id=user_id,
+        event_id=event_id
+    )
+
+    try:
+        db.session.add(new_favorite)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        print("Database error:", error)
+        return jsonify({"message": "Error saving media to database"}), 500
+    
+    return jsonify ({'msg':'favorite added',
+                     'user_id':user_id,
+                     'event_id':event_id})
+
+
+# Obtener los favoritos de un usuario
+@api.route('/user/favorite', methods=['GET'])
+@jwt_required()
+def user_favorites():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    return jsonify(user.favorites_serialize())
 
 # APROBACION y RECHAZO de Eventos [ADMIN]
 @api.route('/events/<int:event_id>/status', methods=['PUT']) 
