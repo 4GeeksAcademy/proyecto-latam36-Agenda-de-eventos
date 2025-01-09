@@ -93,7 +93,7 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background-color: rgba(59, 130, 246, 0.9);
+  background: linear-gradient(90deg, #250764, #b084ff); 
   color: white;
   padding: 6px 12px;
   border-radius: 20px;
@@ -166,4 +166,45 @@
   text-align: center;
   padding: 40px;
   color: #666;
+}
+
+
+/* filters.css */
+.filters-page {
+  padding: 40px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.filters-page h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.scroll-gallery {
+  margin-bottom: 3rem;
+}
+
+.scroll-gallery h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1.5rem;
+  padding-left: 20px;
+  position: relative;
+}
+
+.scroll-gallery h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: #3b82f6;
+  border-radius: 2px;
 }

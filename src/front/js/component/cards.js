@@ -162,11 +162,11 @@ const AutoScrollGallery = ({ filters }) => {
   return (
     <div className="events-gallery-container">
       <div className="events-gallery-header d-flex justify-content-between align-items-center">
-        <h1>
+        {/* <h1>
           {filters?.country && filters.country !== "Todos"
             ? `Próximos Eventos en ${filters.country}`
             : "Próximos Eventos"}
-        </h1>
+        </h1> */}
         {!isMobile && (
           <div className="nav-buttons">
             <button
