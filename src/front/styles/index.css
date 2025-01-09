@@ -148,3 +148,46 @@ h1 {
     border-bottom: 3px solid #ff00ff;
     font-weight: 500;
   }
+
+  .boton-2 {
+    background-color: #885bf1; 
+    color: white; 
+    border: 1px solid #4e2a84; 
+    border-radius: 5px; 
+    padding: 8px 17px; 
+    font-size: 16px; 
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 500; 
+    text-transform: none; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, filter 0.3s ease; 
+    margin-top: 15px;
+    letter-spacing: 1px; 
+  }
+  
+  .boton-2:hover {
+    background-color: #8959f0c9; 
+    transform: translateY(-3px); 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
+    filter: brightness(1.1); 
+  }
+  
+  .boton-2:active {
+    transform: translateY(2px); 
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); 
+    filter: brightness(0.9);
+  }
+  
+  @media (max-width: 768px) { 
+    .boton-2 {
+      padding: 8px 18px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) { 
+    .boton-2 {
+      padding: 6px 15px; 
+      font-size: 12px; 
+    }
+  }

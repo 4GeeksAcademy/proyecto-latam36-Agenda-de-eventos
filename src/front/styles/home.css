@@ -92,7 +92,7 @@
 }
 
 .boton-1 {
-  background: linear-gradient(45deg, #8a2be2, #4b1f69); /* Gradiente suave y elegante */
+  background: linear-gradient(45deg, #885bf1, #4b1f69); /* Gradiente suave y elegante */
   color: white;
   border: none;
   border-radius: 10px; /* Borde más redondeado para un toque más suave */
@@ -108,7 +108,7 @@
 }
 
 .boton-1:hover {
-  background: linear-gradient(45deg, #9c43f3, #6c1d8c); /* Gradiente más claro al pasar el cursor */
+  background: linear-gradient(45deg, #885bf1, #6c1d8c); /* Gradiente más claro al pasar el cursor */
   transform: translateY(-4px); /* Desplazamiento hacia arriba más notorio */
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
   filter: brightness(1.1); /* Aumenta el brillo al pasar el mouse */

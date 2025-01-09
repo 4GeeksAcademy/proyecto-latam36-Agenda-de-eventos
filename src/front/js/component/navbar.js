@@ -1,20 +1,36 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Navbar.css";
-import { FaUserCircle } from "react-icons/fa"; 
+import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [profileMenuVisible, setProfileMenuVisible] = useState(false); 
+    const dropdownRef = useRef(null); // Referencia al menú desplegable
 
     
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setProfileMenuVisible(false); // Cerrar el menú si el clic ocurre fuera de él
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+ 
     useEffect(() => {
         if (store.token && !store.isAdmin) {
             actions.checkAdmin();
         }
-    }, []);
+    }, [store.token, store.isAdmin, actions]);
 
     
     const handleLogout = () => {
@@ -47,7 +63,6 @@ const Navbar = () => {
                         <div className="navbar-links">
                             {store.token ? (
                                 <>
-                                    
                                     <div className="profile-menu">
                                         <button
                                             className="profile-icon"
@@ -56,7 +71,7 @@ const Navbar = () => {
                                             <FaUserCircle size={30} />
                                         </button>
                                         {profileMenuVisible && (
-                                            <div className="profile-dropdown">
+                                            <div ref={dropdownRef} className="profile-dropdown">
                                                 <ul>
                                                     <li>
                                                         <Link to="/perfil" className="nav-link">Perfil</Link>
@@ -69,7 +84,6 @@ const Navbar = () => {
                                         )}
                                     </div>
 
-                                    
                                     {store.isAdmin && (
                                         <div className="admin-panel">
                                             <Link to="/admineventrequests" className="admin-btn">Panel Admin</Link>

@@ -67,7 +67,7 @@
     padding: 8px 12px; 
     display: block;
     text-align: center;
-    background-color: #4b1f69;
+    background-color: #885bf1;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -76,7 +76,7 @@
   
   .profile-dropdown li a:hover,
   .profile-dropdown li button:hover {
-    background-color: #6b2f8a;
+    background-color: #885bf1;
   }
 }
 
@@ -121,7 +121,7 @@
   font-size: 16px;
   text-decoration: none;
   color: white;
-  background-color: #4b1f69;
+  background-color: #885bf1;
   border: none;
   border-radius: 5px;
   transition: background-color 0.3s ease;
@@ -134,24 +134,24 @@
 
 .login-btn {
   background-color: transparent;
-  border: 2px solid #4e2a84;
+  border: 2px solid #885bf1;
 }
 
 .login-btn:hover {
-  background-color: #4e2a84;
+  background-color: #885bf1;
   color: white;
   transform: translateY(-3px);
 }
 
 
 .signup-btn {
-  background-color: #4e2a84;
+  background-color: #885bf1;
   border: 2px solid transparent;
 }
 
 .signup-btn:hover {
   background-color: white;
-  color: #4e2a84;
+  color: #885bf1;
   transform: translateY(-3px);
 }
 
@@ -200,7 +200,7 @@
 }
 
 .nav-link:hover {
-  background-color: #4e2a84;
+  background-color: #885bf1;
   color: white;
 }
 
@@ -208,7 +208,7 @@
 .logout-btn {
   padding: 10px 20px;
   background-color: transparent;
-  border: 2px solid #4e2a84;
+  border: 2px solid #885bf1;
   border-radius: 5px;
   color: white;
   cursor: pointer;
@@ -216,7 +216,7 @@
 }
 
 .logout-btn:hover {
-  background-color: #4e2a84;
+  background-color: #885bf1;
   color: white;
 }
 
@@ -229,7 +229,7 @@
 
 .admin-btn {
   padding: 12px 25px;
-  background-color: #4e2a84;
+  background-color: #885bf1;
   border: 2px solid transparent;
   color: white;
   font-size: 18px;
