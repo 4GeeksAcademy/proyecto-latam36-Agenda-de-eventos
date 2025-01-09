@@ -27,7 +27,8 @@ function Home() {
           </div>
         </section>
       </main>
-      <Filters visibleFilters={["sportsAndWellness", "technology", "gastronomy", "entertainmentAndCulture", "educationalAndProfessional", "socialAndCommunity", "fashionAndLifestyle", "festivalsAndFestivities"]} />
+      <Filters visibleFilters={["sportsAndWellness", "technology", "gastronomy", "entertainmentAndCulture", "educationalAndProfessional", "socialAndCommunity", "fashionAndLifestyle", "festivalsAndFestivities"]} 
+      title={`Explora eventos por Categorías`} />
     </>
   );
 }

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import AutoScrollGallery from "../component/cards";
 import { Context } from "../store/appContext";
 
-const Filters = ({ visibleFilters = [] }) => {
+const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías" }) => {
   const { store } = useContext(Context);
 
   // Filtros predefinidos
@@ -79,18 +79,17 @@ const Filters = ({ visibleFilters = [] }) => {
         ageClassification: "Todos",
       },
     },
-    
   };
 
   return (
     <div className="filters-page">
-      <h2>Explora Eventos por Categorías</h2>
+      <h2>{title}</h2>
       {visibleFilters.map((filterKey) => {
-        const { title, filter } = filtersConfig[filterKey] || {};
+        const { title: sectionTitle, filter } = filtersConfig[filterKey] || {};
         return (
-          title && (
+          sectionTitle && (
             <div key={filterKey} className="scroll-gallery">
-              <h3>{title}</h3>
+              <h3>{sectionTitle}</h3>
               <AutoScrollGallery filters={filter} />
             </div>
           )

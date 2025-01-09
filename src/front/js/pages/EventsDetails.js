@@ -325,7 +325,7 @@ const EventsDetails = () => {
       </div>
       {eventDetails && (
         <Filters 
-          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)} 
+          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)} title={`Explora más eventos de ${eventDetails.category}`}
         />
       )}
 
