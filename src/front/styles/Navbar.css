@@ -32,7 +32,7 @@
   .profile-menu {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Aseguramos que los botones estén centrados */
+    align-items: center; 
   }
 
   .profile-dropdown {
@@ -50,7 +50,7 @@
   .profile-dropdown ul {
     padding-left: 0;
     margin: 0;
-    text-align: center; /* Centra los elementos del menú */
+    text-align: center; 
   }
 
   .profile-dropdown li {
@@ -148,7 +148,7 @@
   min-width: 150px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 100;
-  text-align: center; /* Centra los elementos del menú */
+  text-align: center; 
 }
 
 .profile-dropdown ul {

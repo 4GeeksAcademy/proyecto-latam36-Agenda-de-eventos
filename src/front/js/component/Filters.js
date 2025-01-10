@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
-import AutoScrollGallery from "../component/cards";
+import AutoScrollGallery from "../component/cards"; 
 import { Context } from "../store/appContext";
+import "../../styles/filters.css"
 
 const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías" }) => {
   const { store } = useContext(Context);
 
-  // Filtros predefinidos
+  
   const filtersConfig = {
     sportsAndWellness: {
       title: "Deportes y Bienestar",
@@ -37,7 +38,8 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
     entertainmentAndCulture: {
       title: "Entretenimiento y Cultura",
       filter: {
-        category: "Música, Teatro y Danza, Cine, Arte y Exposiciones, Eventos Literarios",
+        category:
+          "Música, Teatro y Danza, Cine, Arte y Exposiciones, Eventos Literarios",
         isOnline: null,
         price: "Todos",
         ageClassification: "Todos",
@@ -46,7 +48,8 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
     educationalAndProfessional: {
       title: "Educativos y Profesionales",
       filter: {
-        category: "Conferencias, Talleres y Seminarios, Educación y Aprendizaje, Negocios y Emprendimiento",
+        category:
+          "Conferencias, Talleres y Seminarios, Educación y Aprendizaje, Negocios y Emprendimiento",
         isOnline: null,
         price: "Todos",
         ageClassification: "Todos",
@@ -55,7 +58,8 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
     socialAndCommunity: {
       title: "Social y Comunitario",
       filter: {
-        category: "Eventos Familiares, Caridad y Voluntariado, Religión y Espiritualidad",
+        category:
+          "Eventos Familiares, Caridad y Voluntariado, Religión y Espiritualidad",
         isOnline: null,
         price: "Todos",
         ageClassification: "Todos",
@@ -82,13 +86,13 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
   };
 
   return (
-    <div>
+    <div className="filters-container">
       <h2>{title}</h2>
       {visibleFilters.map((filterKey) => {
         const { title: sectionTitle, filter } = filtersConfig[filterKey] || {};
         return (
           sectionTitle && (
-            <div key={filterKey}>
+            <div className="filters-category" key={filterKey}>
               <h3>{sectionTitle}</h3>
               <AutoScrollGallery filters={filter} />
             </div>
@@ -100,3 +104,4 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
 };
 
 export default Filters;
+
