@@ -565,7 +565,7 @@ def upload_file():
     flyer = request.args.get('flyer')
     img = request.args.get('img')
 
-    upload_folder = 'src/api/uploads'
+    upload_folder = 'src/front/img'
 
     if 'file' not in request.files:
         return jsonify ({"msg":"No file part in the request"})
