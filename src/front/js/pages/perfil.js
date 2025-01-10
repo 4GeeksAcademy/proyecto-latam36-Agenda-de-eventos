@@ -107,7 +107,7 @@ const Perfil = () => {
 
     return onRemove ? (
       <button
-        className="text-white px-2 py-1 rounded text-xs font-medium bg-danger"
+        className="button-fav"
         onClick={(e) => {
           e.stopPropagation();
           onRemove();
