@@ -83,7 +83,7 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
   const { store } = useContext(Context);
 
   return (
-    <div>
+    <div className="filters-container">
       <h2>{title}</h2>
       {visibleFilters.map((filterKey) => {
         const { title: sectionTitle, filter } = filtersConfig[filterKey] || {};
@@ -93,7 +93,7 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
               <div className="header-section">
                 <h3>{sectionTitle}</h3>
                 <Link to={`/FilteredEvents/${filterKey}`} className="see-all-link">
-                  Ver todos
+                  Ver Todos
                 </Link>
               </div>
               <AutoScrollGallery filters={filter} />
