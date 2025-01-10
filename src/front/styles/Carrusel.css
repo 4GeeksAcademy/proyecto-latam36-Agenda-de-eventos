@@ -1,64 +1,75 @@
 .carousel-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #000000;
-  }
-  
-  .carousel-container {
-    width: 100%;
-    max-width: 7500px; /* Ajustar según el tamaño máximo deseado */
-    padding: 20px;
-  }
-  
-  .carousel {
-    position: relative;
-    width: 100%;
-    height: 1000px; /* Ajustar según el tamaño deseado */
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: #000;
-  }
-  
-  .slides {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-  }
-  
-  .slide {
-    min-width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .slide img {
-    width: 100%;
-    border-radius: 15px;
-  }
-  
-  .prev, .next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: transparent;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 2rem;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .prev:hover, .next:hover {
-    color: #575657;
-  }
-  
-  .prev {
-    left: 10px;
-  }
-  
-  .next {
-    right: 10px;
-  }
-  
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+}
+
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  position: relative;
+  min-width: 100%;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+.event-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.582);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.event-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.event-category {
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(90deg, #250764, #b084ff); 
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  backdrop-filter: blur(4px);
+}
+
+.event-title h3 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: white;
+}
+
+.date-day {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.2;
+}
+
+.date-time {
+  font-size: 0.75rem;
+  color: #666;
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../styles/Carrusel.css";
 
 const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -71,17 +72,40 @@ const Carousel = () => {
     <div className="carousel-wrapper">
       <div className="carousel-container">
         <div className="carousel">
-          <div className="slides" style={{ transform: `translateX(${-currentSlide * 100}%)` }}>
+          <div
+            className="slides"
+            style={{ transform: `translateX(${-currentSlide * 100}%)` }}
+          >
             {topEvents.map((event, index) => (
               <div className="slide" key={index}>
                 <img
-                  src={event.flyer_img_url || "https://via.placeholder.com/800x400?text=No+Image"}
+                  src={
+                    event.flyer_img_url ||
+                    "https://via.placeholder.com/800x400?text=No+Image"
+                  }
                   alt={event.event_name}
                   onClick={() => goToEventDetails(event.id)}
                 />
-                <div className="event-info">
-                  <h3>{event.event_name}</h3>
-                  <p>{new Date(event.event_date).toLocaleDateString("es-ES")}</p>
+                <div className="event-overlay">
+                  <div className="event-details">
+                    <div className="event-category">
+                        {event.category}
+                    </div>
+                    <div className="event-title">
+                      <h3>{event.event_name}</h3>
+                    </div>
+                    <div className="date-badge">
+                      <div className="date-month">
+                        {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
+                      </div>
+                      <div className="date-day">
+                        {new Date(event.date).getDate()}
+                      </div>
+                      <div className="date-time">
+                        {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -96,6 +120,7 @@ const Carousel = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Carousel;
