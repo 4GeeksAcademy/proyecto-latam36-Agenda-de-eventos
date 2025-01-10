@@ -28,27 +28,30 @@ const FilteredEvents = () => {
       if (queryCategories.length > 0) {
         queryCategories.forEach(cat => queryParams.append("category", cat));
       }
-      queryParams.append("status", "approved"); // Filtrar por status aprobado
+      queryParams.append("status", "approved");
       if (isOnline !== null) queryParams.append("is_online", isOnline);
       if (selectedPrice !== "Todos") queryParams.append("price_type", selectedPrice.toLowerCase() === "gratis" ? "free" : "paid");
       if (ageClassification !== "Todos") queryParams.append("age_classification", ageClassification);
-
+  
       const response = await fetch(`${process.env.BACKEND_URL}/api/events?${queryParams.toString()}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: store.token ? `Bearer ${store.token}` : undefined,
         },
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
-
+  
       const events = await response.json();
-
-      // Agrupar eventos por categoría
-      const groupedEvents = events.reduce((acc, event) => {
-        if (event.status === "approved") { // Filtrar eventos aprobados
+      
+      // Ordenar eventos por fecha antes de agruparlos
+      const sortedEvents = events.sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+      // Agrupar eventos ordenados por categoría
+      const groupedEvents = sortedEvents.reduce((acc, event) => {
+        if (event.status === "approved") {
           const eventCategories = event.category.split(', ');
           eventCategories.forEach(cat => {
             if (!acc[cat]) acc[cat] = [];
@@ -57,7 +60,7 @@ const FilteredEvents = () => {
         }
         return acc;
       }, {});
-
+  
       setFilteredEvents(groupedEvents);
     } catch (err) {
       console.error("Error fetching events:", err);
@@ -116,7 +119,17 @@ const FilteredEvents = () => {
                       />
                       <div className="event-info">
                         <h3>{event.event_name}</h3>
-                        <p>{new Date(event.event_date).toLocaleDateString("es-ES")}</p>
+                        <div className="date-badge">
+                      <div className="date-month">
+                        {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
+                      </div>
+                      <div className="date-day">
+                        {new Date(event.date).getDate()}
+                      </div>
+                      <div className="date-time">
+                        {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
                       </div>
                     </div>
                   ))}
