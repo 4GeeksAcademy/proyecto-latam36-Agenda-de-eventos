@@ -18,6 +18,8 @@ import AdminEventRequests from "./pages/AdminEventRequests"
 import Perfil from "./pages/perfil";
 import ImageUpload from "./pages/ImageTestForm.js";
 import AboutUs from "./pages/aboutUs.js";
+import FilteredEvents from "./pages/FilteredEvents.js";
+
 
 
 //create your first component
@@ -40,6 +42,7 @@ const Layout = () => {
                         <Route element={<Signup />} path="/signup"/>
                         <Route element={<EventsForm/>} path="/EventsForm"/>
                         <Route element={<EventsDetails/>} path="/EventsDetails/:id"/>
+                        <Route element={<FilteredEvents/>} path="/FilteredEvents/:category"/>
                         <Route element={<AdminEventRequests/>} path="/AdminEventRequests"/>
                         <Route element={<ImageUpload/>} path="/ImageTestForm"/>
                         <Route element={<Perfil/>} path="/perfil" />

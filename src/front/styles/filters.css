@@ -1,0 +1,25 @@
+.filters-page {
+    padding: 20px;
+  }
+  
+  .scroll-gallery {
+    margin-bottom: 20px;
+  }
+  
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; 
+  }
+  
+  .see-all-link {
+    color: #007bff;
+    text-decoration: none;
+    margin-left: 10px; 
+  }
+  
+  .see-all-link:hover {
+    text-decoration: underline;
+  }
+  
