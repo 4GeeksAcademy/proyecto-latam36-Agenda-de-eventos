@@ -18,7 +18,6 @@ const AutoScrollGallery = ({ filters }) => {
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
-  // Memoize the filter values to prevent unnecessary re-renders
   const memoizedFilters = useMemo(() => ({
     category: filters.category,
     isOnline: filters.isOnline,
@@ -103,7 +102,7 @@ const AutoScrollGallery = ({ filters }) => {
     return () => {
       mounted.current = false;
     };
-  }, []); // Only run once on mount
+  }, []); 
 
   useEffect(() => {
     if (events.length > 0) {

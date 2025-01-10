@@ -559,6 +559,18 @@ def user_favorites():
     user = User.query.filter_by(email=current_user_email).first()
     return jsonify(user.favorites_serialize())
 
+# Ordenar eventos por Popularidad
+@api.route('/events/top_favorites', methods=['GET'])
+def get_top_favorites():
+    top_events = Events.query.order_by(
+        Events.favorite_count.desc(),
+        Events.event_date.asc()
+    ).limit(5).all()
+
+    if not top_events:
+        return jsonify({"message": "No events found"}), 404
+
+    return jsonify([event.serialize() for event in top_events]), 200
 
 
 
