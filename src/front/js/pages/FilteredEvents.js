@@ -11,13 +11,13 @@ const FilteredEvents = () => {
   const { store } = useContext(Context);
   const { category } = useParams();
   const [filteredEvents, setFilteredEvents] = useState({});
-  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [selectedCategory, setSelectedCategory] = useState(""); // No seleccionamos ninguna tab inicialmente
   const [breadcrumbsTitle, setBreadcrumbsTitle] = useState(filtersConfig[category]?.title || "Todos");
   const [isOnline, setIsOnline] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState("Todos");
   const [ageClassification, setAgeClassification] = useState("Todos");
   const [error, setError] = useState(null);
-  const [initialLoad, setInitialLoad] = useState(true); 
+  const [initialLoad, setInitialLoad] = useState(true); // Para manejar la carga inicial
 
   // Obtener las categorías desde el filterKey
   const categories = filtersConfig[category]?.filter?.category.split(", ") || [];
@@ -28,7 +28,7 @@ const FilteredEvents = () => {
       if (queryCategories.length > 0) {
         queryCategories.forEach(cat => queryParams.append("category", cat));
       }
-      queryParams.append("status", "approved"); 
+      queryParams.append("status", "approved"); // Filtrar por status aprobado
       if (isOnline !== null) queryParams.append("is_online", isOnline);
       if (selectedPrice !== "Todos") queryParams.append("price_type", selectedPrice.toLowerCase() === "gratis" ? "free" : "paid");
       if (ageClassification !== "Todos") queryParams.append("age_classification", ageClassification);
@@ -46,8 +46,9 @@ const FilteredEvents = () => {
 
       const events = await response.json();
 
+      // Agrupar eventos por categoría
       const groupedEvents = events.reduce((acc, event) => {
-        if (event.status === "approved") { 
+        if (event.status === "approved") { // Filtrar eventos aprobados
           const eventCategories = event.category.split(', ');
           eventCategories.forEach(cat => {
             if (!acc[cat]) acc[cat] = [];
@@ -101,10 +102,10 @@ const FilteredEvents = () => {
             <p>Error al cargar los eventos: {error}</p>
           ) : Object.keys(filteredEvents).length > 0 ? (
             Object.entries(filteredEvents).map(([cat, events]) => (
-              <div key={cat} className="category-section">
+              <div key={cat} className={`category-section ${selectedCategory === cat ? 'selected-category' : ''}`}>
                 <h3>{cat}</h3>
                 <div className="events-cards">
-                  {events.slice(0, 5).map((event) => (
+                  {events.slice(0, selectedCategory === cat ? 15 : 5).map((event) => (
                     <div className="event-card" key={event.id}>
                       <img
                         src={
@@ -120,13 +121,13 @@ const FilteredEvents = () => {
                     </div>
                   ))}
                 </div>
-                {events.length > 5 && (
+                {events.length > 5 && selectedCategory !== cat && (
                   <button 
                     className="see-more-button"
                     onClick={() => {
                       setSelectedCategory(cat);
-                      setInitialLoad(false); 
-                      setBreadcrumbsTitle(cat); 
+                      setInitialLoad(false); // Asegurar que no se ejecute la carga inicial nuevamente
+                      setBreadcrumbsTitle(cat); // Actualizar breadcrumbsTitle al seleccionar "Ver más"
                     }}
                   >
                     Ver más

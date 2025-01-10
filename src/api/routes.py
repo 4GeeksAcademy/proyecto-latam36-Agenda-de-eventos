@@ -525,7 +525,7 @@ def add_favorite(event_id):
 
 
 # Eliminar evento de favoritos de un usuario
-api.route('/favorite/<int:event_id>', methods=['DELETE'])
+@api.route('/favorite/<int:event_id>', methods=['DELETE'])
 @jwt_required()
 def remove_favorite(event_id):
     current_user_email = get_jwt_identity()
