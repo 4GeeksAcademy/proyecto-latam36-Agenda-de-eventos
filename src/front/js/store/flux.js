@@ -5,6 +5,7 @@ const getState = ({ getStore, setStore, getActions }) => {
             isAdmin: false,
             loading: false,
             userCountry: null,
+            lastCheck: null,
         },
 
         actions: {
@@ -13,15 +14,19 @@ const getState = ({ getStore, setStore, getActions }) => {
             },
 
             setToken: (newToken) => {
-                localStorage.setItem("token", newToken);
-                setStore({ token: newToken });
-                getActions().checkAdmin();
                 if (newToken) {
-                    setTimeout(() => {
-                        getActions().verifyToken();
-                    }, 300000); // 5 minutos
+                  localStorage.setItem("token", newToken);
+                  setStore({ token: newToken });
+                  getActions().checkAdmin();
+                } else {
+                  localStorage.removeItem("token");
+                  setStore({ 
+                    token: null, 
+                    isAdmin: false, 
+                    user: null 
+                  });
                 }
-            },
+              },
 
             setUserCountry: (country) => {
                 setStore({ userCountry: country });
@@ -78,37 +83,50 @@ const getState = ({ getStore, setStore, getActions }) => {
                 const store = getStore();
                 
                 if (!store.token) {
-                    setStore({ isAdmin: false });
-                    return false;
+                  setStore({ isAdmin: false, user: null });
+                  return false;
                 }
-            
+        
+                const now = Date.now();
+                if (store.lastCheck && (now - store.lastCheck) < 300000) { // 300000 ms = 5 minutos
+                  return store.isAdmin;
+                }
+        
                 try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/users/me", {
-                        headers: {
-                            Authorization: `Bearer ${store.token}`,
-                            "Content-Type": "application/json",
-                        },
+                  const resp = await fetch(process.env.BACKEND_URL + "/api/users/me", {
+                    headers: {
+                      Authorization: `Bearer ${store.token}`,
+                      "Content-Type": "application/json",
+                    },
+                  });
+        
+                  if (resp.ok) {
+                    const userData = await resp.json();
+                    setStore({ 
+                      isAdmin: userData.is_admin || false,
+                      user: userData,
+                      userCountry: userData.country,
+                      lastCheck: now 
                     });
-            
-                    if (resp.ok) {
-                        const userData = await resp.json();
-                        const isAdmin = userData.is_admin || false;
-                        setStore({ isAdmin });
-            
-                        getActions().setUserCountry(userData.country);
-                        return isAdmin;
-                    }
-            
-                    setStore({ isAdmin: false });
-                    return false;
-                    
+                    return userData.is_admin || false;
+                  }
+        
+                  setStore({ 
+                    isAdmin: false, 
+                    user: null,
+                    lastCheck: now 
+                  });
+                  return false;
                 } catch (error) {
-                    console.error("Error verificando rol de admin:", error);
-                    setStore({ isAdmin: false });
-                    return false;
+                  console.error("Error verificando rol de admin:", error);
+                  setStore({ 
+                    isAdmin: false, 
+                    user: null,
+                    lastCheck: now 
+                  });
+                  return false;
                 }
-            },
-
+              },
             
         },
     };

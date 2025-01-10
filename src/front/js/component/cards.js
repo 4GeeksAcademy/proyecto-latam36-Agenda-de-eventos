@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt } from "react-icons/fa";
 import { Context } from "../store/appContext";
@@ -12,21 +12,33 @@ const AutoScrollGallery = ({ filters }) => {
   const [showEvents, setShowEvents] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const galleryRef = useRef(null);
+  const mounted = useRef(false);
   const { store } = useContext(Context);
-  const { userCountry, user } = store;
 
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
+  // Memoize the filter values to prevent unnecessary re-renders
+  const memoizedFilters = useMemo(() => ({
+    category: filters.category,
+    isOnline: filters.isOnline,
+    price: filters.price,
+    ageClassification: filters.ageClassification
+  }), [filters.category, filters.isOnline, filters.price, filters.ageClassification]);
+
   const fetchEvents = async () => {
+    if (mounted.current) return;
+    
     setLoading(true);
+    mounted.current = true;
+
     try {
       const queryParams = new URLSearchParams({
         status: "approved",
-        category: filters.category !== "Todos" ? filters.category : undefined,
-        is_online: filters.isOnline !== null ? filters.isOnline : undefined,  
-        price_type: filters.price !== "Todos" ? filters.price : undefined,  
-        age_classification: filters.ageClassification !== "Todos" ? filters.ageClassification : undefined,
+        ...(memoizedFilters.category !== "Todos" && { category: memoizedFilters.category }),
+        ...(memoizedFilters.isOnline !== null && { is_online: memoizedFilters.isOnline }),
+        ...(memoizedFilters.price !== "Todos" && { price_type: memoizedFilters.price }),
+        ...(memoizedFilters.ageClassification !== "Todos" && { age_classification: memoizedFilters.ageClassification }),
       });
 
       const API_BASE_URL = `${backend}/api/events?${queryParams.toString()}`;
@@ -43,64 +55,61 @@ const AutoScrollGallery = ({ filters }) => {
       }
 
       const eventsData = await response.json();
-      console.log("Eventos obtenidos:", eventsData);
       const sortedEvents = eventsData.sort((a, b) => new Date(a.date) - new Date(b.date));
       setEvents(sortedEvents);
+      filterAndSortEvents(sortedEvents);
     } catch (err) {
       console.error("Error occurred during fetch:", err.message);
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
+  const filterAndSortEvents = useCallback((currentEvents) => {
+    const eventsToFilter = currentEvents || events;
+    let filteredEvents = eventsToFilter.filter(event => event.status === "approved");
+
+    if (memoizedFilters.category && memoizedFilters.category !== "Todos") {
+      const categoryList = memoizedFilters.category.split(",").map(c => c.trim());
+      filteredEvents = filteredEvents.filter(event => categoryList.includes(event.category));
+    }
+
+    if (memoizedFilters.isOnline !== null) {
+      filteredEvents = filteredEvents.filter(event => event.is_online === memoizedFilters.isOnline);
+    }
+
+    if (memoizedFilters.price && memoizedFilters.price !== "Todos") {
+      filteredEvents = filteredEvents.filter(event => {
+        if (memoizedFilters.price === "De Pago") return event.ticket_price > 0;
+        if (memoizedFilters.price === "Gratis") return event.ticket_price === 0;
+        return true;
+      });
+    }
+
+    if (memoizedFilters.ageClassification && memoizedFilters.ageClassification !== "Todos") {
+      filteredEvents = filteredEvents.filter(event => 
+        event.age_classification === memoizedFilters.ageClassification
+      );
+    }
+
+    const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+    setVisibleEvents(sortedEvents);
+    setShowEvents(true);
+  }, [events, memoizedFilters]);
 
   useEffect(() => {
     fetchEvents();
-  }, [filters]);
+    return () => {
+      mounted.current = false;
+    };
+  }, []); // Only run once on mount
 
   useEffect(() => {
-    const filterAndSortEvents = () => {
-      let filteredEvents = events.filter(event => event.status === "approved");
-
-      if (filters) {
-        if (filters.category && filters.category !== "Todos") {
-          const categoryList = Array.isArray(filters.category) 
-            ? filters.category 
-            : filters.category.split(",").map(c => c.trim());
-          filteredEvents = filteredEvents.filter(event => categoryList.includes(event.category));
-        }
-
-        if (filters.isOnline !== null) {
-          filteredEvents = filteredEvents.filter(event => event.is_online === filters.isOnline);
-        }
-
-        if (filters.price && filters.price !== "Todos") {
-          filteredEvents = filteredEvents.filter(event => {
-            if (filters.price === "De Pago") {
-              return event.ticket_price > 0;
-            } else if (filters.price === "Gratis") {
-              return event.ticket_price === 0;
-            }
-            return true;
-          });
-        }
-
-        if (filters.ageClassification && filters.ageClassification !== "Todos") {
-          filteredEvents = filteredEvents.filter(event => event.age_classification === filters.ageClassification);
-        }
-
-        if (user?.age < 18) {
-          filteredEvents = filteredEvents.filter(event => event.age_classification !== "18+");
-        }
-      }
-
-      const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-      console.log("Eventos visibles:", sortedEvents);
-      setVisibleEvents(sortedEvents);
-      setShowEvents(true);
-    };
-
-    filterAndSortEvents();
-  }, [events, filters, user]);
+    if (events.length > 0) {
+      filterAndSortEvents();
+    }
+  }, [memoizedFilters, events, filterAndSortEvents]);
 
   useEffect(() => {
     const handleResize = () => {
