@@ -656,6 +656,6 @@ def upload_file():
             db.session.rollback()
             return jsonify ({'msg':'An error occurred: {e}'}), 500
      
-    return jsonify ({'media url':response['url'],
+    return jsonify ({'media_url':response['url'],
                      'format':response['format'],
                      'resource_type':response['resource_type']}),200
