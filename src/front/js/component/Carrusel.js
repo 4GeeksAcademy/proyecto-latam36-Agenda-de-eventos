@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();

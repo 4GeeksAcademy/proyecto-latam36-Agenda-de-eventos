@@ -8,13 +8,12 @@ const Navbar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [profileMenuVisible, setProfileMenuVisible] = useState(false); 
-    const dropdownRef = useRef(null); // Referencia al menú desplegable
+    const dropdownRef = useRef(null);
 
-    
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setProfileMenuVisible(false); // Cerrar el menú si el clic ocurre fuera de él
+                setProfileMenuVisible(false);
             }
         };
 
@@ -25,14 +24,12 @@ const Navbar = () => {
         };
     }, []);
 
- 
     useEffect(() => {
         if (store.token && !store.isAdmin) {
             actions.checkAdmin();
         }
     }, [store.token, store.isAdmin, actions]);
 
-    
     const handleLogout = () => {
         const userConfirmed = window.confirm(`Are you sure you want to Logout, ${store.username || "user"}?`);
         if (userConfirmed) {
@@ -76,19 +73,22 @@ const Navbar = () => {
                                                     <li>
                                                         <Link to="/perfil" className="nav-link">Perfil</Link>
                                                     </li>
+                                                    {store.isAdmin && (
+                                                        <li>
+                                                            <Link to="/admineventrequests" className="admin-btn">
+                                                                Panel Admin
+                                                            </Link>
+                                                        </li>
+                                                    )}
                                                     <li>
-                                                        <button onClick={handleLogout} className="logout-btn">Logout</button>
+                                                        <button onClick={handleLogout} className="logout-btn">
+                                                            Logout
+                                                        </button>
                                                     </li>
                                                 </ul>
                                             </div>
                                         )}
                                     </div>
-
-                                    {store.isAdmin && (
-                                        <div className="admin-panel">
-                                            <Link to="/admineventrequests" className="admin-btn">Panel Admin</Link>
-                                        </div>
-                                    )}
                                 </>
                             ) : (
                                 <>
