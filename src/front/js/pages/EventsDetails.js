@@ -325,7 +325,7 @@ const EventsDetails = () => {
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-8">
-            <div id="eventCarousel" className="carousel slide event-card" data-bs-ride="carousel">
+            <div id="eventCarousel" className="carousel slide" data-bs-ride="carousel">
               <div className="carousel-inner">
                 {renderCarouselItems()}
               </div>
@@ -372,7 +372,7 @@ const EventsDetails = () => {
               {isLoggedIn ? (
                 <div>
                   <button 
-                    className="btn btn-primary w-100" 
+                    className="btn button-fav w-100" 
                     onClick={handleFavoriteToggle}
                   >
                     <i className={`fas fa-heart me-2 ${isFavorite ? 'text-danger' : ''}`}></i>

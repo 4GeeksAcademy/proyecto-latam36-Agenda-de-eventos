@@ -1,65 +1,154 @@
-  .event-card {
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  /* .event-image {
-    position: relative;
-  }
-  .event-image img {
-    width: 100%;
+.container {
+  font-family: 'Arial', sans-serif;
+  color: white; 
+  
+}
+
+.event-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px; 
+  box-shadow: none; 
+  background-color: #1E1E1E; 
+}
+
+.carousel-inner img {
+  height: 400px;
+  object-fit: cover;
+  border: none; 
+}
+
+.event-date {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background-color: rgba(24, 23, 23, 0.404); 
+  color: #f7f5fa;
+  border-radius: 8px;
+  text-align: center;
+  padding: 6px 12px;
+}
+
+.event-date .month {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.event-date .day {
+  font-size: 24px;
+}
+
+.event-details h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: white; 
+}
+
+.event-details p {
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  color: #cccccc; 
+}
+
+.event-info, .producer-info {
+  background-color: #1E1E1E; 
+  border-radius: 12px; 
+  box-shadow: none; 
+}
+
+.event-info h5 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.event-info .price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.event-info p {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #cccccc;
+}
+
+.producer-info {
+  margin-top: 20px;
+}
+
+.producer-info h4 {
+  color: white;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.producer-info p {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: #cccccc;
+}
+
+.button-fav {
+  background-color: #885bf1;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.button-fav:hover {
+  background-color: #8959f0c9;
+}
+
+.button-outline {
+  background-color: transparent;
+  color: #800080;
+  border: 2px solid #800080;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-outline:hover {
+  background-color: #800080;
+  color: white;
+}
+
+
+.carousel {
+  animation: none;
+}
+
+.carousel-control-next, .carousel-control-prev {
+  filter: invert(1); 
+}
+
+@media (max-width: 768px) {
+  .event-card img {
     height: auto;
-  } */
-  .event-image .carousel-control-prev,
-  .event-image .carousel-control-next {
-    width: 5%;
   }
-  .event-details {
-    padding: 20px;
+
+  .event-details h3 {
+    font-size: 1.4rem;
   }
-  .event-date {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgb(255, 255, 255);
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
+
+  .event-info h5, .producer-info h4 {
+    font-size: 1.2rem;
   }
-  .event-date .month {
-    font-size: 12px;
-    color: #6c757d;
+
+  .event-info p, .producer-info p {
+    font-size: 0.9rem;
   }
-  .event-date .day {
-    font-size: 24px;
-    color: #263031;
-  }
-  .event-info {
-    padding: 20px;
-    background-color: rgb(250, 250, 250);
-    border-radius: 10px;
-    margin-top: 20px;
-    color: black;
-  }
-  .event-info .price {
-    font-size: 24px;
-    color: #0c0c0c;
-  }
-  .event-info .btn {
+
+  .button-primary, .button-outline {
     width: 100%;
-    
+    font-size: 0.9rem;
   }
-  .producer-info {
-    padding: 20px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-    margin-top: 20px;
-    color: black;
-  }
-  
-  .event-carousel img {
-    width: 600px;
-    height: 400px;
-    object-fit: cover; 
-  }
-  
+}
