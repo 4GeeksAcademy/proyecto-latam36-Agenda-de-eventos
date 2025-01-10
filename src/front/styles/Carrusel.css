@@ -26,6 +26,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  
 }
 
 .slide img {
@@ -56,6 +57,7 @@ button.next {
   z-index: 10;
   border-radius: 50%;
   transition: background-color 0.3s;
+  
 }
 
 button.prev:hover,

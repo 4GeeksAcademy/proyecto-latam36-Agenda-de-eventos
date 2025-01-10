@@ -83,7 +83,7 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
   const { store } = useContext(Context);
 
   return (
-    <div className="filters-page">
+    <div>
       <h2>{title}</h2>
       {visibleFilters.map((filterKey) => {
         const { title: sectionTitle, filter } = filtersConfig[filterKey] || {};
@@ -106,3 +106,4 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
 };
 
 export default Filters;
+
