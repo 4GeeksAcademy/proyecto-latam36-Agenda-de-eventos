@@ -583,7 +583,7 @@ def upload_file():
     flyer = request.args.get('flyer')
     img = request.args.get('img')
 
-    upload_folder = 'src/api/uploads'
+    upload_folder = 'src/front/img'
 
     if 'file' not in request.files:
         return jsonify ({"msg":"No file part in the request"})
@@ -674,6 +674,6 @@ def upload_file():
             db.session.rollback()
             return jsonify ({'msg':'An error occurred: {e}'}), 500
      
-    return jsonify ({'media url':response['url'],
+    return jsonify ({'media_url':response['url'],
                      'format':response['format'],
                      'resource_type':response['resource_type']}),200
