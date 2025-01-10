@@ -11,7 +11,6 @@ const Carousel = () => {
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL || `https://${window.location.hostname}:3001`;
 
-  // Fetch top favorite events
   const fetchTopFavorites = async () => {
     setLoading(true);
     try {
@@ -34,6 +33,13 @@ const Carousel = () => {
     fetchTopFavorites();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % topEvents.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [topEvents]);
+
   const showSlide = (index) => {
     if (index >= topEvents.length) {
       setCurrentSlide(0);
@@ -42,14 +48,6 @@ const Carousel = () => {
     } else {
       setCurrentSlide(index);
     }
-  };
-
-  const nextSlide = () => {
-    showSlide(currentSlide + 1);
-  };
-
-  const prevSlide = () => {
-    showSlide(currentSlide - 1);
   };
 
   const goToEventDetails = (eventId) => {
@@ -71,56 +69,27 @@ const Carousel = () => {
   return (
     <div className="carousel-wrapper">
       <div className="carousel-container">
-        <div className="carousel">
-          <div
-            className="slides"
-            style={{ transform: `translateX(${-currentSlide * 100}%)` }}
-          >
-            {topEvents.map((event, index) => (
-              <div className="slide" key={index}>
-                <img
-                  src={
-                    event.flyer_img_url ||
-                    "https://via.placeholder.com/800x400?text=No+Image"
-                  }
-                  alt={event.event_name}
-                  onClick={() => goToEventDetails(event.id)}
-                />
-                <div className="event-overlay">
-                  <div className="event-details">
-                    <div className="event-category">
-                        {event.category}
-                    </div>
-                    <div className="event-title">
-                      <h3>{event.event_name}</h3>
-                    </div>
-                    <div className="date-badge">
-                      <div className="date-month">
-                        {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
-                      </div>
-                      <div className="date-day">
-                        {new Date(event.date).getDate()}
-                      </div>
-                      <div className="date-time">
-                        {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className="prev" onClick={prevSlide}>
-            ❮
-          </button>
-          <button className="next" onClick={nextSlide}>
-            ❯
-          </button>
+        <div className="carousel" style={{ transform: `translateX(${-currentSlide * 100}%)` }}>
+          {topEvents.map((event, index) => (
+            <div className="slide" key={index}>
+              <img
+                src={event.flyer_img_url || "https://via.placeholder.com/800x400?text=No+Image"}
+                alt={event.event_name}
+                onClick={() => goToEventDetails(event.id)}
+              />
+            </div>
+          ))}
         </div>
+        <button className="prev" onClick={() => showSlide(currentSlide - 1)}>
+          ❮
+        </button>
+        <button className="next" onClick={() => showSlide(currentSlide + 1)}>
+          ❯
+        </button>
       </div>
     </div>
   );
-  
 };
 
 export default Carousel;
+
