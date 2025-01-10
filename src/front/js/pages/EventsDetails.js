@@ -385,13 +385,13 @@ const EventsDetails = () => {
                   )}
                 </div>
               ) : (
-                <div className="alert alert-info" role="alert">
+                <div className="alert alert-info bg-dark rounded-3" role="alert">
                   <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
                   <div className="d-flex gap-2">
-                    <a href="/login" className="btn btn-primary btn-sm">
+                    <a href="/login" className="btn button-fav btn-sm">
                       Iniciar sesión
                     </a>
-                    <a href="/signup" className="btn btn-outline-primary btn-sm">
+                    <a href="/signup" className="btn button-fav btn-sm">
                       Registrarse
                     </a>
                   </div>
