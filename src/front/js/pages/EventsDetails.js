@@ -325,7 +325,7 @@ const EventsDetails = () => {
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-8">
-            <div id="eventCarousel" className="carousel slide event-card" data-bs-ride="carousel">
+            <div id="eventCarousel" className="carousel slide" data-bs-ride="carousel">
               <div className="carousel-inner">
                 {renderCarouselItems()}
               </div>
@@ -372,7 +372,7 @@ const EventsDetails = () => {
               {isLoggedIn ? (
                 <div>
                   <button 
-                    className="btn btn-primary w-100" 
+                    className="btn button-fav w-100" 
                     onClick={handleFavoriteToggle}
                   >
                     <i className={`fas fa-heart me-2 ${isFavorite ? 'text-danger' : ''}`}></i>
@@ -385,13 +385,13 @@ const EventsDetails = () => {
                   )}
                 </div>
               ) : (
-                <div className="alert alert-info" role="alert">
+                <div className="alert alert-info bg-dark rounded-3" role="alert">
                   <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
                   <div className="d-flex gap-2">
-                    <a href="/login" className="btn btn-primary btn-sm">
+                    <a href="/login" className="btn button-fav btn-sm">
                       Iniciar sesión
                     </a>
-                    <a href="/signup" className="btn btn-outline-primary btn-sm">
+                    <a href="/signup" className="btn button-fav btn-sm">
                       Registrarse
                     </a>
                   </div>
