@@ -82,13 +82,13 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
   };
 
   return (
-    <div className="filters-page">
+    <div>
       <h2>{title}</h2>
       {visibleFilters.map((filterKey) => {
         const { title: sectionTitle, filter } = filtersConfig[filterKey] || {};
         return (
           sectionTitle && (
-            <div key={filterKey} className="scroll-gallery">
+            <div key={filterKey}>
               <h3>{sectionTitle}</h3>
               <AutoScrollGallery filters={filter} />
             </div>
