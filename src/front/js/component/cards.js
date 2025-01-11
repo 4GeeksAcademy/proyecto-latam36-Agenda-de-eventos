@@ -22,12 +22,12 @@ const AutoScrollGallery = ({ filters }) => {
     category: filters.category,
     isOnline: filters.isOnline,
     price: filters.price,
-    ageClassification: filters.ageClassification
+    ageClassification: filters.ageClassification,
   }), [filters.category, filters.isOnline, filters.price, filters.ageClassification]);
 
   const fetchEvents = async () => {
     if (mounted.current) return;
-    
+
     setLoading(true);
     mounted.current = true;
 
@@ -87,7 +87,7 @@ const AutoScrollGallery = ({ filters }) => {
     }
 
     if (memoizedFilters.ageClassification && memoizedFilters.ageClassification !== "Todos") {
-      filteredEvents = filteredEvents.filter(event => 
+      filteredEvents = filteredEvents.filter(event =>
         event.age_classification === memoizedFilters.ageClassification
       );
     }
@@ -102,7 +102,7 @@ const AutoScrollGallery = ({ filters }) => {
     return () => {
       mounted.current = false;
     };
-  }, []); 
+  }, []);
 
   useEffect(() => {
     if (events.length > 0) {
@@ -129,12 +129,12 @@ const AutoScrollGallery = ({ filters }) => {
 
     const gallery = galleryRef.current;
     const cardWidth = gallery.children[0]?.offsetWidth || 0;
-    const gap = 64;
+    const gap = 24;
     const scrollAmount = cardWidth + gap;
     const maxScroll = gallery.scrollWidth - gallery.clientWidth;
 
     let newScrollPosition;
-    if (direction === 'right') {
+    if (direction === "right") {
       if (gallery.scrollLeft >= maxScroll - 10) {
         newScrollPosition = 0;
       } else {
@@ -150,114 +150,74 @@ const AutoScrollGallery = ({ filters }) => {
 
     gallery.scrollTo({
       left: newScrollPosition,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
-  const navButtonStyle = {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    border: 'none',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    cursor: 'pointer'
-  };
-
   return (
-    <div className="events-gallery-container">
-      <div className="events-gallery-header d-flex justify-content-between align-items-center">
-        {/* <h1>
-          {filters?.country && filters.country !== "Todos"
-            ? `Próximos Eventos en ${filters.country}`
-            : "Próximos Eventos"}
-        </h1> */}
-        {!isMobile && (
-          <div className="nav-buttons">
-            <button
-              onClick={() => scroll('left')}
-              className="nav-button"
-            >
-              <FaChevronLeft />
-            </button>
-            <button
-              onClick={() => scroll('right')}
-              className="nav-button"
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        )}
+    <div className="events-auto-gallery">
+      <div className="events-auto-header">
+        <h1>Próximos Eventos</h1>
       </div>
-      
       {error ? (
         <div className="alert alert-danger" role="alert">
           {error}
         </div>
       ) : loading || !showEvents ? (
-        <div className="auto-scroll-gallery" ref={galleryRef}>
+        <div className="scrollable-gallery" ref={galleryRef}>
           <div className="spinner-border" role="status">
             <span className="sr-only">Loading...</span>
           </div>
         </div>
       ) : (
-        <div 
-          className="auto-scroll-gallery" 
-          ref={galleryRef}
-          style={{ visibility: showEvents ? "visible" : "hidden" }}
-        >
+        <div className="scrollable-gallery" ref={galleryRef}>
           {visibleEvents.length > 0 ? (
             visibleEvents.map((event) => (
               <div
                 key={event.id}
-                className="event-card"
+                className="event-card-item"
                 onClick={() => handleCardClick(event.id)}
               >
-                <div className="event-card-image">
+                <div className="event-image-container">
                   <img
                     src={event.flyer_img_url || "https://via.placeholder.com/600x400?text=Event+Image"}
                     alt={event.event_name || "Placeholder image"}
                   />
-                  <div className="category-badge">
+                  <div className="event-category-badge">
                     {event.category}
                   </div>
                 </div>
-                
-                <div className="event-card-content">
-                  <h3 className="event-title">{event.event_name}</h3>
-                  
-                  <div className="event-info">
-                    <div className="location-info">
-                      <FaMapMarkerAlt />
-                      <div className="location-text">
-                        {event.location.split(',')[0]}<br />
-                        <strong>{event.location.split(',').pop().trim()}</strong>
-                      </div>
+                <div className="card-details">
+                  <h3 className="card-title">{event.event_name}</h3>
+                 <div className="date-display">
+                    <div className="date-month">
+                      {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
                     </div>
-                    
-                    <div className="date-badge">
-                      <div className="date-month">
-                        {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
-                      </div>
-                      <div className="date-day">
-                        {new Date(event.date).getDate()}
-                      </div>
-                      <div className="date-time">
-                        {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
-                      </div>
+                    <div className="date-day">
+                      {new Date(event.date).getDate()}
+                    </div>
+                    <div className="date-time">
+                      {new Date(event.date).toLocaleString("default", { hour: "2-digit", minute: "2-digit" })}
                     </div>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="no-events-message">
+            <div className="no-events-alert">
               <h2>No hay eventos disponibles para este filtro</h2>
             </div>
           )}
+        </div>
+      )}
+      {!isMobile && (
+        <div className="scroll-buttons">
+          <button className="scroll-btn" onClick={() => scroll("left")}>
+            <FaChevronLeft />
+          </button>
+          <button className="scroll-btn" onClick={() => scroll("right")}>
+            <FaChevronRight />
+          </button>
         </div>
       )}
     </div>
