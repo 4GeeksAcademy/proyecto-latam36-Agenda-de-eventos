@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import EventFilters from "../component/EventFilters";
 import { filtersConfig } from "../component/Filters";
 import Breadcrumbs from "../component/Breadcrumbs.jsx";
@@ -10,17 +10,21 @@ import "../../styles/FilteredEvents.css";
 const FilteredEvents = () => {
   const { store } = useContext(Context);
   const { category } = useParams();
+  const navigate = useNavigate();
   const [filteredEvents, setFilteredEvents] = useState({});
-  const [selectedCategory, setSelectedCategory] = useState(""); // No seleccionamos ninguna tab inicialmente
+  const [selectedCategory, setSelectedCategory] = useState(""); 
   const [breadcrumbsTitle, setBreadcrumbsTitle] = useState(filtersConfig[category]?.title || "Todos");
   const [isOnline, setIsOnline] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState("Todos");
   const [ageClassification, setAgeClassification] = useState("Todos");
   const [error, setError] = useState(null);
-  const [initialLoad, setInitialLoad] = useState(true); // Para manejar la carga inicial
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  // Obtener las categorías desde el filterKey
   const categories = filtersConfig[category]?.filter?.category.split(", ") || [];
+
+  const handleCardClick = (eventId) => {
+    navigate(`/EventsDetails/${eventId}`);
+  };
 
   const fetchFilteredEvents = async (queryCategories) => {
     try {
@@ -46,10 +50,8 @@ const FilteredEvents = () => {
   
       const events = await response.json();
       
-      // Ordenar eventos por fecha antes de agruparlos
       const sortedEvents = events.sort((a, b) => new Date(a.date) - new Date(b.date));
   
-      // Agrupar eventos ordenados por categoría
       const groupedEvents = sortedEvents.reduce((acc, event) => {
         if (event.status === "approved") {
           const eventCategories = event.category.split(', ');
@@ -78,7 +80,6 @@ const FilteredEvents = () => {
   useEffect(() => {
     if (!initialLoad) {
       fetchFilteredEvents(selectedCategory === "" || selectedCategory === "Todos" ? [] : [selectedCategory]);
-      // Actualizar el título del breadcrumbs al seleccionar una categoría
       setBreadcrumbsTitle(selectedCategory !== "" && selectedCategory !== "Todos" ? selectedCategory : filtersConfig[category]?.title || "Todos");
     }
   }, [selectedCategory, isOnline, selectedPrice, ageClassification, store.token]);
@@ -109,7 +110,12 @@ const FilteredEvents = () => {
                 <h3>{cat}</h3>
                 <div className="events-cards">
                   {events.slice(0, selectedCategory === cat ? 15 : 5).map((event) => (
-                    <div className="event-card" key={event.id}>
+                    <div 
+                      className="event-card" 
+                      key={event.id}
+                      onClick={() => handleCardClick(event.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <img
                         src={
                           event.flyer_img_url ||
@@ -120,16 +126,16 @@ const FilteredEvents = () => {
                       <div className="event-info">
                         <h3>{event.event_name}</h3>
                         <div className="date-badge">
-                      <div className="date-month">
-                        {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
-                      </div>
-                      <div className="date-day">
-                        {new Date(event.date).getDate()}
-                      </div>
-                      <div className="date-time">
-                        {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </div>
+                          <div className="date-month">
+                            {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
+                          </div>
+                          <div className="date-day">
+                            {new Date(event.date).getDate()}
+                          </div>
+                          <div className="date-time">
+                            {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -139,8 +145,8 @@ const FilteredEvents = () => {
                     className="see-more-button"
                     onClick={() => {
                       setSelectedCategory(cat);
-                      setInitialLoad(false); // Asegurar que no se ejecute la carga inicial nuevamente
-                      setBreadcrumbsTitle(cat); // Actualizar breadcrumbsTitle al seleccionar "Ver más"
+                      setInitialLoad(false); 
+                      setBreadcrumbsTitle(cat); 
                     }}
                   >
                     Ver más
