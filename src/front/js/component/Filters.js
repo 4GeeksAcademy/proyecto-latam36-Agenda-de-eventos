@@ -96,7 +96,9 @@ const Filters = ({ visibleFilters = [], title = "Explora Eventos por Categorías
                   Ver Todos
                 </Link>
               </div>
+              <div className="auto-scroll-gallery">
               <AutoScrollGallery filters={filter} />
+              </div>
             </div>
           )
         );
