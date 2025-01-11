@@ -156,9 +156,6 @@ const AutoScrollGallery = ({ filters }) => {
 
   return (
     <div className="events-auto-gallery">
-      {/* <div className="events-auto-header">
-        <h1>Próximos Eventos</h1>
-      </div> */}
       {error ? (
         <div className="alert alert-danger" role="alert">
           {error}
