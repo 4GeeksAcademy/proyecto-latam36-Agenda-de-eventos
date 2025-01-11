@@ -14,13 +14,22 @@ const Carousel = () => {
   const fetchTopFavorites = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${backend}/api/events/top_favorites`);
+      const queryParams = new URLSearchParams({
+        status: "approved"
+      });
+      
+      const response = await fetch(`${backend}/api/events/top_favorites?${queryParams.toString()}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error fetching top favorite events");
       }
       const events = await response.json();
-      setTopEvents(events);
+      
+      const approvedEvents = events.filter(event => event.status === "approved");
+      
+      const sortedEvents = approvedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+      
+      setTopEvents(sortedEvents);
     } catch (err) {
       console.error("Error fetching top favorite events:", err.message);
       setError(err.message);
@@ -55,15 +64,27 @@ const Carousel = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="carousel-wrapper">
+        <div className="loading-spinner">Loading...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="alert alert-danger">{error}</div>;
+    return (
+      <div className="carousel-wrapper">
+        <div className="alert alert-danger">{error}</div>
+      </div>
+    );
   }
 
   if (topEvents.length === 0) {
-    return <div>No popular events available.</div>;
+    return (
+      <div className="carousel-wrapper">
+        <div className="no-events-message">No popular events available.</div>
+      </div>
+    );
   }
 
   return (
@@ -71,11 +92,15 @@ const Carousel = () => {
       <div className="carousel-container">
         <div className="carousel" style={{ transform: `translateX(${-currentSlide * 100}%)` }}>
           {topEvents.map((event, index) => (
-            <div className="slide" key={index}>
+            <div 
+              className="slide" 
+              key={event.id || index}
+              onClick={() => goToEventDetails(event.id)}
+              style={{ cursor: 'pointer' }}
+            >
               <img
                 src={event.flyer_img_url || "https://via.placeholder.com/800x400?text=No+Image"}
                 alt={event.event_name}
-                onClick={() => goToEventDetails(event.id)}
               />
             </div>
           ))}
@@ -92,4 +117,3 @@ const Carousel = () => {
 };
 
 export default Carousel;
-
