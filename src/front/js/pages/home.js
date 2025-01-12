@@ -1,12 +1,14 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 import Navbar from "../component/navbar";
 import Carrusel from "../component/Carrusel";
 import Filters from "../component/Filters";
+import { useAuthModal } from '../../../utils/authUtils';
+import AuthRequired from "../component/AuthRequired";
 import "../../styles/home.css";
 
-
 function Home() {
+  const { isModalOpen, handleAuthAction, closeModal } = useAuthModal('/EventsForm');
+
   return (
     <>
       <main className="principal mb-3">
@@ -21,17 +23,34 @@ function Home() {
           </div>
           <div className="principal__crearEvento">
             <div className="principal__crearEvento__texto">
-              <p className="parrafo-publica">Publica<br/>tu evento</p>
-              <Link to={"/EventsForm"}>
-                <button className="boton-1">Crea tu evento</button>
-              </Link>
+              <p className="parrafo-publica">
+                Publica
+                <br />
+                tu evento
+              </p>
+              <button className="boton-1" onClick={handleAuthAction}>
+                Crea tu evento
+              </button>
             </div>
           </div>
         </section>
       </main>
-      <Carrusel/>
-      <Filters visibleFilters={["sportsAndWellness", "technology", "gastronomy", "entertainmentAndCulture", "educationalAndProfessional", "socialAndCommunity", "fashionAndLifestyle", "festivalsAndFestivities"]} 
-      title={`Explora eventos por Categorías`} />
+      <Carrusel />
+      <Filters
+        visibleFilters={[
+          "sportsAndWellness",
+          "technology",
+          "gastronomy",
+          "entertainmentAndCulture",
+          "educationalAndProfessional",
+          "socialAndCommunity",
+          "fashionAndLifestyle",
+          "festivalsAndFestivities",
+        ]}
+        title={`Explora eventos por Categorías`}
+      />
+      <button onClick={handleAuthAction}>Crear Evento</button>
+      {isModalOpen && <AuthRequired onClose={closeModal} />}
     </>
   );
 }

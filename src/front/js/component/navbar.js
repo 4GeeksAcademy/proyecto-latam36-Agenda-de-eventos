@@ -1,14 +1,30 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
-import "../../styles/Navbar.css";
 import { FaUserCircle } from "react-icons/fa";
+import AuthRequired from "./AuthRequired";
+import "../../styles/Navbar.css";
 
 const Navbar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [profileMenuVisible, setProfileMenuVisible] = useState(false); 
     const dropdownRef = useRef(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const handleCreateEvent = () => { 
+    if (!store.token) {
+        setIsModalOpen(true); // Abrir modal si no está logueado
+    } else {
+        // Navegar a la página de creación de eventos
+        window.location.href = "/EventsForm";
+    }
+    };
+
+    const closeModal = () => {
+    setIsModalOpen(false);
+    };
+    
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -39,6 +55,7 @@ const Navbar = () => {
     };
 
     return (
+    <>
         <nav className="navbar navbar-expand-lg text-center">
             <div className="container-fluid">
                 <Link className="navbar-brand d-block" to="/">
@@ -92,8 +109,7 @@ const Navbar = () => {
                                 </>
                             ) : (
                                 <>
-                                    <Link to="/login" className="navbar-button login-btn">Login</Link>
-                                    <Link to="/signup" className="navbar-button signup-btn">SignUp</Link>
+                                    <button className="navbar-button login-btn"onClick={handleCreateEvent}>Iniciar Sesión | Registrarme</button>
                                 </>
                             )}
                         </div>
@@ -101,6 +117,9 @@ const Navbar = () => {
                 </div>
             </div>
         </nav>
+         {isModalOpen && ( 
+        <AuthRequired onClose={closeModal} /> )} 
+    </>
     );
 };
 

@@ -244,7 +244,7 @@ const EventsDetails = () => {
           <img src={flyer_img_url} alt="Event flyer" className="d-block w-100" />
           <div className="event-date">
             <div className="month">
-              {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
+              {new Date(date).toLocaleString("es-US", { month: "short" }).toUpperCase()}
             </div>
             <div className="day">{new Date(date).getDate()}</div>
           </div>
@@ -387,7 +387,7 @@ const EventsDetails = () => {
               ) : (
                 <div className="alert alert-info bg-dark rounded-3" role="alert">
                   <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
-                  <div className="d-flex gap-2">
+                  <div className="d-flex gap-2 justify-content-center">
                     <a href="/login" className="btn button-fav btn-sm">
                       Iniciar sesión
                     </a>
