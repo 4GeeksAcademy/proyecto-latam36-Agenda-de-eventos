@@ -8,6 +8,7 @@ import "../../styles/home.css";
 
 function Home() {
   const { isModalOpen, handleAuthAction, closeModal } = useAuthModal('/EventsForm');
+  const authTitleProps = { page: 'EventsForm' };
 
   return (
     <>
@@ -50,7 +51,7 @@ function Home() {
         title={`Explora eventos por Categorías`}
       />
       <button onClick={handleAuthAction}>Crear Evento</button>
-      {isModalOpen && <AuthRequired onClose={closeModal} />}
+      {isModalOpen && <AuthRequired onClose={closeModal} authTitleProps={authTitleProps} />}
     </>
   );
 }

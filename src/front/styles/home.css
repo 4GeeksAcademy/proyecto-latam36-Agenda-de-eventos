@@ -136,18 +136,17 @@
 }
 
 .boton-1 {
-  padding: 15px 25px;
+  padding: 10px 20px;
   font-size: 18px;
-  font-weight: bold;
-  color: white; 
-  background-color: #9b7eff; 
-  border: 1px solid #f6f6f7; 
-  border-radius: 8px;
-  text-transform: uppercase;
-  text-align: center;
-  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  background-color: #885bf1;
+  border: 1px solid #885bf1;
+  border-radius: 5px;
   box-shadow: 0 4px 10px rgba(107, 47, 138, 0.4); 
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .boton-1:hover {

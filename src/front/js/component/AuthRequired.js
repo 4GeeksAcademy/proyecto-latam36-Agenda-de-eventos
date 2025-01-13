@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext";
 import "../../styles/authRequired.css";
 
-const AuthRequired = ({ onClose }) => {
+const AuthRequired = ({ onClose, onSuccessPath = '/', authTitleProps }) => {
   const { actions } = useContext(Context);
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
@@ -23,6 +23,11 @@ const AuthRequired = ({ onClose }) => {
   const navigate = useNavigate();
   const backend = process.env.BACKEND_URL;
 
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
 
   const validateAndContinue = (currentStep) => {
     setErrorMessage('');
@@ -93,8 +98,7 @@ const AuthRequired = ({ onClose }) => {
       const token = data['access token'];
       actions.setToken(token);
       localStorage.setItem('token', token);
-
-      setTimeout(() => navigate('/'), 2000);
+      onClose();
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -213,7 +217,7 @@ const AuthRequired = ({ onClose }) => {
       case 1:
         return (
           <div className="auth-step">
-            <AuthTitle option="register" />
+            <AuthTitle {...authTitleProps} />
             <div className="registerDetail">
               <div className="inputContainerRegisterDetail">
                 <input 
@@ -250,7 +254,7 @@ const AuthRequired = ({ onClose }) => {
       case 2:
         return (
           <div className="auth-step">
-            <AuthTitle option={isLogin ? "login" : "register"} />
+            <AuthTitle {...authTitleProps} />
             {isLogin ? (
               <div className="registerDetail">
                 <div className="inputContainerRegisterDetail">
@@ -258,7 +262,7 @@ const AuthRequired = ({ onClose }) => {
                     type="email"
                     placeholder="Ingresa tu correo"
                     value={email}
-                    readOnly
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <input
@@ -270,7 +274,7 @@ const AuthRequired = ({ onClose }) => {
                   />
                 </div>
                 <div className="auth-buttons">
-                   <button onClick={() => validateAndContinue(2)}>Continuar</button>
+                   <button onClick={handleLogin} disabled={isLoading}>Iniciar Sesión</button>
                </div>
               </div>
             ) : (
@@ -280,7 +284,7 @@ const AuthRequired = ({ onClose }) => {
                     type="email"
                     placeholder="Ingresa tu correo"
                     value={email}
-                    readOnly
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <input
@@ -406,7 +410,7 @@ const AuthRequired = ({ onClose }) => {
         <div className="auth-dark-overlay"></div>
         <button 
           className="auth-close-button" 
-          onClick={onClose}
+          onClick={handleClose}
           disabled={isLoading}
         >
           X

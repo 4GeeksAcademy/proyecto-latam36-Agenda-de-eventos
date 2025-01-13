@@ -26,6 +26,9 @@
   background-color: transparent;
   border: none;
 }
+.footer-links button:hover{
+  color: #6b2f8a; 
+}
 
 
 .footer-link {

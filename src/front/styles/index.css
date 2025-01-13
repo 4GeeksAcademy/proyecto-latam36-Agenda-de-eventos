@@ -191,3 +191,37 @@ h1 {
     font-size: 12px; 
   }
 }
+
+/* Alert styling */
+
+.alert {
+  padding: 0.75rem;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 14px;
+  border-color: #333;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.9);
+  color: white;
+}
+
+.alert-success {
+  background-color: rgba(40, 167, 69, 0.9);
+  color: white;
+}
+
+/* authUtils RedirectMessage  */
+.redirect-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 5px;
+  color: white;
+  text-align: center;
+  z-index: 1000;
+}

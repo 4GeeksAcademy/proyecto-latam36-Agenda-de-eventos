@@ -12,13 +12,9 @@ const Navbar = () => {
     const dropdownRef = useRef(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     
-    const handleCreateEvent = () => { 
-    if (!store.token) {
-        setIsModalOpen(true); // Abrir modal si no está logueado
-    } else {
-        // Navegar a la página de creación de eventos
-        window.location.href = "/EventsForm";
-    }
+    const authRequired = () => { 
+    (!store.token) 
+    setIsModalOpen(true); 
     };
 
     const closeModal = () => {
@@ -109,7 +105,7 @@ const Navbar = () => {
                                 </>
                             ) : (
                                 <>
-                                    <button className="navbar-button login-btn"onClick={handleCreateEvent}>Iniciar Sesión | Registrarme</button>
+                                    <button className="navbar-button login-btn"onClick={authRequired}>Iniciar Sesión | Registrarme</button>
                                 </>
                             )}
                         </div>

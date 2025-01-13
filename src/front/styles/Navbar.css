@@ -106,17 +106,25 @@
 }
 
 .navbar-button:hover {
-  background-color: #6b2f8a; 
+  background-color: #885bf1; 
   color: white;
-  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(107, 47, 138, 0.6); 
+  transform: translateY(-3px);
 }
 
 /* Botones específicos */
 .login-btn {
-  background-color: transparent;
-  color: #885bf1;
+  padding: 10px 20px;
+  font-size: 18px;
+  text-decoration: none;
+  color: white;
+  background-color: #885bf1;
   border: 1px solid #885bf1;
   border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(107, 47, 138, 0.4); 
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .login-btn:hover {
