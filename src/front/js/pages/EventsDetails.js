@@ -4,11 +4,12 @@ import Navbar from "../component/navbar";
 import Modal from "../component/Modal";
 import Filters from "../component/Filters";
 import Breadcrumbs from "../component/Breadcrumbs.jsx";
+import { useAuthModal } from '../../../utils/authUtils';
+import AuthRequired from "../component/AuthRequired";
 
 const CATEGORY_MAPPINGS = {
   'Deportes': 'sportsAndWellness',
-  'Fitness': 'sportsAndWellness',
-  'Salud': 'sportsAndWellness',
+  'Fitness y Salud': 'sportsAndWellness', 
   'Deportes extremos': 'sportsAndWellness',
   'Artes Marciales': 'sportsAndWellness',
   'Tecnología': 'technology',
@@ -16,32 +17,30 @@ const CATEGORY_MAPPINGS = {
   'Gastronomía': 'gastronomy',
   'Bebidas': 'gastronomy',
   'Música': 'entertainmentAndCulture',
-  'Teatro': 'entertainmentAndCulture',
-  'Danza': 'entertainmentAndCulture',
+  'Teatro y Danza': 'entertainmentAndCulture',
   'Cine': 'entertainmentAndCulture',
-  'Arte': 'entertainmentAndCulture',
+  'Arte y Exposiciones': 'entertainmentAndCulture',
   'Eventos Literarios': 'entertainmentAndCulture',
   'Conferencias': 'educationalAndProfessional',
-  'Talleres': 'educationalAndProfessional',
-  'Seminarios': 'educationalAndProfessional',
-  'Educación': 'educationalAndProfessional',
-  'Negocios': 'educationalAndProfessional',
+  'Talleres y Seminarios': 'educationalAndProfessional',
+  'Educación y Aprendizaje': 'educationalAndProfessional',
+  'Negocios y Emprendimiento': 'educationalAndProfessional',
   'Eventos Familiares': 'socialAndCommunity',
-  'Caridad': 'socialAndCommunity',
-  'Voluntariado': 'socialAndCommunity',
-  'Religión': 'socialAndCommunity',
+  'Caridad y Voluntariado': 'socialAndCommunity',
+  'Religión y Espiritualidad': 'socialAndCommunity',
   'Moda': 'fashionAndLifestyle',
   'Estilo de Vida': 'fashionAndLifestyle',
-  'Festivales': 'festivalsAndFestivities',
-  'Carnavales': 'festivalsAndFestivities',
+  'Festivales y Carnavales': 'festivalsAndFestivities',
   'Celebraciones': 'festivalsAndFestivities'
 };
+
 
 const backend = process.env.BACKEND_URL;
 
 const EventsDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isModalOpen, handleAuthAction, closeModal: originalCloseModal } = useAuthModal();
   const [eventDetails, setEventDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +51,17 @@ const EventsDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteMessage, setFavoriteMessage] = useState("");
   const [error, setError] = useState(null);
+
+  const checkLoginStatus = useCallback(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    return !!token;
+  }, []);
+
+  const closeModal = useCallback(() => {
+    originalCloseModal();
+    checkLoginStatus();
+  }, [originalCloseModal, checkLoginStatus]);
 
   const getCategoryFilterKey = useCallback((category) => {
     return CATEGORY_MAPPINGS[category] || null;
@@ -76,6 +86,7 @@ const EventsDetails = () => {
       
       const data = await response.json();
       setEventDetails(data);
+      
     } catch (error) {
       setError(error.message);
       console.error("Error:", error);
@@ -83,6 +94,14 @@ const EventsDetails = () => {
       setIsLoading(false);
     }
   }, [id]);
+
+  useEffect(() => {
+    fetchEventDetails();
+  }, [fetchEventDetails]);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
 
   const checkFavoriteStatus = useCallback(async () => {
     if (!isLoggedIn) return;
@@ -150,8 +169,7 @@ const EventsDetails = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           status: newStatus,
           justification,
@@ -195,18 +213,10 @@ const EventsDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
         <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden">Cargando...</span>
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="alert alert-danger m-5" role="alert">
-        {error}
       </div>
     );
   }
@@ -227,52 +237,11 @@ const EventsDetails = () => {
     ticket_price,
     category,
     age_classification,
-    organizer_name,
-    organizer_email,
     flyer_img_url,
     media_files,
     contact_info,
     status,
   } = eventDetails;
-
-  const renderCarouselItems = () => {
-    const items = [];
-    
-    if (flyer_img_url) {
-      items.push(
-        <div key="flyer" className="carousel-item active event-image">
-          <img src={flyer_img_url} alt="Event flyer" className="d-block w-100" />
-          <div className="event-date">
-            <div className="month">
-              {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
-            </div>
-            <div className="day">{new Date(date).getDate()}</div>
-          </div>
-        </div>
-      );
-    }
-
-    if (media_files?.length) {
-      media_files.forEach((media, index) => {
-        items.push(
-          <div
-            key={index}
-            className={`carousel-item ${!flyer_img_url && index === 0 ? "active" : ""} event-image`}
-          >
-            <img src={media.url} alt={`Event media ${index + 1}`} className="d-block w-100" />
-            <div className="event-date">
-              <div className="month">
-                {new Date(date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
-              </div>
-              <div className="day">{new Date(date).getDate()}</div>
-            </div>
-          </div>
-        );
-      });
-    }
-
-    return items;
-  };
 
   const renderAdminButtons = () => {
     if (!isAdmin) return null;
@@ -315,6 +284,45 @@ const EventsDetails = () => {
         </button>
       </div>
     );
+  };
+
+  const renderCarouselItems = () => {
+    const items = [];
+    
+    if (eventDetails.flyer_img_url) {
+      items.push(
+        <div key="flyer" className="carousel-item active event-image">
+          <img src={eventDetails.flyer_img_url} alt="Event flyer" className="d-block w-100" />
+          <div className="event-date">
+            <div className="month">
+              {new Date(eventDetails.date).toLocaleString("es-US", { month: "short" }).toUpperCase()}
+            </div>
+            <div className="day">{new Date(eventDetails.date).getDate()}</div>
+          </div>
+        </div>
+      );
+    }
+
+    if (eventDetails.media_files?.length) {
+      eventDetails.media_files.forEach((media, index) => {
+        items.push(
+          <div
+            key={index}
+            className={`carousel-item ${!eventDetails.flyer_img_url && index === 0 ? "active" : ""} event-image`}
+          >
+            <img src={media.url} alt={`Event media ${index + 1}`} className="d-block w-100" />
+            <div className="event-date">
+              <div className="month">
+                {new Date(eventDetails.date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
+              </div>
+              <div className="day">{new Date(eventDetails.date).getDate()}</div>
+            </div>
+          </div>
+        );
+      });
+    }
+
+    return items;
   };
 
   return (
@@ -367,7 +375,14 @@ const EventsDetails = () => {
               <p>
                 <strong>Clasificación:</strong> {age_classification}
               </p>
-              <p className="price">$ {ticket_price}</p>
+              <p className="price">
+                {Number(ticket_price) === 0 ? (
+                  <span className="text-success">Free</span>
+                ) : (
+                  `$ ${ticket_price}`
+                )}
+              </p>
+
               
               {isLoggedIn ? (
                 <div>
@@ -385,28 +400,30 @@ const EventsDetails = () => {
                   )}
                 </div>
               ) : (
-                <div className="alert alert-info bg-dark rounded-3" role="alert">
-                  <p className="mb-2">¿Te interesa este evento? Inicia sesión para agregar a favoritos y acceder a más funciones.</p>
-                  <div className="d-flex gap-2">
-                    <a href="/login" className="btn button-fav btn-sm">
-                      Iniciar sesión
-                    </a>
-                    <a href="/signup" className="btn button-fav btn-sm">
-                      Registrarse
-                    </a>
-                  </div>
-                </div>
+                <button 
+                  className="btn button-fav w-100"
+                  onClick={handleAuthAction}
+                >
+                  Iniciar Sesión | Registrarse
+                </button>
               )}
             </div>
 
-            <div className="producer-info card p-4 mb-4">
-              <h4 className="fw-bold">Productor</h4>
-              <p>
-                <strong>Nombre:</strong> {organizer_name}
-              </p>
-              <p>
-                <strong>Email:</strong> {organizer_email}
-              </p>
+            <div className="contact-info card p-4 mb-4">
+              <h4 className="fw-bold">Información de contacto</h4>
+              {contact_info?.length > 0 ? (
+                <ul className="list-unstyled mb-0">
+                  {contact_info.map((contact, index) => (
+                    <li key={index} className="mb-2">
+                      <strong>{contact.contact_media}:</strong> {contact.contact_data}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted mb-0">
+                  No hay información de contacto disponible.
+                </p>
+              )}
             </div>
 
             {isAdmin && (
@@ -416,32 +433,20 @@ const EventsDetails = () => {
             )}
           </div>
         </div>
-
-        <div className="mt-5 mb-5">
-          <h4>Información de contacto</h4>
-          {contact_info?.length > 0 ? (
-            <ul className="list-unstyled">
-              {contact_info.map((contact, index) => (
-                <li key={index} className="mb-2">
-                  <strong>{contact.contact_media}:</strong> {contact.contact_data}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted">
-              No hay información de contacto disponible.
-            </p>
-          )}
-        </div>
       </div>
 
       {eventDetails && (
-        <Filters 
-          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)}
-          title={`Explora más eventos de ${eventDetails.category}`}
-        />
-      )}
-      <p className="text-muted"></p>
+  <>
+    <Filters 
+      visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)}
+      title={`Explora más eventos de ${eventDetails.category}`}
+    />
+  </>
+)}
+
+
+      {isModalOpen && <AuthRequired onClose={closeModal} />}
+      
       {showModal && isLoggedIn && (
         <Modal
           title={modalAction === "approve" ? "Aprobar evento" : "Rechazar evento"}
@@ -464,7 +469,6 @@ const EventsDetails = () => {
               <textarea
                 className="form-control"
                 rows="4"
-                value={justification}
                 onChange={(e) => setJustification(e.target.value)}
                 placeholder="Escribe tu justificación aquí..."
               ></textarea>

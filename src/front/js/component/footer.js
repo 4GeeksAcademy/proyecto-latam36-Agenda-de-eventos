@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
+import { useAuthModal } from '../../../utils/authUtils';
+import AuthRequired from "../component/AuthRequired";
 import { Link } from 'react-router-dom';
 import "../../styles/footer.css";
 
 const Footer = () => {
+
+const { isModalOpen, handleAuthAction, closeModal } = useAuthModal('/EventsForm');
+
     return (
+    <>
         <footer className="footer text-center bg-dark text-white p-5">
             <div className="container">
                 <div className="footer-logo">
@@ -19,7 +25,10 @@ const Footer = () => {
 
                 <div className="footer-links">
                     <ul>
-                        <li><Link to="/EventsForm" className="footer-link">Crea tu evento</Link></li>
+                        <li>
+                        <button onClick={handleAuthAction}>Crear Evento</button>
+                        {isModalOpen && <AuthRequired onClose={closeModal} />}
+                        </li>
                         <li><Link to="/AboutUs" className="footer-link">Sobre nosotros</Link></li>
                         <li><Link to="/AboutUs" className="footer-link">Contáctanos</Link></li>
                     </ul>
@@ -31,6 +40,7 @@ const Footer = () => {
                 </div>
             </div>
         </footer>
+    </>
     );
 };
 

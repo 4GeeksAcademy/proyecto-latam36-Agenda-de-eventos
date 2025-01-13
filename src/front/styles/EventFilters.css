@@ -11,6 +11,13 @@
     margin-bottom: 1rem;
     justify-content: flex-start; 
   }
+
+  .event-filters__category-selects {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    justify-content: flex-start;
+}
   
   .event-filters__form-label {
     display: block;
@@ -34,48 +41,55 @@
   }
   
   .event-filters__form-select option:hover {
-    background-color: #ff00ff;
+    /* background-color: #ff00ff; */
     color: #fff;
   }
   
-  .event-filters__tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    width: 100%;
-  }
-  
-  .event-filters__tab {
-    flex: 1;
-    padding: 0.5rem;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #0b0405;
-    color: white;
-    text-align: center;
-    
-  }
-  
-  .event-filters__tab:hover {
-    border-bottom-color: #ff00ff;
-  }
-  
-  .event-filters__tab.active {
-    border-bottom-color: #ff00ff;
-  }
   
   @media (max-width: 768px) {
     .event-filters__selects {
       flex-direction: row;
-      flex-wrap: wrap; 
     }
-    .event-filters__tabs {
-      flex-wrap: nowrap; 
+   
+  }
+
+  @media (max-width: 768px) {
+    .event-filters__category-selects {
+      flex-direction: column; 
     }
-    .event-filters__tab {
-      flex: none; 
-    }
+  }
+  
+  @media (min-width: 769px) {
+    .event-filters__selects,
+    .event-filters__category-selects {
+      flex-direction: row; 
+    }}
+  
+  .event-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; 
+    justify-content: center;
+    margin-bottom: 2rem;
+    background-color: black;
+  }
+  
+  .event-filters select,
+  .event-filters button {
+    padding: 0.5rem 1rem; 
+    border: 1px solid #885bf1;
+    border-radius: 8px;
+    background-color: #1e1e1e; 
+    color: #ffffff;
+    font-size: 1rem;
+    /* transition: background-color 0.3s, border-color 0.3s, transform 0.3s; */
+  }
+  
+  .event-filters select:hover,
+  .event-filters button:hover {
+    background-color: #885bf1; 
+    border-color: #6a3cc7;
+    cursor: pointer;
+    transform: scale(1.05); 
   }
   

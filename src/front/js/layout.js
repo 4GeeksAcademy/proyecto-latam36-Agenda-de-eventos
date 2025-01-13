@@ -8,6 +8,7 @@ import injectContext from "./store/appContext";
 // import Breadcrumbs from "./component/Breadcrumbs.jsx";
 // import Navbar from "./component/navbar";
 import Footer from "./component/footer";
+import AuthRequired from "./component/AuthRequired.js"
 
 import Home from "./pages/home";
 import Login from './pages/login';
@@ -47,6 +48,7 @@ const Layout = () => {
                         <Route element={<ImageUpload/>} path="/ImageTestForm"/>
                         <Route element={<Perfil/>} path="/perfil" />
                         <Route element={<ImageUpload/>} path="/image" />
+                        <Route element={<AuthRequired />} path="/auth-required" />
                         <Route element={<h1>Not found!</h1>} />
                         <Route element={<AboutUs/>} path="/AboutUs"/>
                     </Routes>

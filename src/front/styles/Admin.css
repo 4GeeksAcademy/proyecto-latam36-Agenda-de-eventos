@@ -84,12 +84,6 @@
   }
 }
 
-/* Alert styling */
-.alert-info {
-  background-color: #1a1a1a;
-  border-color: #333;
-  color: #d1d1d1;
-}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
