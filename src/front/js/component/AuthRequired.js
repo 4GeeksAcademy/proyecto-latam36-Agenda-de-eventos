@@ -173,19 +173,24 @@ const AuthRequired = ({ onClose, onSuccessPath = '/', authTitleProps }) => {
     }
   };
 
-  const AuthTitle = ({ option, page }) => (
+  const AuthTitle = ({ option, page, condition }) => (
     <div className="titleLoginRegister">
       {option === 'register' ? (
         <div className="auth-title">
           <h1>
-            <span className="bold">Registrate</span> y enterate de todos los espectáculos y eventos que{' '}
+            <span className="bold">Registrate</span> y entérate de todos los espectáculos y eventos que{' '}
             <span className="bold">SON PARA TI.</span>
           </h1>
         </div>
       ) : (
         <div className="auth-title">
           <h1>
-            {page === 'EventsForm' ? (
+            {condition === 'TokenExpired' ? (
+              <>
+                <span className="bold">Tu sesión ha expirado</span>. Por favor, inicia sesión nuevamente para continuar {' '}
+                {/* <span className="bold">SON PARA TI.</span> */}
+              </>
+            ) : page === 'EventsForm' ? (
               <>
                 <span className="bold">Inicia Sesión</span> para crear tu evento y descubre todos los espectáculos y eventos que{' '}
                 <span className="bold">SON PARA TI.</span>
@@ -199,14 +204,18 @@ const AuthRequired = ({ onClose, onSuccessPath = '/', authTitleProps }) => {
           </h1>
         </div>
       )}
-      <br />
-      <div>
-        <h1>
-          Si eres{' '}
-          <span className="bold">artista, productor o dueño de un local</span>, difundí tus eventos a{' '}
-          <span className="bold">MILES</span> de personas.
-        </h1>
-      </div>
+      {condition !== 'TokenExpired' && (
+        <>
+          <br />
+          <div>
+            <h1>
+              Si eres{' '}
+              <span className="bold">artista, productor o dueño de un local</span>, difunde tus eventos a{' '}
+              <span className="bold">MILES</span> de personas.
+            </h1>
+          </div>
+        </>
+      )}
     </div>
   );
   

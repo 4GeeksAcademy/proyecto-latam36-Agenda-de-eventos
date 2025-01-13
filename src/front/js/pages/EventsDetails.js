@@ -211,6 +211,16 @@ const EventsDetails = () => {
     checkFavoriteStatus();
   }, [checkFavoriteStatus]);
 
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!eventDetails) {
     return (
       <div className="alert alert-warning m-5" role="alert">
