@@ -50,7 +50,6 @@ function Home() {
         ]}
         title={`Explora eventos por Categorías`}
       />
-      <button onClick={handleAuthAction}>Crear Evento</button>
       {isModalOpen && <AuthRequired onClose={closeModal} authTitleProps={authTitleProps} />}
     </>
   );

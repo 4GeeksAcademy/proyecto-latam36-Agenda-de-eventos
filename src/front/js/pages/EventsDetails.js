@@ -9,8 +9,7 @@ import AuthRequired from "../component/AuthRequired";
 
 const CATEGORY_MAPPINGS = {
   'Deportes': 'sportsAndWellness',
-  'Fitness': 'sportsAndWellness',
-  'Salud': 'sportsAndWellness',
+  'Fitness y Salud': 'sportsAndWellness', 
   'Deportes extremos': 'sportsAndWellness',
   'Artes Marciales': 'sportsAndWellness',
   'Tecnología': 'technology',
@@ -18,26 +17,23 @@ const CATEGORY_MAPPINGS = {
   'Gastronomía': 'gastronomy',
   'Bebidas': 'gastronomy',
   'Música': 'entertainmentAndCulture',
-  'Teatro': 'entertainmentAndCulture',
-  'Danza': 'entertainmentAndCulture',
+  'Teatro y Danza': 'entertainmentAndCulture',
   'Cine': 'entertainmentAndCulture',
-  'Arte': 'entertainmentAndCulture',
+  'Arte y Exposiciones': 'entertainmentAndCulture',
   'Eventos Literarios': 'entertainmentAndCulture',
   'Conferencias': 'educationalAndProfessional',
-  'Talleres': 'educationalAndProfessional',
-  'Seminarios': 'educationalAndProfessional',
-  'Educación': 'educationalAndProfessional',
-  'Negocios': 'educationalAndProfessional',
+  'Talleres y Seminarios': 'educationalAndProfessional',
+  'Educación y Aprendizaje': 'educationalAndProfessional',
+  'Negocios y Emprendimiento': 'educationalAndProfessional',
   'Eventos Familiares': 'socialAndCommunity',
-  'Caridad': 'socialAndCommunity',
-  'Voluntariado': 'socialAndCommunity',
-  'Religión': 'socialAndCommunity',
+  'Caridad y Voluntariado': 'socialAndCommunity',
+  'Religión y Espiritualidad': 'socialAndCommunity',
   'Moda': 'fashionAndLifestyle',
   'Estilo de Vida': 'fashionAndLifestyle',
-  'Festivales': 'festivalsAndFestivities',
-  'Carnavales': 'festivalsAndFestivities',
+  'Festivales y Carnavales': 'festivalsAndFestivities',
   'Celebraciones': 'festivalsAndFestivities'
 };
+
 
 const backend = process.env.BACKEND_URL;
 
@@ -90,6 +86,7 @@ const EventsDetails = () => {
       
       const data = await response.json();
       setEventDetails(data);
+      
     } catch (error) {
       setError(error.message);
       console.error("Error:", error);
@@ -429,11 +426,14 @@ const EventsDetails = () => {
       </div>
 
       {eventDetails && (
-        <Filters 
-          visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)}
-          title={`Explora más eventos de ${eventDetails.category}`}
-        />
-      )}
+  <>
+    <Filters 
+      visibleFilters={[getCategoryFilterKey(eventDetails.category)].filter(Boolean)}
+      title={`Explora más eventos de ${eventDetails.category}`}
+    />
+  </>
+)}
+
 
       {isModalOpen && <AuthRequired onClose={closeModal} />}
       
