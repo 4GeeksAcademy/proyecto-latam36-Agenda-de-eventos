@@ -73,16 +73,16 @@
     margin-bottom: 2rem;
     background-color: black;
   }
-  
+
   .event-filters select,
   .event-filters button {
     padding: 0.5rem 1rem; 
     border: 1px solid #885bf1;
     border-radius: 8px;
-    background-color: #1e1e1e; 
+    background-color: #1e1e1e !important; 
     color: #ffffff;
     font-size: 1rem;
-    /* transition: background-color 0.3s, border-color 0.3s, transform 0.3s; */
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s !important;
   }
   
   .event-filters select:hover,
