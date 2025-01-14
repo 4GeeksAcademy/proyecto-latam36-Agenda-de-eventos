@@ -10,7 +10,6 @@ import Footer from "./component/footer";
 import AuthRequired from "./component/AuthRequired";
 
 import Home from "./pages/home";
-import Login from './pages/login';
 import EventsForm from "./pages/EventsForm";
 import EventsDetails from "./pages/EventsDetails";
 import AdminEventRequests from "./pages/AdminEventRequests";
@@ -31,7 +30,6 @@ const Layout = () => {
                 <ScrollToTop>
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<Login />} path="/login" />
                         <Route element={<EventsForm/>} path="/EventsForm"/>
                         <Route element={<EventsDetails/>} path="/EventsDetails/:id"/>
                         <Route element={<FilteredEvents/>} path="/FilteredEvents/:category"/>
