@@ -217,8 +217,8 @@ async function imageUpload(imageInput) {
         <div className="form-group">
               <label>Descripción del Evento:</label>
               <textarea name="eventDescription"
-                        placeholder="Máximo de 1000 caracteres"
-                        maxLength="1000"
+                        placeholder="Máximo de 2000 caracteres"
+                        maxLength="2000"
                         value={formData.eventDescription}
                         onChange={handleChange}
                         required/>
