@@ -9,9 +9,14 @@ const AboutUs = () => {
             <Navbar />
             <Breadcrumbs />
             <div className="about-us-container">
-                <div className="header-section">
+                <div className="header-section ">
+                    <div>
                     <h1>Sobre Nosotros</h1>
-                    <p className="subtitle">Conectando a Colombia a través de su cultura.</p>
+                    <div>
+                        <p className="subtitle">Conectando a Colombia a través de su cultura.</p>
+                    </div>
+                    </div>
+              
                 </div>
 
                 <div className="mission-section">
@@ -52,13 +57,26 @@ const AboutUs = () => {
 
                 <div className="nature-section">
                     <div className="text">
-                        <h2>Nuestra Naturaleza</h2>
-                        <p>
-                            Somos más que una plataforma, somos una comunidad. En <span className="highlight">Cultural
-                            Wave</span>, buscamos ser el puente entre artistas, organizadores y amantes de la
-                            cultura. Con un diseño intuitivo y herramientas prácticas, facilitamos la
-                            exploración y planificación de eventos para todos los usuarios.
-                        </p>
+                    <h2>¿Quiénes somos?</h2>
+  
+    
+   
+    <ul>
+        <li>👨‍💻<strong>Aurelio Najera</strong> <img src="https://flagcdn.com/w40/mx.png" alt="México" width="20"/> (México) - Full Stack Developer</li>
+        <li>👨‍💻<strong>Martin Cuadro</strong> <img src="https://flagcdn.com/w40/uy.png" alt="Uruguay" width="20"/> (Uruguay) - Full Stack Developer</li>
+        <li>👩‍💻<strong>Miguel Garcia</strong> <img src="https://flagcdn.com/w40/ve.png" alt="Venezuela" width="20"/> (Venezuela) - Full Stack Developer</li>
+        <li>👩‍💻<strong>Andreina Paz</strong> <img src="https://flagcdn.com/w40/ve.png" alt="Venezuela" width="20"/> (Venezuela) - Full Stack Developer</li>
+        <li>👨‍💻<strong>Juan Carlos Aviles</strong> <img src="https://flagcdn.com/w40/cr.png" alt="Costa Rica" width="20"/> (Costa Rica) - Full Stack Developer</li>
+    </ul>
+
+    <p>
+        Somos un equipo apasionado de cinco desarrolladores, unidos por nuestra creatividad, talento y pasión por la tecnología. 
+        Nos especializamos en el desarrollo de software, trabajando juntos para crear soluciones innovadoras y eficientes. 
+        Nuestra diversidad nos fortalece, aportando diferentes perspectivas y experiencias que enriquecen cada proyecto.
+    </p>
+
+    <p><strong>¡Conócenos y descubre cómo podemos ayudarte a hacer realidad tu visión tecnológica! 🚀</strong></p>
+                       
                     </div>
                     <div className="image">
                         <img

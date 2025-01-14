@@ -8,8 +8,10 @@
 }
 
 .header-section {
-    text-align: center;
-    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;  /* Alinea elementos uno debajo del otro */
+    align-items: flex-start; /* Alinea elementos completamente a la izquierda */
+    text-align: left;        /* Asegura que el texto también esté alineado a la izquierda */
 }
 
 .header-section h1 {
