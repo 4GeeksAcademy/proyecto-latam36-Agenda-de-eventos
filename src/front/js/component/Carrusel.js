@@ -66,7 +66,7 @@ const Carousel = () => {
   if (loading) {
     return (
       <div className="carousel-wrapper">
-        <div className="loading-spinner">Loading...</div>
+        <div className="loading-spinner"> </div>
       </div>
     );
   }
