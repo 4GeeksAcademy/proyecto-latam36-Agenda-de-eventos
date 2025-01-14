@@ -225,3 +225,25 @@ h1 {
   text-align: center;
   z-index: 1000;
 }
+
+
+
+.button-fav {
+  background-color: #885bf1;
+  color: white;
+  border: 1px solid #885bf1;
+  border-radius: 5px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.button-fav:hover {
+  background-color: #6b2f8a; 
+  color: white;
+  box-shadow: 0 6px 15px rgba(107, 47, 138, 0.6); 
+  transform: translateY(-3px);}
