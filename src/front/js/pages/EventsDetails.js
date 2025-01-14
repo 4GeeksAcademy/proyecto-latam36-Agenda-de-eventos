@@ -205,6 +205,7 @@ const EventsDetails = () => {
     const initializeComponent = async () => {
       await checkLoginStatus();
       await fetchEventDetails();
+      window.scrollTo(0, 0)
     };
 
     initializeComponent();
