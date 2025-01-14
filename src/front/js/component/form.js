@@ -9,8 +9,8 @@ const backend=process.env.BACKEND_URL
 
 const Form = () => {
             const [formLoading, setFormLoading] = useState(false);
-            const [flyerFile, setFlyerFile] = useState("")
-            const [imageFile, setImageFile] = useState(null)
+            const [flyerFile, setFlyerFile] = useState("");
+            const [imageFile, setImageFile] = useState(null);
             const token = localStorage.getItem("token");
             console.log("this is the token:",token)
             const navigate = useNavigate();     
@@ -30,7 +30,7 @@ const Form = () => {
                         flyerImage: null,
                         additionalImages: [],
                         isOnlineEvent: false,
-                        city:'Bogotá',
+                        city:'',
                         country: 'Colombia',
                         instagramEventName: '', 
                         facebookEventName: '',  
@@ -120,6 +120,21 @@ async function imageUpload(imageInput) {
  const handleSubmit = async(e) => {
             e.preventDefault();
             setFormLoading(true); 
+            
+            
+            if (!formData.eventName || !formData.eventDescription || !formData.eventDateTime || !formData.eventCategory || !formData.audienceCategory || !formData.eventAddress || !formData.city) {
+            alert("Por favor, completa todos los campos obligatorios marcados con (*).");
+            setFormLoading(false);
+            return;
+        }
+
+        
+        if (formData.eventDescription.length > 2000) {
+            alert("La descripción del evento excede el límite de 2000 caracteres.");
+            setFormLoading(false);
+            return;
+        }
+            
             const mediaFilesArray=[];
 
             console.log('this is the flyer:',e.target.flyerImage.files[0])
@@ -181,7 +196,7 @@ async function imageUpload(imageInput) {
                         return 
                              
                         }
-            else { alert("There was an error with information");
+            else { alert("Hubo un error con la información proporcionada.");
                         console.log(response.code)
                         return
       }
@@ -203,11 +218,12 @@ async function imageUpload(imageInput) {
 
         <div>
               <p className="form-title">Formulario para Solicitar Evento</p>
+              <small className="required-indicator">Los campos con asteriscos (*) son obligatorios.</small>
         </div>
 
         <div className="form-group">
-              <label>Nombre del Evento:</label>
-              <input type="text"
+              <label>Nombre del Evento(*){" "}:</label>
+                  <input type="text"
                     name="eventName"
                     value={formData.eventName}
                     onChange={handleChange}
@@ -215,17 +231,25 @@ async function imageUpload(imageInput) {
         </div>
 
         <div className="form-group">
-              <label>Descripción del Evento:</label>
+              <label>Descripción del Evento(*){" "}:</label>
               <textarea name="eventDescription"
                         placeholder="Máximo de 2000 caracteres"
                         maxLength="2000"
                         value={formData.eventDescription}
                         onChange={handleChange}
                         required/>
+                        <small className="characters-left">
+            {2000 - formData.eventDescription.length} caracteres restantes
+          </small>
+          {formData.eventDescription.length > 2000 && (
+            <small className="error">
+              Te has excedido del límite de caracteres permitido.
+            </small>
+          )}
         </div>
 
         <div className="form-group">
-              <label>Fecha y Hora del Evento:</label>
+              <label>Fecha y Hora del Evento(*){" "}:</label>
               <input type="datetime-local"
                       name="eventDateTime"
                       value={formData.eventDateTime}
@@ -235,14 +259,14 @@ async function imageUpload(imageInput) {
 
         <div className="form-row">
             <div className="form-group">
-                <label>Categoría del Evento:</label>
+                <label>Categoría del Evento(*){" "}:</label>
                 <select name="eventCategory"
                         value={formData.eventCategory}
                         onChange={handleChange}
                         required>
 
                     <option value="" disabled>
-                          Selecciona una categoría del Evento
+                          Selecciona una categoría del Evento(*){" "}
                     </option>
                       {[
                         'Música',
@@ -278,14 +302,14 @@ async function imageUpload(imageInput) {
             </div>
 
             <div className="form-group">
-                <label>Categoría de Público Objetivo:</label>
+                <label>Categoría de Público Objetivo(*){" "}:</label>
                 <select name="audienceCategory"
                         value={formData.audienceCategory}
                         onChange={handleChange}
                         required>
 
                   <option value="" disabled>
-                      Selecciona una categoría de Audiencia
+                      Selecciona una categoría de Audiencia(*){" "}
                   </option>
                   {[
                     'Todo Público',
@@ -307,7 +331,7 @@ async function imageUpload(imageInput) {
 
 
       <div>
-          <label>Dirección del Evento:</label>
+          <label>Dirección del Evento(*){" "}:</label>
           <input type="text" 
                   name="eventAddress" 
                   value={formData.eventAddress} 
@@ -316,7 +340,7 @@ async function imageUpload(imageInput) {
       </div>
 
       <div>
-            <label className="file-upload" htmlFor="flyerImage">Añadir un Flyer Promocional para el evento:</label>
+            <label className="file-upload" htmlFor="flyerImage">Añadir un Flyer Promocional para el evento(*){" "}:</label>
             <input type="file" 
                     accept=".jpg,.jpeg,.png" 
                     name="flyerImage" 
@@ -331,7 +355,7 @@ async function imageUpload(imageInput) {
                           name="image[]" 
                           id="image" 
                           onChange={handleFileChange} multiple />
-                  <span>{ imageFile ? " "+imageFile+" Imagenes por cargar" : null}</span>
+                  <span>{ imageFile ? " "+imageFile+" Imagenes Adjuntadas" : null}</span>
                   <small>
                         Por favor, adjunta una imagen con una resolución recomendada de 1080x1080 píxeles para una mejor visualización.
                   </small>
@@ -380,7 +404,7 @@ async function imageUpload(imageInput) {
 
 
       <div className='country-selection'>
-            <label>Ciudad donde se realiza el evento:</label>
+            <label>Ciudad donde se realiza el evento(*){" "}:</label>
             <select name='city' value={formData.city} onChange={handleChange}>
                   <option key="Bogotá" value="Bogotá">&nbsp; Bogotá &nbsp;</option>
                   <option key="Medellin" value="Medellin">&nbsp; Medellin &nbsp;</option>
@@ -388,7 +412,7 @@ async function imageUpload(imageInput) {
                   <option key="Cartagena" value="Cartagena">&nbsp; Cartagena &nbsp;</option>
                   <option key="Pereira" value="Pereira">&nbsp; Pereira &nbsp;</option>
             </select>
-            <label>Pais donde se realiza el evento:</label>
+            <label>Pais donde se realiza el evento(*){" "}:</label>
             <select name='country' value={formData.country} onChange={handleChange}>
                 <option key="Colombia" value="Colombia">
                         &nbsp; Colombia &nbsp;
@@ -408,7 +432,7 @@ async function imageUpload(imageInput) {
      
      {!formData.isFree && (
        <div>
-         <label>Precio del Evento en USD:</label>
+         <label>Precio del Evento en USD(*){" "}:</label>
          <input type="number"
                 min="0"
                 step="any"
