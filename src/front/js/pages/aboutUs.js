@@ -31,7 +31,7 @@ const AboutUs = () => {
                     </div>
                     <div className="image">
                         <img
-                            src="https://res.cloudinary.com/dijfzjssm/image/upload/v1736410679/pexels-picjumbo-com-55570-196652_dse586.jpg"
+                            src="https://media.istockphoto.com/id/1806011581/photo/overjoyed-happy-young-people-dancing-jumping-and-singing-during-concert-of-favorite-group.jpg?s=612x612&w=0&k=20&c=cMFdhX403-yKneupEN-VWSfFdy6UWf1H0zqo6QBChP4="
                             alt="Concierto"
                         />
                     </div>
@@ -40,7 +40,7 @@ const AboutUs = () => {
                 <div className="functionality-section">
                     <div className="image">
                         <img
-                            src="https://res.cloudinary.com/dijfzjssm/image/upload/v1736410679/pexels-picjumbo-com-55570-196652_dse586.jpg"
+                            src="https://i0.wp.com/ishootshows.com/wp-content/uploads/2019/10/DSC_0643.jpg?resize=1024%2C663&ssl=1git"
                             alt="Teatro"
                         />
                     </div>
