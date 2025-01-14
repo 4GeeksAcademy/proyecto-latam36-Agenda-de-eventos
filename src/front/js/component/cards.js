@@ -185,7 +185,9 @@ const AutoScrollGallery = ({ filters }) => {
                   </div>
                 </div>
                 <div className="event-info">
+                  <div className="card-title">
                   <h3 className="card-title">{event.event_name}</h3>
+                  </div>
                  <div className="date-display">
                     <div className="date-month">
                       {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
