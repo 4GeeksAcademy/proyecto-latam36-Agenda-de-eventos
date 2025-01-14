@@ -76,7 +76,7 @@ class User(db.Model):
 class Events(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(100),unique=False, nullable=False)
-    event_description = db.Column(db.String(300),unique=False, nullable=False)
+    event_description = db.Column(db.String(2000),unique=False, nullable=False)
     organizer_user_id = db.Column(db.Integer, ForeignKey(User.id), unique=False, nullable=False)
     event_date = db.Column(db.Date, unique=False, nullable=False)
     event_start_time = db.Column(db.Time, unique=False, nullable=False)
