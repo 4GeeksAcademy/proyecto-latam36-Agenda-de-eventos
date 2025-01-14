@@ -34,7 +34,6 @@ const CATEGORY_MAPPINGS = {
   'Celebraciones': 'festivalsAndFestivities'
 };
 
-
 const backend = process.env.BACKEND_URL;
 
 const EventsDetails = () => {
@@ -52,15 +51,36 @@ const EventsDetails = () => {
   const [favoriteMessage, setFavoriteMessage] = useState("");
   const [error, setError] = useState(null);
 
-  const checkLoginStatus = useCallback(() => {
+  const checkLoginStatus = useCallback(async () => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-    return !!token;
+    const newLoginStatus = !!token;
+    setIsLoggedIn(newLoginStatus);
+
+    if (newLoginStatus) {
+      try {
+        const responseAdmin = await fetch(`${backend}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (responseAdmin.ok) {
+          const isAdminResponse = await responseAdmin.json();
+          setIsAdmin(isAdminResponse.is_admin);
+        }
+        await checkFavoriteStatus(token);
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    } else {
+      setIsAdmin(false);
+      setIsFavorite(false);
+    }
+
+    return newLoginStatus;
   }, []);
 
-  const closeModal = useCallback(() => {
+  const closeModal = useCallback(async () => {
     originalCloseModal();
-    checkLoginStatus();
+    await checkLoginStatus();
+    await fetchEventDetails();
   }, [originalCloseModal, checkLoginStatus]);
 
   const getCategoryFilterKey = useCallback((category) => {
@@ -69,24 +89,11 @@ const EventsDetails = () => {
 
   const fetchEventDetails = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      setIsLoggedIn(!!token);
-
-      if (token) {
-        const responseAdmin = await fetch(`${backend}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!responseAdmin.ok) throw new Error('Failed to fetch admin status');
-        const isAdminResponse = await responseAdmin.json();
-        setIsAdmin(isAdminResponse.is_admin);
-      }
-
       const response = await fetch(`${backend}/api/events/${id}?details=true`);
       if (!response.ok) throw new Error('Failed to fetch event details');
       
       const data = await response.json();
       setEventDetails(data);
-      
     } catch (error) {
       setError(error.message);
       console.error("Error:", error);
@@ -95,18 +102,9 @@ const EventsDetails = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    fetchEventDetails();
-  }, [fetchEventDetails]);
+  const checkFavoriteStatus = useCallback(async (token) => {
+    if (!token) return;
 
-  useEffect(() => {
-    checkLoginStatus();
-  }, [checkLoginStatus]);
-
-  const checkFavoriteStatus = useCallback(async () => {
-    if (!isLoggedIn) return;
-
-    const token = localStorage.getItem("token");
     try {
       const response = await fetch(`${backend}/api/user/favorite`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -122,7 +120,7 @@ const EventsDetails = () => {
     } catch (error) {
       console.error("Error checking favorite status:", error);
     }
-  }, [isLoggedIn, id]);
+  }, [id]);
 
   const handleFavoriteToggle = async () => {
     if (!isLoggedIn) {
@@ -204,44 +202,13 @@ const EventsDetails = () => {
   };
 
   useEffect(() => {
-    fetchEventDetails();
-  }, [fetchEventDetails]);
+    const initializeComponent = async () => {
+      await checkLoginStatus();
+      await fetchEventDetails();
+    };
 
-  useEffect(() => {
-    checkFavoriteStatus();
-  }, [checkFavoriteStatus]);
-
-  if (isLoading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!eventDetails) {
-    return (
-      <div className="alert alert-warning m-5" role="alert">
-        Evento no encontrado.
-      </div>
-    );
-  }
-
-  const {
-    event_name,
-    description,
-    date,
-    location,
-    ticket_price,
-    category,
-    age_classification,
-    flyer_img_url,
-    media_files,
-    contact_info,
-    status,
-  } = eventDetails;
+    initializeComponent();
+  }, [checkLoginStatus, fetchEventDetails]);
 
   const renderAdminButtons = () => {
     if (!isAdmin) return null;
@@ -324,6 +291,38 @@ const EventsDetails = () => {
 
     return items;
   };
+
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!eventDetails) {
+    return (
+      <div className="alert alert-warning m-5" role="alert">
+        Evento no encontrado.
+      </div>
+    );
+  }
+
+  const {
+    event_name,
+    description,
+    date,
+    location,
+    ticket_price,
+    category,
+    age_classification,
+    flyer_img_url,
+    media_files,
+    contact_info,
+    status,
+  } = eventDetails;
 
   return (
     <>
