@@ -35,6 +35,8 @@
     font-weight: bold;
     color: #ffffff;
     margin: 0;
+    border-left: 4px solid #885bf1;
+    padding-left: 1rem;
   }
   
   .header-section .see-all-link {
@@ -91,6 +93,9 @@
     font-size: 1.2rem;
     color: #ffffff;
     margin-bottom: 0.5rem;
+    border-left: 4px solid #885bf1;
+    padding-left: 1rem;
+    text-align: left;
   }
   
   .auto-scroll-gallery .event-info p {
