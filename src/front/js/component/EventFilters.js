@@ -54,7 +54,9 @@ const EventFilters = ({
     <div className="event-filters mb-3 p-3">
       <div className="event-filters__selects">
         <div className="event-filters__event-type-select">
+          <label htmlFor="event-type-select">Tipo de Evento</label>
           <select 
+            id="event-type-select"
             className="form-select" 
             value={isOnline === null ? "Todos" : isOnline ? "Online" : "Presencial"} 
             onChange={(e) => {
@@ -70,7 +72,9 @@ const EventFilters = ({
         </div>
 
         <div className="event-filters__price-select">
+          <label htmlFor="price-select">Valor del Evento</label>
           <select 
+            id="price-select"
             className="form-select"
             value={selectedPrice || "Todos"} 
             onChange={(e) => setSelectedPrice(e.target.value)}
@@ -83,7 +87,9 @@ const EventFilters = ({
         </div>
 
         <div className="event-filters__age-select">
+          <label htmlFor="age-select">Clasificación por Edad</label>
           <select 
+            id="age-select"
             className="form-select"
             value={ageClassification || "Todos"} 
             onChange={(e) => setAgeClassification(e.target.value)}
@@ -96,22 +102,26 @@ const EventFilters = ({
         </div>
       </div>
 
-      <div className="event-filters__category-selects">
-        {Object.entries(categoryGroups).map(([groupKey, group]) => (
-          <div key={groupKey} className="event-filters__category-group">
-            <select 
-              className="form-select"
-              value={group.categories.includes(selectedCategory) ? selectedCategory : ""}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="" disabled>{group.title}</option>
-              <option value={groupKey}>Ver todos</option>
+      <div className="event-filters__category-select">
+        <label htmlFor="category-select">Categoría</label>
+        <select 
+          id="category-select"
+          className="form-select"
+          value={selectedCategory || ""}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="" disabled>Seleccionar Categoría</option>
+          <option value="Ver todos">Ver todos</option>
+          {Object.entries(categoryGroups).map(([groupKey, group]) => (
+            <optgroup key={groupKey} label={group.title}>
               {group.categories.map((category) => (
-                <option key={category} value={category}>{category}</option>
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
-            </select>
-          </div>
-        ))}
+            </optgroup>
+          ))}
+        </select>
       </div>
     </div>
   );

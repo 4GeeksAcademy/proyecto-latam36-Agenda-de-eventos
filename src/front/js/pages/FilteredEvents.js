@@ -30,13 +30,32 @@ const FilteredEvents = () => {
   const fetchFilteredEvents = async (queryCategories) => {
     try {
       const queryParams = new URLSearchParams();
-      if (queryCategories.length > 0) {
+      
+      // Filtro de categorías
+      if (queryCategories.length > 0 && !["Ver todos", "Todos"].includes(selectedCategory)) {
         queryCategories.forEach(cat => queryParams.append("category", cat));
       }
+      
+      // Status siempre presente
       queryParams.append("status", "approved");
-      if (isOnline !== null) queryParams.append("is_online", isOnline);
-      if (selectedPrice !== "Todos") queryParams.append("price_type", selectedPrice.toLowerCase() === "gratis" ? "free" : "paid");
-      if (ageClassification !== "Todos") queryParams.append("age_classification", ageClassification);
+      
+      // Filtro de modalidad (online/presencial)
+      if (isOnline !== null) {
+        queryParams.append("is_online", isOnline);
+      }
+      
+      // Filtro de precio
+      if (selectedPrice !== "Todos") {
+        const priceType = selectedPrice === "Gratis" ? "free" : "paid";
+        queryParams.append("price_type", priceType);
+      }
+      
+      // Filtro de edad
+      if (ageClassification !== "Todos") {
+        queryParams.append("age_classification", ageClassification);
+      }
+  
+      console.log('Query params:', queryParams.toString()); // Para debugging
   
       const response = await fetch(`${process.env.BACKEND_URL}/api/events?${queryParams.toString()}`, {
         headers: {
@@ -50,6 +69,7 @@ const FilteredEvents = () => {
       }
   
       const events = await response.json();
+      console.log('Received events:', events); // Para debugging
       
       const sortedEvents = events.sort((a, b) => new Date(a.date) - new Date(b.date));
   
@@ -70,6 +90,7 @@ const FilteredEvents = () => {
       setError(err.message);
     }
   };
+
 
   useEffect(() => {
     if (initialLoad) {

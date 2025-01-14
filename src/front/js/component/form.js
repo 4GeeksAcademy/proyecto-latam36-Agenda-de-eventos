@@ -148,25 +148,29 @@ async function imageUpload(imageInput) {
                   "contact_data":formData.instagramEventName}]
 
 
-            const uri = `${backend}/api/events`
-            const response = await fetch(uri, {
-                  method: 'POST',
-                  headers: { Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json' },
-                  body: JSON.stringify({"event_name":formData.eventName,
-                        "event_description":formData.eventDescription,
-                        "event_date":formData.eventDateTime.split('T')[0],
-                        "event_start_time":formData.eventDateTime.split('T')[1],
-                        "event_duration":"0:00",
-                        "ticket_price":Number.parseFloat(formData.priceUSD),
-                        "event_address":formData.eventAddress,
-                        "event_city":formData.city,
-                        "event_country":formData.country,
-                        "event_category":formData.eventCategory,
-                        "age_clasification":formData.audienceCategory,
-                        "flyer_img_url":flyerUrl["mediaUrl"],
-                        "event_media":mediaArrayJson,
-                        "contact_info":contactInfoArray                                    })
+                  const uri = `${backend}/api/events`
+                  const response = await fetch(uri, {
+                      method: 'POST',
+                      headers: { 
+                          Authorization: `Bearer ${token}`,
+                          'Content-Type': 'application/json' 
+                      },
+                      body: JSON.stringify({
+                          "event_name": formData.eventName,
+                          "event_description": formData.eventDescription,
+                          "event_date": formData.eventDateTime.split('T')[0],
+                          "event_start_time": formData.eventDateTime.split('T')[1],
+                          "event_duration": "0:00",
+                          "ticket_price": formData.isFree ? 0 : Number.parseFloat(formData.priceUSD),
+                          "event_address": formData.eventAddress,
+                          "event_city": formData.city,
+                          "event_country": formData.country,
+                          "event_category": formData.eventCategory,
+                          "age_clasification": formData.audienceCategory,
+                          "flyer_img_url": flyerUrl["mediaUrl"],
+                          "event_media": mediaArrayJson,
+                          "contact_info": contactInfoArray
+                      })
                   })
             setFormLoading(false);
             if (response.status==201){
@@ -213,8 +217,8 @@ async function imageUpload(imageInput) {
         <div className="form-group">
               <label>Descripción del Evento:</label>
               <textarea name="eventDescription"
-                        placeholder="Máximo de 1000 caracteres"
-                        maxLength="1000"
+                        placeholder="Máximo de 2000 caracteres"
+                        maxLength="2000"
                         value={formData.eventDescription}
                         onChange={handleChange}
                         required/>

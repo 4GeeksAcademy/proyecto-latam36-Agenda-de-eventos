@@ -46,7 +46,6 @@ const Navbar = () => {
         const userConfirmed = window.confirm(`Are you sure you want to Logout, ${store.username || "user"}?`);
         if (userConfirmed) {
             actions.logout();
-            navigate("/login");
         }
     };
 
