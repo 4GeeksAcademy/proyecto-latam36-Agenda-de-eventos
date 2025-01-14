@@ -43,7 +43,7 @@
 
 /* Tarjetas de eventos */
 .event-card-item {
-  flex: 0 0 240px; /* Ajustar el ancho de la tarjeta */
+  width: 300px;
   border-radius: 12px;
   overflow: hidden;
   background: #1e1e1e;
@@ -60,13 +60,12 @@
 /* Imagen del evento */
 .event-image-container {
   position: relative;
-  height: 200px;
   overflow: hidden;
 }
 
 .event-image-container img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
 }
 
@@ -101,6 +100,22 @@
   font-size: 0.875rem;
   color: #bbbbbb;
   text-align: center;
+}
+
+.event-info {
+  padding: 1rem;
+  text-align: center;
+}
+
+.event-info h3 {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.event-info p {
+  font-size: 0.9rem;
+  color: #bbbbbb;
 }
 
 /* Información de ubicación */

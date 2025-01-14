@@ -184,7 +184,7 @@ const AutoScrollGallery = ({ filters }) => {
                     {event.category}
                   </div>
                 </div>
-                <div className="card-details">
+                <div className="event-info">
                   <h3 className="card-title">{event.event_name}</h3>
                  <div className="date-display">
                     <div className="date-month">

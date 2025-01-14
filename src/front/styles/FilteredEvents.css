@@ -50,7 +50,7 @@
 }
 
 .event-card {
-  flex: 0 0 250px; 
+  width: 300px;
   background-color: #1e1e1e;
   border-radius: 12px;
   overflow: hidden;
@@ -65,7 +65,7 @@
 
 .event-card img {
   width: 100%;
-  height: 140px;
+  height: auto;
   object-fit: cover;
 }
 
@@ -83,6 +83,37 @@
 .event-info p {
   font-size: 0.9rem;
   color: #bbbbbb;
+}
+
+.date-display {
+  background-color: #212121d7;
+  padding: 8px 12px;
+  border-radius: 8px;
+  min-width: 80px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.date-month {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #9e9e9e;
+}
+
+.date-day {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.date-time {
+  font-size: 0.75rem;
+  color: #9e9e9e;
 }
 
 
@@ -130,11 +161,6 @@
 @media (max-width: 768px) {
   .filtered-events-page h2 {
     font-size: 1.5rem;
-  }
-
-  .event-card {
-    flex: 0 0 200px; 
-    
   }
 
   .see-more-button {

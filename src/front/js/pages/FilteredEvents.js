@@ -125,7 +125,7 @@ const FilteredEvents = () => {
                       />
                       <div className="event-info">
                         <h3>{event.event_name}</h3>
-                        <div className="date-badge">
+                        <div className="date-display">
                           <div className="date-month">
                             {new Date(event.date).toLocaleString("default", { month: "short" }).toUpperCase()}
                           </div>
@@ -133,9 +133,9 @@ const FilteredEvents = () => {
                             {new Date(event.date).getDate()}
                           </div>
                           <div className="date-time">
-                            {new Date(event.date).toLocaleString("default", { hour: '2-digit', minute: '2-digit' })}
-                          </div>
+                            {new Date(event.date).toLocaleString("default", { hour: "2-digit", minute: "2-digit" })}
                         </div>
+                      </div>
                       </div>
                     </div>
                   ))}
