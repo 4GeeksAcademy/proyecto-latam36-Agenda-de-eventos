@@ -157,23 +157,23 @@
 
 .auth-buttons button {
   width: 100%;
-  background-color: #9b7eff;
-  border: 1px solid transparent;
+  background-color: #9b7eff !important;
+  border: 1px solid transparent !important;
   text-transform: uppercase;
   padding: 12px 20px;
-  font-weight: 900;
-  font-size: 14px;
-  color: white;
+  font-weight: 900 !important;
+  font-size: 14px !important;
+  color: white !important;
   cursor: pointer;
   border-radius: 5px;
   box-shadow: 0 4px 10px rgba(107, 47, 138, 0.4);
-  transition: all 0.3s ease;
+  transition: all 0.3s ease !important;
 }
 
 .auth-buttons button:hover {
-  background-color: #6b2f8a;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(107, 47, 138, 0.6);
+  background-color: #6b2f8a !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 15px rgba(107, 47, 138, 0.6) !important;
 }
 
 .auth-close-button {
