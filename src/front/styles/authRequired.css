@@ -103,15 +103,15 @@
 }
 
 .inputContainerRegisterDetail input {
-  border: none;
-  border-bottom: 2px solid white;
-  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 2px solid white !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   backdrop-filter: blur(27px);
-  color: white;
-  font-size: 14px;
-  padding: 8px 12px;
-  width: 100%;
-  transition: all 0.3s ease;
+  padding: 8px 12px !important;
+  width: 100% !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid #555555 !important;
+  border-radius: 5px !important;
+  color: white !important;
 }
 
 .inputContainerRegisterDetail input:focus {
@@ -137,6 +137,16 @@
   color: white;
   backdrop-filter: blur(27px);
   font-size: 14px;
+}
+
+.selectContainerRegisterDetail select:focus {
+  background-color: #333; 
+  color: #fff; 
+}
+
+.selectContainerRegisterDetail select option {
+  background-color: rgba(255, 255, 255, 0.05);;
+  color: white; 
 }
 
 .auth-buttons {

@@ -356,9 +356,11 @@ const AuthRequired = ({ onClose, onSuccessPath = '/', authTitleProps }) => {
                   required
                 >
                   <option value="">Ciudad</option>
-                  <option value="Bogotá">Bogotá</option>
-                  <option value="Medellín">Medellín</option>
-                  <option value="Cali">Cali</option>
+                  <option key="Bogotá" value="Bogotá">&nbsp; Bogotá &nbsp;</option>
+                  <option key="Medellin" value="Medellin">&nbsp; Medellin &nbsp;</option>
+                  <option key="Cali" value="Cali">&nbsp; Cali &nbsp;</option>
+                  <option key="Cartagena" value="Cartagena">&nbsp; Cartagena &nbsp;</option>
+                  <option key="Pereira" value="Pereira">&nbsp; Pereira &nbsp;</option>
                 </select>
               </div>
               <div className="auth-buttons">
