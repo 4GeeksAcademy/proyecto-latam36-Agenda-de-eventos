@@ -11,6 +11,7 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
+from datetime import timedelta
 from pathlib import Path
 
 # from models import Person
@@ -44,6 +45,9 @@ app.register_blueprint(api, url_prefix='/api')
 
 #flask JWT Extended config
 app.config["JWT-SECRET_KEY"]=os.getenv("JWT-SECRET-KEY")
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=60)  # Access token valid for 60 minutes
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)    # Refresh token valid for 30 days
+
 jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object

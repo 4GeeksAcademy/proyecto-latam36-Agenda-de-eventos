@@ -2,45 +2,41 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import "../../styles/eventForm.css";
+import "../../styles/spinners.css";
 import { MdToken } from 'react-icons/md';
 
 const backend=process.env.BACKEND_URL
 
 const Form = () => {
-
-      //const checkLogin = () => {
+            const [formLoading, setFormLoading] = useState(false);
+            const [flyerFile, setFlyerFile] = useState("")
+            const [imageFile, setImageFile] = useState(null)
             const token = localStorage.getItem("token");
             console.log("this is the token:",token)
-            const navigate = useNavigate();
-            
-      /*      if (!token){
-                        navigate("/login");
-                        return
-                  }
-            }*/
-      
+            const navigate = useNavigate();     
 
- const [formData, setFormData] = useState({
-  eventName: '',
-  eventDescription: '',
-  eventDateTime: '',
-  eventCategory: '',
-  audienceCategory: '',
-  eventAddress: '',
-  googleMapsLink: '',
-  socialMediaLinks: {
-   instagram: '',
-   facebook: ''
-  },
-  flyerImage: null,
-  additionalImages: [],
-  isOnlineEvent: false,
-  country: 'Colombia',
-  instagramEventName: '', 
-  facebookEventName: '',  
-  isFree: false,
-  priceUSD: '', 
- });
+            const [formData, setFormData] = useState({
+                        eventName: '',
+                        eventDescription: '',
+                        eventDateTime: '',
+                        eventCategory: '',
+                        audienceCategory: '',
+                        eventAddress: '',
+                        googleMapsLink: '',
+                        socialMediaLinks: {
+                                          instagram: '',
+                                          facebook: ''
+                                          },
+                        flyerImage: null,
+                        additionalImages: [],
+                        isOnlineEvent: false,
+                        city:'Bogotá',
+                        country: 'Colombia',
+                        instagramEventName: '', 
+                        facebookEventName: '',  
+                        isFree: false,
+                        priceUSD: '', 
+                        });
 
  const handleChange = (e) => {
  const { name, value, type, checked } = e.target;
@@ -71,23 +67,26 @@ setFormData((prevState) => ({
 };
 
  const handleFileChange = (e) => {
- const { name } = e.target;
+      const { name } = e.target;
 
- if (name === 'flyerImage') {
-  console.log(e.target.files)
-   setFormData((prevState) => ({
-     ...prevState,
-     flyerImage : e.target.flyerImage.files[0]
-   }));
-   
- }
-
- if (name === 'additionalImages') {
-    setFormData((prevState) => ({
+      if (name === 'flyerImage') {
+      console.log(e.target.files[0]['name'])
+      setFlyerFile(e.target.files[0]['name'])
+      /*setFormData((prevState) => ({
       ...prevState,
-      additionalImages : [...e.target.files]
-    }));
- }
+      flyerImage : e.target.flyerImage.files[0]
+      }));*/
+      
+      }
+
+      if (name === 'image[]') {
+            console.log(e.target.files.length)
+            setImageFile(e.target.files.length)
+      /* setFormData((prevState) => ({
+            ...prevState,
+            additionalImages : [...e.target.files]
+      }));*/
+      }
  };
 
 async function imageUpload(imageInput) {
@@ -120,9 +119,8 @@ async function imageUpload(imageInput) {
 
  const handleSubmit = async(e) => {
             e.preventDefault();
+            setFormLoading(true); 
             const mediaFilesArray=[];
-            //const formFlyer = new FormData();
-            //const formImage = new FormData();
 
             console.log('this is the flyer:',e.target.flyerImage.files[0])
             const fileArray = e.target.image.files
@@ -162,19 +160,20 @@ async function imageUpload(imageInput) {
                         "event_duration":"0:00",
                         "ticket_price":Number.parseFloat(formData.priceUSD),
                         "event_address":formData.eventAddress,
-                        "event_city":"Bogota",
-                        "event_country":"Colombia",
+                        "event_city":formData.city,
+                        "event_country":formData.country,
                         "event_category":formData.eventCategory,
                         "age_clasification":formData.audienceCategory,
                         "flyer_img_url":flyerUrl["mediaUrl"],
                         "event_media":mediaArrayJson,
                         "contact_info":contactInfoArray                                    })
                   })
+            setFormLoading(false);
             if (response.status==201){
                         const eventResponse=await response.json();
                         console.log(eventResponse)
                         alert('Evento creado existosamente')
-                        navigate("/");
+                        setTimeout(() => navigate('/'), 2000);
                         return 
                              
                         }
@@ -182,10 +181,6 @@ async function imageUpload(imageInput) {
                         console.log(response.code)
                         return
       }
-
-   /*   useEffect(() => {
-            checkLogin();
-          }, [checkLogin]); */
 
  console.log('Formulario enviado con los siguientes datos:', formData);
  };
@@ -321,8 +316,10 @@ async function imageUpload(imageInput) {
             <input type="file" 
                     accept=".jpg,.jpeg,.png" 
                     name="flyerImage" 
-                    id="flyerImage" 
+                    id="flyerImage"
+                    onChange={handleFileChange} 
                     />
+            <span>{ "  " + flyerFile }</span>
             <div>
                   <label className="file-upload" htmlFor="image">Añadir imagenes del Evento o Lugar:</label>
                   <input type="file" 
@@ -330,9 +327,11 @@ async function imageUpload(imageInput) {
                           name="image[]" 
                           id="image" 
                           onChange={handleFileChange} multiple />
+                  <span>{ imageFile ? " "+imageFile+" Imagenes por cargar" : null}</span>
                   <small>
                         Por favor, adjunta una imagen con una resolución recomendada de 1080x1080 píxeles para una mejor visualización.
                   </small>
+                  
             </div>
       </div>
 
@@ -377,6 +376,14 @@ async function imageUpload(imageInput) {
 
 
       <div className='country-selection'>
+            <label>Ciudad donde se realiza el evento:</label>
+            <select name='city' value={formData.city} onChange={handleChange}>
+                  <option key="Bogotá" value="Bogotá">&nbsp; Bogotá &nbsp;</option>
+                  <option key="Medellin" value="Medellin">&nbsp; Medellin &nbsp;</option>
+                  <option key="Cali" value="Cali">&nbsp; Cali &nbsp;</option>
+                  <option key="Cartagena" value="Cartagena">&nbsp; Cartagena &nbsp;</option>
+                  <option key="Pereira" value="Pereira">&nbsp; Pereira &nbsp;</option>
+            </select>
             <label>Pais donde se realiza el evento:</label>
             <select name='country' value={formData.country} onChange={handleChange}>
                 <option key="Colombia" value="Colombia">
@@ -394,7 +401,6 @@ async function imageUpload(imageInput) {
                 ¿Es un evento gratis?
             </label>
       </div>
-
      
      {!formData.isFree && (
        <div>
@@ -410,7 +416,13 @@ async function imageUpload(imageInput) {
      )}
 
 
-    <button type ="submit">Enviar Solicitud</button></form >  
+            <button type ="submit">{ formLoading ? 'Enviando...' : 'Enviar Solicitud'}</button>
+            <div className={formLoading ? "dots-spinner" : null }>
+              <div></div>
+              <div></div>
+              <div></div>       
+            </div>
+    </form >  
 </div>
  );
 };

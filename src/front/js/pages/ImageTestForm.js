@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { FormLabel } from "react-bootstrap";
 import Navbar from "../component/navbar"
+import "../../styles/spinners.css";
 
 const backend=process.env.BACKEND_URL
 
 
 const ImageUpload = () => {
-    
+  
+  const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
 
     const loadimg= async(e) => {
         e.preventDefault();
+        setLoading(true);
         const formData = new FormData();
         let option = e.target.option.value;
         const options = ['1','2','3','4']
@@ -36,6 +40,7 @@ const ImageUpload = () => {
               // fetch will set it with the correct boundary.
             },
           })
+          setLoading(false);
           if (response.status==200){
             let mediaResponse=await response.json();
             let alertmessage=mediaResponse['msg']+" img url:"+mediaResponse["url"]+" media format:"+mediaResponse['format']+" media type:"+mediaResponse['resource_type'];
@@ -63,7 +68,12 @@ const ImageUpload = () => {
             <h1></h1>
             <label className="form-label">User or event id:</label>
             <input className="form-control" type="text" name="id" id="id"></input>
-            <input type="submit" value="Upload"></input>
+            <input type="submit" value={loading ? "Loading..." : "Upload"}></input>
+            <div class={loading ? "dots-spinner" : null }>
+              <div></div>
+              <div></div>
+              <div></div>       
+            </div>
         </form>
       </>
       

@@ -7,6 +7,7 @@ import Breadcrumbs from "../component/Breadcrumbs.jsx";
 import Navbar from "../component/navbar";
 import "../../styles/FilteredEvents.css";
 
+
 const FilteredEvents = () => {
   const { store } = useContext(Context);
   const { category } = useParams();
