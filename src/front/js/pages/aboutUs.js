@@ -53,6 +53,9 @@ const AboutUs = () => {
                             máximo de la oferta cultural del país.
                         </p>
                     </div>
+
+  
+
                 </div>
 
                 <div className="nature-section">
@@ -76,6 +79,49 @@ const AboutUs = () => {
     </p>
 
     <p><strong>¡Conócenos y descubre cómo podemos ayudarte a hacer realidad tu visión tecnológica! 🚀</strong></p>
+
+    <div className="technologies-container">
+    <div className="tech-header">
+        <h2>Tecnologías Utilizadas</h2>
+        <p className="tech-subtitle">Las herramientas que utilizamos para desarrollar soluciones innovadoras.</p>
+    </div>
+    <div className="tech-grid">
+        <div className="tech-item">
+            <img src="https://img.icons8.com/ios11/512/FFFFFF/github.png" alt="GitHub Codespaces" />
+            <span>GitHub CS</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML" />
+            <span>HTML</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" />
+            <span>JavaScript</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" />
+            <span>React</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS" />
+            <span>CSS</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmD38KsMgEwahtWc_Nfs5ZVktP9dBc36MUZA&s" alt="Flask" />
+            <span>Flask</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" />
+            <span>Python</span>
+        </div>
+        <div className="tech-item">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlalchemy/sqlalchemy-original.svg" alt="SQLAlchemy" />
+            <span>SQLAlchemy</span>
+        </div>
+    </div>
+</div>
+
+
                        
                     </div>
                     <div className="image">
